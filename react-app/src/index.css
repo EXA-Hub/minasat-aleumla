@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #ffffff; /* White background */
+    --foreground: #020817; /* Dark text for light mode */
+    --primary: #2563eb; /* Brighter blue for better contrast */
+    --primary-foreground: #ffffff; /* White text on primary */
+    --secondary: #e2e8f0; /* Lighter gray for secondary elements */
+    --secondary-foreground: #1e293b; /* Dark text on secondary */
+    --accent: #4f46e5; /* Vibrant purple for accents */
+    --accent-foreground: #ffffff; /* White text on accent */
+    --muted: #f1f5f9; /* Very light gray for muted backgrounds */
+    --muted-foreground: #64748b; /* Gray text for muted elements */
+    --border: #cbd5e1; /* Light gray for borders */
+    --card: #ffffff; /* White for card backgrounds */
+    --muted-light: #94a3b8; /* Medium gray for subtle elements */
+  }
+
+  .dark {
+    --background: #0f172a; /* Dark blue-gray background */
+    --foreground: #f8fafc; /* Light text for dark mode */
+    --primary: #3b82f6; /* Bright blue for primary actions */
+    --primary-foreground: #ffffff; /* White text on primary */
+    --secondary: #1e293b; /* Darker gray for secondary elements */
+    --secondary-foreground: #f8fafc; /* Light text on secondary */
+    --accent: #818cf8; /* Soft purple for accents */
+    --accent-foreground: #ffffff; /* White text on accent */
+    --muted: #1e293b; /* Dark gray for muted backgrounds */
+    --muted-foreground: #94a3b8; /* Light gray for muted text */
+    --border: #334155; /* Darker gray for borders */
+    --card: #1e293b; /* Dark gray for card backgrounds */
+    --muted-light: #475569; /* Medium gray for subtle elements */
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.markdown-content {
+  direction: rtl;
+  text-align: right;
+}
+
+.markdown-content * {
+  background: none !important;
+  color: inherit !important;
+}
+
+.dark\:bg-green-900\/10:is(.dark *) {
+  background-color: rgb(20 83 45 / 0.1);
+}
+
+.bg-green-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
+}

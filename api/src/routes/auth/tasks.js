@@ -1,0 +1,146 @@
+// my-api/src/routes/auth/tasks.js
+import mongoose from 'mongoose';
+
+const dailyIpSchema = new mongoose.Schema(
+  {
+    ip: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    lastClaimed: {
+      type: Date,
+      required: true,
+    },
+  },
+  {
+    versionKey: false, // Disable the __v field
+    // _id: false, // Disable the _id field
+  }
+);
+
+const DailyIp = mongoose.model('DailyIp', dailyIpSchema);
+
+const generateShortURL = async (url, expirationMinutes = 15) => {
+  const currentTime = new Date();
+  currentTime.setMinutes(currentTime.getMinutes() + expirationMinutes); // Add expiration time
+
+  const expiration = {
+    year: currentTime.getUTCFullYear(),
+    month: currentTime.getUTCMonth() + 1, // Months are 0-indexed
+    day: currentTime.getUTCDate(),
+    hour: currentTime.getUTCHours(),
+    minute: currentTime.getUTCMinutes(),
+  };
+
+  const apiUrl = `https://linkjust.com/api?api=${
+    process.env.LINKJUST_API_KEY
+  }&url=${encodeURIComponent(url)}&format=json&expiration[year]=${
+    expiration.year
+  }&expiration[month]=${expiration.month}&expiration[day]=${
+    expiration.day
+  }&expiration[hour]=${expiration.hour}&expiration[minute]=${
+    expiration.minute
+  }`;
+
+  const response = await fetch(apiUrl, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to generate short URL: ${response.message}\n${response.status}`
+    );
+  }
+
+  const data = await response.json();
+  return data.shortenedUrl; // Assuming the API returns a field called 'shortenedUrl'
+};
+
+import { Router } from 'express';
+import { query, validationResult } from 'express-validator';
+import config from '../../config.js';
+
+const router = Router();
+const tempMemory = new Map();
+const { dailyConfig } = config;
+
+const saveTempCode = (ip, code) => {
+  const expireTime = Date.now() + 15 * 60 * 1000;
+  tempMemory.set(ip, { code, expireTime });
+  setTimeout(() => tempMemory.delete(ip), 15 * 60 * 1000);
+};
+
+const generateCode = () =>
+  String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+
+router.get(
+  '/@me/daily',
+  [query('host').trim().notEmpty().withMessage('Host is required').isURL()],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+    try {
+      const { host } = req.query;
+      const { clientIp } = req;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const ipRecord = await DailyIp.findOne({ ip: clientIp });
+      if (ipRecord) {
+        const lastClaimDate = new Date(ipRecord.lastClaimed);
+        lastClaimDate.setHours(0, 0, 0, 0);
+        if (lastClaimDate.getTime() === today.getTime()) {
+          return res
+            .status(400)
+            .json({ error: 'لقد حصلت على هديتك بالفعل اليوم!' });
+        }
+        ipRecord.lastClaimed = new Date();
+        await ipRecord.save();
+      } else {
+        await DailyIp.create({ ip: clientIp, lastClaimed: new Date() });
+      }
+      const code = generateCode();
+      const shortUrl = await generateShortURL(`${host}?dailyCode=${code}`);
+      saveTempCode(clientIp, code);
+      res.status(200).json({ dailyUrl: shortUrl });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'خطأ في الخادم' });
+    }
+  }
+);
+
+router.get('/verify-daily', [query('dailyCode').isInt()], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  try {
+    const { dailyCode } = req.query;
+    const { clientIp } = req;
+    const entry = tempMemory.get(clientIp);
+    if (!entry) return res.status(400).json({ error: 'لا توجد هدايا' });
+    tempMemory.delete(clientIp);
+    if (entry.code !== dailyCode)
+      return res.status(400).json({ error: 'رمز غير صحيح' });
+    if (Date.now() >= entry.expireTime)
+      return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
+    const daily =
+      Math.ceil(Math.random() * dailyConfig.limit) + dailyConfig.bouns;
+    req.user.balance += daily;
+    await req.user.save();
+    return res.status(200).json({
+      message: 'لقد حصلت على هديتك',
+      daily,
+    });
+  } catch (error) {
+    console.error(`Error in /verify-daily: ${error.message}`);
+    res.status(500).json({ error: 'خطأ في الخادم' });
+  }
+});
+
+export default router;
