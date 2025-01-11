@@ -7,12 +7,13 @@ import {
   TrendingUp,
   Gift,
   FileCheck,
+  CreditCard,
 } from 'lucide-react';
 
 const menuItems = [
   {
     id: 'main',
-    title: 'الرئيسية',
+    title: 'الرئيسية 🏠',
     items: [
       {
         name: 'نظرة عامة',
@@ -23,8 +24,22 @@ const menuItems = [
     ],
   },
   {
+    id: 'support',
+    title: 'دعم المنصة 💝',
+    items: [
+      {
+        name: 'الخطط والإشتراكات',
+        icon: CreditCard,
+        path: '/explore/support/subscriptions',
+        component: React.lazy(
+          () => import('../../pages/explore/support/plans.jsx')
+        ),
+      },
+    ],
+  },
+  {
     id: 'transfers',
-    title: 'التحويلات',
+    title: 'التحويلات 🔄',
     items: [
       {
         name: 'الشيكات',
@@ -46,7 +61,7 @@ const menuItems = [
   },
   {
     id: 'platform-kings',
-    title: 'ملوك المنصة',
+    title: 'ملوك المنصة 👑',
     items: [
       {
         name: 'أغنى الأشخاص',
@@ -60,7 +75,7 @@ const menuItems = [
   },
   {
     id: 'settings',
-    title: 'الإعدادات',
+    title: 'الإعدادات ⚙️',
     items: [
       {
         name: 'الألوان',

@@ -66,8 +66,7 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
           <DialogTitle>إنشاء هدية جديدة</DialogTitle>
           <button
             onClick={() => onOpenChange(false)}
-            className="rounded-full p-2 hover:bg-muted-foreground"
-          >
+            className="rounded-full p-2 hover:bg-muted-foreground">
             <X className="h-4 w-4" />
           </button>
         </DialogHeader>
@@ -77,6 +76,7 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
               عنوان الهدية
             </label>
             <Input
+              type="text"
               required
               minLength={3}
               maxLength={100}
@@ -133,8 +133,7 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-primary-foreground hover:bg-blue-900 disabled:opacity-50 h-10 rounded-md"
-          >
+            className="w-full bg-blue-500 text-primary-foreground hover:bg-blue-900 disabled:opacity-50 h-10 rounded-md">
             {loading ? 'جاري الإنشاء...' : 'إنشاء الهدية'}
           </button>
           <span className="text-xs text-red-700">سيتم فرض الرسوم</span>
@@ -203,8 +202,7 @@ const AirdropPage = () => {
         <h2 className="text-3xl font-bold">الهدايا المتاحة</h2>
         <button
           onClick={() => setDialogOpen(true)}
-          className="bg-blue-500 text-primary-foreground hover:bg-blue-900 px-4 py-2 rounded-md"
-        >
+          className="bg-blue-500 text-primary-foreground hover:bg-blue-900 px-4 py-2 rounded-md">
           إنشاء هدية جديدة
         </button>
       </div>
@@ -230,8 +228,7 @@ const AirdropPage = () => {
                   href={gift.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline block mb-4"
-                >
+                  className="text-blue-500 hover:underline block mb-4">
                   تفاصيل إضافية
                 </a>
               )}
@@ -243,8 +240,7 @@ const AirdropPage = () => {
               <button
                 onClick={() => handleGiftClaim(gift)}
                 disabled={claimingId === gift.id || gift.claimed}
-                className="bg-blue-500 text-primary-foreground hover:bg-blue-900 disabled:opacity-50 px-4 py-2 rounded-md"
-              >
+                className="bg-blue-500 text-primary-foreground hover:bg-blue-900 disabled:opacity-50 px-4 py-2 rounded-md">
                 {claimingId === gift.id
                   ? 'جاري تقديم الهدية...'
                   : gift.claimed

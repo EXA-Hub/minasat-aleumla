@@ -51,15 +51,40 @@ function requireAppWs(_app, ws) {
       const { amount, code, winnersCount } = req.body;
       const creator = req.user;
 
+      // TODO validate gifts plan
+      const { slots, maxCoins, maxUsers } =
+        subscriptions[creator.tier].features.gifts;
+
+      if (winnersCount > maxUsers)
+        return res
+          .status(400)
+          .json({ error: 'الحد الأقصى للمستخدمين هو ' + maxUsers });
+
+      if (amount > maxCoins)
+        return res
+          .status(400)
+          .json({ error: 'الحد الأقصى للمبلغ هو ' + maxCoins });
+
+      if (giftCache.has(code))
+        return res.status(400).json({ error: 'الكود مستخدم مسبقاً' });
+
+      const giftsCount = await MysteryGift.find({
+        creator: req.user._id,
+      }).countDocuments();
+
+      if (slots <= giftsCount)
+        return res.status(400).json({
+          error: 'الحد الآقصى للهدايا هو ' + slots,
+        });
+
       try {
         const feeAmount = Math.ceil(
           (amount * subscriptions[creator.tier].features.wallet.fee) / 100
         );
         const totalAmount = (amount + feeAmount) * winnersCount; // Calculate total amount including fee for all winners
 
-        if (creator.balance < totalAmount) {
+        if (creator.balance < totalAmount)
           return res.status(400).json({ error: 'رصيد غير كافٍ' });
-        }
 
         creator.balance -= totalAmount;
         creator.transactionStats.totalSpent += totalAmount;
@@ -83,9 +108,8 @@ function requireAppWs(_app, ws) {
         });
       } catch (error) {
         console.error(error);
-        if (error.code === 11000) {
+        if (error.code === 11000)
           return res.status(400).json({ error: 'الكود مستخدم مسبقاً' });
-        }
         res.status(500).json({ error: 'خطأ في الخادم' });
       }
     }
@@ -164,13 +188,13 @@ function requireAppWs(_app, ws) {
 
     try {
       const gifts = await MysteryGift.find({ creator: req.user._id })
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .populate('winners', 'username') // Populate the 'winners' array instead of 'winner'
-        .populate('attempts.user', 'username');
+        .sort({ createdAt: -1 }) // Sort by createdAt in descending order
+        .skip(skip) // Apply skip for pagination
+        .limit(limit) // Apply limit for pagination
+        .populate('winners', 'username') // Populate the 'winners' array
+        .populate('attempts.user', 'username'); // Populate the 'attempts.user' field
 
-      const total = await MysteryGift.countDocuments({ creator: req.user._id });
+      const total = await MysteryGift.countDocuments({ creator: req.user._id }); // Get total count of gifts
 
       res.json({
         gifts: gifts.map((g) => ({
@@ -178,15 +202,16 @@ function requireAppWs(_app, ws) {
           amount: g.amount,
           status: g.status,
           winners: g.winners.map((winner) => winner.username), // Include usernames of winners
-          attempts: g.attempts.length,
-          createdAt: g.createdAt,
+          attempts: g.attempts.length, // Include number of attempts
+          createdAt: g.createdAt, // Include creation date
         })),
         pagination: {
-          page,
-          limit,
-          total,
-          hasMore: skip + gifts.length < total,
+          page, // Current page number
+          limit, // Number of items per page
+          total, // Total number of gifts
+          hasMore: skip + limit < total, // Check if there are more items to fetch
         },
+        plan: subscriptions[req.user.tier].features.gifts, // Include the user's gift plan details
       });
     } catch (error) {
       res.status(500).json({ error: 'خطأ في الخادم' });

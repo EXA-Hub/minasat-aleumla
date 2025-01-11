@@ -1,3 +1,4 @@
+// react-app/src/main.jsx
 console.log(
   '%c!!! تـحـذيـر !!!',
   `
@@ -104,13 +105,24 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <Router>
             <Routes>
               {/* Static routes */}
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/ref/:userId" element={<ReferralRedirect />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/recoverAccount" element={<RecoveryPage />} />
+              <Route key={'/'} path="/" element={<LandingPage />} />
+              <Route
+                key={'/ref/:userId'}
+                path="/ref/:userId"
+                element={<ReferralRedirect />}
+              />
+              <Route key={'/login'} path="/login" element={<LoginPage />} />
+              <Route
+                key={'/recoverAccount'}
+                path="/recoverAccount"
+                element={<RecoveryPage />}
+              />
 
               {/* Dashboard routes */}
-              <Route path="/dashboard" element={<DashboardPage />}>
+              <Route
+                key={'/dashboard'}
+                path="/dashboard"
+                element={<DashboardPage />}>
                 {dashboardMenuItems.flatMap((section) =>
                   section.items.map(
                     ({ path, component }) =>
@@ -120,8 +132,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                           path={path}
                           element={
                             <React.Suspense
-                              fallback={<div>جار التحميل...</div>}
-                            >
+                              fallback={<div>جار التحميل...</div>}>
                               {React.createElement(component)}
                             </React.Suspense>
                           }
@@ -132,7 +143,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               </Route>
 
               {/* Explore routes */}
-              <Route path="/explore" element={<ExplorePage />}>
+              <Route key={'/explore'} path="/explore" element={<ExplorePage />}>
                 {exploreMenuItems.flatMap((section) =>
                   section.items.map(
                     ({ path, component }) =>
@@ -142,8 +153,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                           path={path}
                           element={
                             <React.Suspense
-                              fallback={<div>جار التحميل...</div>}
-                            >
+                              fallback={<div>جار التحميل...</div>}>
                               {React.createElement(component)}
                             </React.Suspense>
                           }
@@ -167,16 +177,22 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               ))}
 
               {/* Dynamically generated error routes */}
-              {errorRoutes.map((route) => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={route.element}
-                />
-              ))}
+              {errorRoutes
+                .filter((route) => route.path) // Filter out routes without a `path`
+                .map((route) => (
+                  <Route
+                    key={route.path} // Ensure the key is unique
+                    path={route.path}
+                    element={route.element}
+                  />
+                ))}
 
               {/* Catch-all route for unknown pages */}
-              <Route path="*" element={<Navigate to="/error/not-found" />} />
+              <Route
+                key={'*'}
+                path="*"
+                element={<Navigate to="/error/not-found" />}
+              />
             </Routes>
           </Router>
         </ModalProvider>

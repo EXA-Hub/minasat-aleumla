@@ -25,6 +25,7 @@ const ChequesPage = () => {
   const [claimCode, setClaimCode] = useState('');
   const [cheques, setCheques] = useState([]);
   const [error, setError] = useState('');
+  const [plan, setPlan] = useState({ slots: 10, maxCoins: 20000 });
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 5,
@@ -35,10 +36,15 @@ const ChequesPage = () => {
   const createCheque = async (e) => {
     e.preventDefault();
     try {
-      const data = await api.cheques.create({
+      const newCheque = {
         amount: parseFloat(amount),
         description,
-      });
+      };
+      if (newCheque.amount > plan.maxCoins) {
+        setError('الحد الأقصى للمبلغ هو ' + plan.maxCoins);
+        return;
+      }
+      const data = await api.cheques.create(newCheque);
       setCheques([data, ...cheques]);
       setAmount('');
       setDescription('');
@@ -72,6 +78,7 @@ const ChequesPage = () => {
           total: data.pagination.total,
           hasMore: data.pagination.hasMore,
         });
+        setPlan(data.plan);
       } catch (err) {
         console.error(err);
         setError(err.data?.error || 'Error occurred');
@@ -90,8 +97,7 @@ const ChequesPage = () => {
         من فضلك{' '}
         <a
           href="/login"
-          className="text-primary hover:underline transition-all duration-300"
-        >
+          className="text-primary hover:underline transition-all duration-300">
           سجل دخول
         </a>{' '}
         للوصول إلى هذه الصفحة.
@@ -116,7 +122,9 @@ const ChequesPage = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>إنشاء شيك</CardTitle>
+            <CardTitle>
+              إنشاء شيك {plan.slots}/{cheques.length}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={createCheque} className="space-y-4">
@@ -127,6 +135,7 @@ const ChequesPage = () => {
                 onChange={(e) => setAmount(e.target.value)}
               />
               <Input
+                type="text"
                 placeholder="الوصف (اختياري)"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -145,6 +154,7 @@ const ChequesPage = () => {
           <CardContent>
             <form onSubmit={claimCheque} className="space-y-4">
               <Input
+                type="text"
                 placeholder="رمز الشيك"
                 value={claimCode}
                 onChange={(e) => setClaimCode(e.target.value)}
@@ -203,8 +213,7 @@ const ChequesPage = () => {
           <div className="flex justify-between items-center mt-4">
             <Button
               onClick={handlePreviousPage}
-              disabled={pagination.page === 1}
-            >
+              disabled={pagination.page === 1}>
               السابق
             </Button>
             <span>

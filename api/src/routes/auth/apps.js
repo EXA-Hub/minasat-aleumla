@@ -2,7 +2,7 @@ import { Router } from 'express';
 import config from '../../config.js';
 
 const router = Router();
-const { apps } = config;
+const { apps, subscriptions } = config;
 
 apps.forEach((app) => {
   if (app.router) app.router(router);
@@ -10,12 +10,14 @@ apps.forEach((app) => {
 
 router.get('/@me/apps', async (req, res) => {
   try {
+    const { slots } = subscriptions[req.user.tier].features.apps;
     res.json(
-      config.apps.map(({ id, name, svg, bgColor }) => ({
+      apps.map(({ id, name, svg, bgColor }) => ({
         id,
         name,
         svg,
         bgColor,
+        slots,
         connectedAccounts: req.user.apps[id].map(({ id, name }) => ({
           id,
           name,
@@ -37,7 +39,10 @@ router.post('/@me/apps/verifyConnection', async (req, res) => {
       (app) => app.id.toLocaleLowerCase() === body.app.toLocaleLowerCase()
     );
     if (!app) return res.status(400).json({ error: 'التطبيق غير موجود' }); // 'App not found' in Arabic
-    await app.connect(body, req.user);
+    const { slots } = subscriptions[req.user.tier].features.apps;
+    if (req.user.apps[app.id].length >= slots)
+      return res.status(400).json({ error: 'تم تجاوز حد التطبيقات' });
+    else await app.connect(body, req.user);
     // Respond with a success status
     res.sendStatus(200);
   } catch (error) {

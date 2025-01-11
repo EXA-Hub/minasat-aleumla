@@ -50,12 +50,20 @@ function requireAppWs(_app, ws) {
       const { amount, description } = req.body;
       const creator = req.user;
 
-      if (amount > subscriptions[creator.tier].features.cheque.maxCoins) {
+      const { slots, maxCoins } = subscriptions[creator.tier].features.cheque;
+
+      if (amount > maxCoins) {
         return res.status(400).json({
           error: `الحد الأقصى للمبلغ هو ${
             subscriptions[creator.tier].features.wallet.minAmount
           }`,
         });
+      }
+      const chequesCount = await Cheque.find({
+        creator: req.user._id,
+      }).countDocuments();
+      if (slots <= chequesCount) {
+        return res.status(400).json({ error: 'تم تجاوز حد الشيكات' });
       }
 
       try {
@@ -198,6 +206,7 @@ function requireAppWs(_app, ws) {
           total,
           hasMore: skip + cheques.length < total,
         },
+        plan: subscriptions[req.user.tier].features.cheque,
       });
     } catch (error) {
       console.error(error);

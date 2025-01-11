@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const ColorContext = createContext();
 
@@ -65,6 +66,10 @@ export const ColorProvider = ({ children }) => {
       {children}
     </ColorContext.Provider>
   );
+};
+
+ColorProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export const useColors = () => useContext(ColorContext);

@@ -83,6 +83,10 @@ const userSchema = new mongoose.Schema({
   balance: {
     type: Number,
     default: defaultBalance,
+    validate: {
+      validator: (value) => value >= 0,
+      message: 'الرصيد يجب ان يكون على الاقل 0',
+    },
   },
   transactionStats: {
     totalTransactions: {
@@ -162,8 +166,12 @@ const userSchema = new mongoose.Schema({
   },
   tier: {
     type: String,
-    enum: subscriptions.map((sub) => sub.name),
-    default: subscriptions[0].name,
+    enum: Object.keys(subscriptions),
+    default: Object.keys(subscriptions)[0],
+  },
+  subscribedAt: {
+    type: Date,
+    default: Date.now,
   },
   // Add other fields as needed
 });

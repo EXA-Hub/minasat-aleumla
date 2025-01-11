@@ -1,3 +1,4 @@
+// react-app/src/errorConfig.jsx
 import ErrorPage from './pages/ErrorPage';
 
 // Array of error objects (all text in Arabic)
@@ -14,7 +15,6 @@ const errors = [
   },
   {
     code: 401,
-    path: '/error/unauthorized',
     description: 'أنت غير مصرح لك بالوصول إلى هذه الصفحة. يرجى تسجيل الدخول.',
     image: '/icon.svg',
     button: {
@@ -24,7 +24,6 @@ const errors = [
   },
   {
     code: 404,
-    path: '/error/not-found',
     description: 'الصفحة التي تبحث عنها غير موجودة.',
     image: '/icon.svg',
     button: {
@@ -34,7 +33,6 @@ const errors = [
   },
   {
     code: 500,
-    path: '/error/server-error',
     description: 'حدث خطأ في الخادم. يرجى المحاولة مرة أخرى لاحقًا.',
     image: '/icon.svg',
     button: {

@@ -57,12 +57,20 @@ function initializeWebSocket(app) {
     }
   });
 
-  wss.sendNotification = async (notification, time, username) => {
+  /**
+   * Send a notification to the user with the given username.
+   * If the user is currently connected via WebSocket, send the notification directly.
+   * Otherwise, store the notification in the user's notifications array.
+   * @param {string} notification The text of the notification
+   * @param {number} [time] The time of the notification (defaults to current time)
+   * @param {string} username The username of the user to send the notification to
+   */
+  wss.sendNotification = async (notification, time = Date.now(), username) => {
     try {
       const user = await User.findOne({ username });
       if (!user) return;
       const client = clients.get(user.username);
-      const notify = { text: notification, time: time || Date.now() };
+      const notify = { text: notification, time: time };
       if (client && client.readyState === 1) {
         client.send(JSON.stringify(notify));
       } else {

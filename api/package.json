@@ -19,8 +19,11 @@
     "express-rate-limit": "^7.5.0",
     "express-validator": "^7.2.0",
     "helmet": "^8.0.0",
+    "moment-timezone": "^0.5.46",
     "mongoose": "^8.9.2",
     "node-cache": "^5.1.2",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.16",
     "otplib": "^12.0.1",
     "proxycheck-ts": "^0.0.11",
@@ -29,6 +32,7 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/node-cron": "^3.0.11",
     "@types/request-ip": "^0.0.41"
   }
 }

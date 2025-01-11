@@ -19,6 +19,14 @@ const giftSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
+// Post-save hook to check if max limit is hit
+giftSchema.post('save', async function (doc) {
+  if (doc.usersClaimed.length >= doc.max) {
+    await Gifts.findByIdAndDelete(doc._id); // Delete the gift if max limit is reached
+    console.log(`Gift ${doc._id} deleted because max limit was reached.`);
+  }
+});
+
 const Gifts = mongoose.model('Gift', giftSchema);
 
 // Get available airdrops with pagination
@@ -147,9 +155,26 @@ router.post(
 
     try {
       const { title, coins, max, url } = req.body;
+      const { slots, maxCoins, maxUsers } =
+        subscriptions[req.user.tier].features.airdrop;
+
+      if (maxCoins < coins)
+        return res.status(400).json({ error: 'قيمة العملات غير صحيحة' });
+
+      if (maxUsers < max)
+        return res
+          .status(400)
+          .json({ error: 'الحد الأقصى للمستخدمين غير صحيح' });
+
+      const airdropCount = await Gifts.countDocuments({
+        createdBy: req.user._id,
+      });
+
+      if (airdropCount >= slots)
+        return res.status(400).json({ error: 'لقد استخدمت كل صلة هدية' });
 
       const cost = coins * max;
-      const fee = subscriptions[req.user.tier].features.wallet.fee;
+      const { fee } = subscriptions[req.user.tier].features.wallet;
       const feeAmount = Math.ceil((cost * fee) / 100);
       if (req.user.balance < feeAmount + cost)
         return res.status(400).json({ error: 'رصيد غير كافٍ' });

@@ -1,13 +1,17 @@
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { Product, Trade } from '../../utils/schemas/traderSchema.js';
+import config from '../../config.js';
+
+const { subscriptions } = config;
 const router = Router();
 
 // Get all products
 router.get('/products/', async (req, res) => {
   try {
     const products = await Product.find({ userId: req.user._id });
-    res.json(products);
+    const { slots, maxCoins } = subscriptions[req.user.tier].features.products;
+    res.json({ products, plan: { slots, maxCoins } });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'فشل في جلب المنتجات.' });
@@ -40,9 +44,14 @@ router.post(
   async (req, res) => {
     try {
       const count = await Product.countDocuments({ userId: req.user._id });
-      if (count >= 5)
+      const { slots, maxCoins } =
+        subscriptions[req.user.tier].features.products;
+      if (count >= slots)
         return res.status(400).json({ error: 'تجاوزت الحد الأقصى للمنتجات.' });
-
+      if (req.body.price > maxCoins)
+        return res
+          .status(400)
+          .json({ error: 'السعر يجب ان يكون اقل من او يساوي ' + maxCoins });
       const product = await Product.create({
         ...req.body,
         userId: req.user._id,
@@ -68,6 +77,12 @@ router.put(
   ],
   async (req, res) => {
     try {
+      if (
+        req.body.price > subscriptions[req.user.tier].features.products.maxCoins
+      )
+        return res
+          .status(400)
+          .json({ error: 'السعر يجب ان يكون اقل من او يساوي ' + maxCoins });
       const product = await Product.findOneAndUpdate(
         { _id: req.params.id, userId: req.user._id, isLocked: false },
         req.body,

@@ -1,8 +1,8 @@
 // my-api/src/routes/public/connect.js
 import { Router } from 'express';
-const router = Router();
-
 import config from '../../config.js';
+
+const router = Router();
 const { apps } = config;
 
 router.get('/app/connect/:appId', (req, res) => {

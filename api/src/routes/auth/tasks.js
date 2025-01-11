@@ -65,7 +65,7 @@ import config from '../../config.js';
 
 const router = Router();
 const tempMemory = new Map();
-const { dailyConfig } = config;
+const { subscriptions } = config;
 
 const saveTempCode = (ip, code) => {
   const expireTime = Date.now() + 15 * 60 * 1000;
@@ -129,8 +129,10 @@ router.get('/verify-daily', [query('dailyCode').isInt()], async (req, res) => {
       return res.status(400).json({ error: 'رمز غير صحيح' });
     if (Date.now() >= entry.expireTime)
       return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
+    const dailyConfig =
+      subscriptions[req.user.subscription].features.tasks.daily;
     const daily =
-      Math.ceil(Math.random() * dailyConfig.limit) + dailyConfig.bouns;
+      Math.ceil(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
     req.user.balance += daily;
     await req.user.save();
     return res.status(200).json({

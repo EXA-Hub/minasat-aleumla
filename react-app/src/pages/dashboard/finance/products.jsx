@@ -50,15 +50,13 @@ const ProductForm = ({ product, onSubmit, onCancel }) => (
     <div className="flex gap-4">
       <button
         type="submit"
-        className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-      >
+        className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
         {product?.isNew ? 'إضافة منتج' : 'تحديث المنتج'}
       </button>
       <button
         type="button"
         onClick={onCancel}
-        className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300"
-      >
+        className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">
         إلغاء
       </button>
     </div>
@@ -83,6 +81,7 @@ const ProductsPage = () => {
   const [editingProduct, setEditingProduct] = useState(null);
   const [sortField, setSortField] = useState(null);
   const [sortDirection, setSortDirection] = useState('asc');
+  const [plan, setPlan] = useState(0);
 
   useEffect(() => {
     loadProducts();
@@ -91,7 +90,8 @@ const ProductsPage = () => {
   const loadProducts = async () => {
     try {
       const data = await api.products.getAll();
-      setProducts(data);
+      setProducts(data.products);
+      setPlan(data.plan);
     } catch (error) {
       toast.error(error.data?.error || 'فشل في تحميل المنتجات');
     } finally {
@@ -122,10 +122,19 @@ const ProductsPage = () => {
       price: Number(formData.get('price')),
     };
 
+    if (productData.price > plan.maxCoins) {
+      toast.error('السعر يجب ان يكون اقل من او يساوي ' + plan.maxCoins);
+      return;
+    }
+
     try {
       if (product.isNew) {
-        await api.products.create(productData);
-        toast.success('تم إضافة المنتج بنجاح');
+        if (plan.slots <= products.length) {
+          toast.error('تم تخطي الحد الاقصي للمنتجات');
+        } else {
+          await api.products.create(productData);
+          toast.success('تم إضافة المنتج بنجاح');
+        }
       } else {
         await api.products.update(product._id, productData);
         toast.success('تم تحديث المنتج بنجاح');
@@ -153,8 +162,7 @@ const ProductsPage = () => {
   const SortButton = ({ field, children }) => (
     <button
       onClick={() => handleSort(field)}
-      className="flex items-center gap-2 px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
-    >
+      className="flex items-center gap-2 px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
       {children}
       {sortField === field && (
         <ArrowUpDown
@@ -180,12 +188,13 @@ const ProductsPage = () => {
   return (
     <div dir="rtl" className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold">منتجاتي ({products.length}/5)</h2>
+        <h2 className="text-3xl font-bold">
+          منتجاتي ({products.length}/{plan.slots})
+        </h2>
         <button
           onClick={() => setSelectedProduct({ isNew: true })}
-          disabled={products.length >= 5}
-          className="flex items-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
-        >
+          disabled={products.length >= plan.slots}
+          className="flex items-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50">
           <Plus className="h-5 w-5" />
           <span>إضافة منتج</span>
         </button>
@@ -206,8 +215,7 @@ const ProductsPage = () => {
                   ? 'bg-blue-50 dark:bg-blue-900'
                   : ''
               }`}
-              onClick={() => setSelectedProduct(product)}
-            >
+              onClick={() => setSelectedProduct(product)}>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold">{product.name}</h3>
@@ -229,8 +237,7 @@ const ProductsPage = () => {
                       setEditingProduct(product._id);
                     }}
                     disabled={product.isLocked}
-                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
-                  >
+                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50">
                     <Edit className="h-5 w-5" />
                   </button>
                   <button
@@ -239,8 +246,7 @@ const ProductsPage = () => {
                       handleDelete(product);
                     }}
                     disabled={product.isLocked}
-                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
-                  >
+                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50">
                     <Trash2 className="h-5 w-5" />
                   </button>
                 </div>

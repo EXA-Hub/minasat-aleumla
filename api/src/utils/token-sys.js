@@ -1,16 +1,21 @@
 import crypto from 'crypto';
-import dotenv from 'dotenv-safe';
-
-// Load environment variables from .env file
-dotenv.config();
 
 /**
  * Secret key for encryption, should be stored securely.
  * It is loaded from the environment variables for security.
  * In this case, it uses the MONGO_URI as a secret key, which can be changed.
+ *
+ * @returns {{secretKey: string, iv: Buffer}} - An object containing the secret key and the initialization vector (IV).
+ *
  */
-const secretKey = process.env.TOKEN_SECRET; // Can be of any length
-const iv = crypto.randomBytes(16); // Initialization vector (IV) is needed for encryption
+function secretKeyF() {
+  const secretKey = process.env.TOKEN_SECRET; // Can be of any length
+  const iv = crypto.randomBytes(16); // Initialization vector (IV) is needed for encryption
+  return {
+    secretKey,
+    iv,
+  };
+}
 
 /**
  * Generates a token by encrypting the provided data (username, uid, and password)
@@ -23,6 +28,9 @@ const iv = crypto.randomBytes(16); // Initialization vector (IV) is needed for e
  */
 function generateToken(username, uid, password) {
   const data = `${username}\n${uid}\n${password}`;
+  const { iv, secretKey } = secretKeyF();
+
+  console.log(secretKey);
 
   // Hash the secret key to ensure it's 32 bytes for AES-256-CBC
   const key = crypto.createHash('sha256').update(secretKey).digest();
@@ -48,6 +56,7 @@ function decryptToken(token) {
   // Split the token into IV and encrypted data
   const [ivHex, encryptedData] = token.split(':');
   const iv = Buffer.from(ivHex, 'hex');
+  const { secretKey } = secretKeyF();
 
   // Hash the secret key to ensure it's 32 bytes for AES-256-CBC
   const key = crypto.createHash('sha256').update(secretKey).digest();

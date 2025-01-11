@@ -1,9 +1,28 @@
 // my-react-app/src/utils/api.js
 import axios from 'axios';
+// At the top of the file, add these imports:
+import { createRoot } from 'react-dom/client';
+import errors from '../errorConfig';
+import React from 'react';
+
+// Create a function to dynamically import the ErrorWidget
+const showErrorWidget = async (errorData) => {
+  const root = document.createElement('div');
+  root.id = 'error-widget-root';
+  document.body.appendChild(root);
+
+  // Dynamically import the ErrorWidget component
+  const { default: ErrorWidget } = await import('../components/ErrorWidget');
+
+  createRoot(root).render(
+    React.createElement(ErrorWidget, {
+      error: errorData,
+      onClose: () => document.body.removeChild(root),
+    })
+  );
+};
 
 const API_BASE_URL = import.meta.env.VITE_API; // You can easily change this when deploying
-
-import { errorRedirects } from '../errorConfig.jsx'; // Import the errorRedirects array
 
 // Create axios instance with default config
 const axiosInstance = axios.create({
@@ -30,28 +49,31 @@ axiosInstance.interceptors.request.use(
 // Add response interceptor to handle errors
 axiosInstance.interceptors.response.use(
   (response) => response.data,
-  (error) => {
-    // If the error has a response from the server
+  async (error) => {
     if (error.response) {
       const { status } = error.response;
+      const errorData = errors.find((err) => err.code === status);
 
-      // Check if the error code is in the errorRedirects array
-      const redirect = errorRedirects.find((err) => err.code === status);
-      if (redirect) {
-        // Redirect the user to the specified path
-        window.location.pathname = redirect.path;
+      if (errorData) {
+        if (errorData.path) window.location.href = errorData.path;
+        else await showErrorWidget(errorData);
       }
-
-      // Return the error response data to preserve the structure
-      // This allows us to access error.response.data.errors in components
       return Promise.reject(error.response);
     }
-    // For network errors or other issues
     return Promise.reject(new Error(error.message || 'Network error'));
   }
 );
 
 const api = {
+  plans: {
+    getAll: async () => axiosInstance.get('/api/public/plans'),
+    subscribe: async (plan) =>
+      axiosInstance.post(`/api/auth/plan/subscribe/${plan}`),
+    claim: async (code) => axiosInstance.post('/api/auth/plan/claim', { code }),
+    cancel: async () => axiosInstance.post('/api/auth/plan/cancel'),
+    generateCode: async (plan, quantity) =>
+      axiosInstance.post('/api/auth/plan/generate-code', { plan, quantity }),
+  },
   cheques: {
     create: async (data) => axiosInstance.post('/api/auth/@me/cheque', data),
     claim: async (data) => axiosInstance.post('/api/auth/cheque/claim', data),

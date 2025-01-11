@@ -5,7 +5,7 @@ const conversionRates = {
   coinToUsdRate: 1 / (50 * 1000), // BASED ON EGP TO USD
 };
 
-const coins = [1, 5, 10, 50, 100].map(
+const coins = [1, 5, 10, 25, 50, 100].map(
   (a) => a * Math.ceil(1 / conversionRates.coinToUsdRate)
 ); // Coins array
 
@@ -30,78 +30,73 @@ const convertCoins = (coins) => {
 // Generate the array of objects with the conversions
 const convertedCoins = convertCoins(coins);
 
-const subscriptions = [
-  {
-    name: 'free',
-    coins: 2000,
+const plans = {
+  free: {
+    coins: 0,
     features: {
-      apps: { slots: 2 },
+      wallet: { maxSend: 2000, fee: 2, maxCoins: 200000 },
+      tasks: { daily: { limit: 200, bonus: 20 } },
       products: { slots: 10, maxCoins: 20000 },
       gifts: { slots: 10, maxCoins: 20000, maxUsers: 10 },
-      cheque: { slots: 10, maxCoins: 20000 },
       airdrop: { slots: 10, maxCoins: 20000, maxUsers: 10 },
-      tasks: { daily: { limit: 200, bonus: 20 } },
-      donations: { maxCoins: 20000 },
-      wallet: { maxSend: 2000, fee: 1, maxCoins: 200000 },
+      apps: { slots: 2 },
+      cheque: { slots: 10, maxCoins: 20000 },
     },
   },
-  {
-    name: 'basic',
+  basic: {
     coins: 5000,
     features: {
-      apps: { slots: 3 },
+      wallet: { maxSend: 5000, fee: 1, maxCoins: 500000 },
+      tasks: { daily: { limit: 300, bonus: 30 } },
       products: { slots: 15, maxCoins: 30000 },
       gifts: { slots: 15, maxCoins: 30000, maxUsers: 15 },
-      cheque: { slots: 15, maxCoins: 30000 },
       airdrop: { slots: 15, maxCoins: 30000, maxUsers: 15 },
-      tasks: { daily: { limit: 300, bonus: 30 } },
-      donations: { maxCoins: 30000 },
-      wallet: { maxSend: 5000, fee: 0.5, maxCoins: 500000 },
+      apps: { slots: 3 },
+      cheque: { slots: 15, maxCoins: 30000 },
     },
   },
-  {
-    name: 'professional',
+  professional: {
     coins: 15000,
     features: {
-      apps: { slots: 5 },
+      wallet: { maxSend: 100000, fee: 0.5, maxCoins: 1000000 },
+      tasks: { daily: { limit: 400, bonus: 40 } },
       products: { slots: 25, maxCoins: 50000 },
       gifts: { slots: 25, maxCoins: 50000, maxUsers: 25 },
-      cheque: { slots: 25, maxCoins: 50000 },
       airdrop: { slots: 25, maxCoins: 50000, maxUsers: 25 },
-      tasks: { daily: { limit: 400, bonus: 40 } },
-      donations: { maxCoins: 50000 },
-      wallet: { maxSend: 100000, fee: 0, maxCoins: 1000000 },
+      apps: { slots: 5 },
+      cheque: { slots: 25, maxCoins: 50000 },
     },
   },
-  {
-    name: 'elite',
+  elite: {
     coins: 50000,
     features: {
-      apps: { slots: 10 },
+      wallet: { maxSend: 500000, fee: 0, maxCoins: 5000000 },
+      tasks: { daily: { limit: 600, bonus: 60 } },
       products: { slots: 50, maxCoins: 100000 },
       gifts: { slots: 50, maxCoins: 100000, maxUsers: 50 },
-      cheque: { slots: 50, maxCoins: 100000 },
       airdrop: { slots: 50, maxCoins: 100000, maxUsers: 50 },
-      tasks: { daily: { limit: 600, bonus: 60 } },
-      donations: { maxCoins: 100000 },
-      wallet: { maxSend: 500000, fee: 0, maxCoins: 5000000 },
+      apps: { slots: 10 },
+      cheque: { slots: 50, maxCoins: 100000 },
     },
   },
-];
+};
 
 import discordApp from './apps/discord.js';
 import youtubeApp from './apps/youtube.js';
 
 export default {
-  defaultFee: 2,
-  maxSendingAmount: 100000,
-  defaultBalance: 5,
-  rates: convertedCoins,
   port: 6969,
+  defaultBalance: 5,
   host: '192.168.100.45',
   emailUser: 'zampx.98@gmail.com',
-  dailyConfig: { limit: 100, bouns: 10 },
-  subscriptions,
+  corn: {
+    checkExpiredSubscriptions: {
+      cornTime: 24 * 60 * 60 * 1000,
+      jobName: 'checkExpiredSubscriptions',
+    },
+  },
+  rates: convertedCoins,
+  subscriptions: plans,
   apps: [
     discordApp,
     // youtubeApp

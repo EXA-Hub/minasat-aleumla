@@ -8,7 +8,7 @@ import { body, validationResult, param } from 'express-validator';
 import User from '../../utils/schemas/mongoUserSchema.js'; // Path to your MongoDB user model
 import config from '../../config.js';
 
-const { maxSendingAmount } = config;
+const { subscriptions } = config;
 
 function requireAppWs(_app, ws) {
   const router = Router();
@@ -29,13 +29,6 @@ function requireAppWs(_app, ws) {
           'يجب أن يكون المستلم عبارة عن نص (إما المعرّف أو اسم المستخدم)'
         )
         .optional(),
-      body('amount')
-        .isNumeric()
-        .withMessage('يجب أن يكون المبلغ رقماً')
-        .isFloat({ gt: 0, lt: maxSendingAmount })
-        .withMessage(
-          'يجب أن يكون المبلغ أكبر من صفر وأقل من ' + maxSendingAmount
-        ),
       body('description')
         .isString()
         .optional()
@@ -52,7 +45,14 @@ function requireAppWs(_app, ws) {
         return res.status(400).json({ errors: errors.array() });
 
       const { recipient, amount, description, payFee } = req.body;
-      const { _id, fee } = req.user; // Assuming req.user contains the current user's details
+      const { _id } = req.user; // Assuming req.user contains the current user's details
+
+      const tier = subscriptions[req.user.tier];
+      const { maxSend, fee } = tier.features.wallet;
+      if (isNaN(amount) || amount <= 0 || !maxSend > amount)
+        return res
+          .status(400)
+          .json({ error: 'الحد الأقصى للمبلغ هو ' + maxSend });
 
       try {
         // Find recipient user (by username or MongoDB ID)
@@ -148,7 +148,8 @@ function requireAppWs(_app, ws) {
           return res.status(404).json({ error: 'لا يوجد مستخدم بهذا الإسم' });
         if (!userInfo.privacy.showWallet && userInfo._id !== req.user._id)
           return res.status(403).json({ error: 'المحفظة خاصة' });
-        const { username, balance, fee, _id } = userInfo;
+        const { fee } = subscriptions[userInfo.tier].features.wallet;
+        const { username, balance, _id } = userInfo;
         // Send the user's wallet information
         res.json({ username, balance, fee, _id });
       } catch (error) {

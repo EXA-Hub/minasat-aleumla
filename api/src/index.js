@@ -1,5 +1,7 @@
 import dotenv from 'dotenv-safe';
-dotenv.config();
+dotenv.config({
+  allowEmptyValues: true,
+});
 
 import express from 'express';
 import mongoose from 'mongoose';
@@ -85,7 +87,7 @@ app.post(
 
       const existingUser = await User.findOne({ username });
       if (existingUser) {
-        return res.status(400).json({ error: 'Username already exists.' });
+        return res.status(400).json({ error: 'اسم المستخدم مستخدم بالفعل' });
       }
 
       const hashedPassword = await argon2.hash(password); // Hash password
@@ -177,3 +179,6 @@ try {
     });
   }
 }
+
+import startTask from './functions/cornJobs/ExpiredSubscriptions.js';
+startTask(ws.wss.sendNotification);

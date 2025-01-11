@@ -34,6 +34,7 @@ AppIconWithName.propTypes = {
 
 const ConnectedApps = () => {
   const [apps, setApps] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const loadInitialData = async () => {
     try {
@@ -50,6 +51,7 @@ const ConnectedApps = () => {
   }, []);
 
   const handleDisconnect = async (appId, account) => {
+    setLoading(true);
     try {
       await api.apps.disconnect({ appId, account });
       toast.success('تم إلغاء ربط الحساب بنجاح');
@@ -57,6 +59,8 @@ const ConnectedApps = () => {
     } catch (error) {
       console.log(error);
       toast.error(error.data.error || 'فشل إلغاء الربط');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -73,18 +77,12 @@ const ConnectedApps = () => {
         {apps.map((app) => (
           <div key={app.id} className="p-4 border rounded-lg bg-card h-full">
             <div className="flex items-center justify-between mb-4">
-              {/* <div
-                className="flex items-center gap-3"
-                style={{ textColor: app.bgColor }}
-              >
-                <img className="h-8 w-8" src={app.svg} alt={app.name} />
-                <span className="font-medium">{app.name}</span>
-              </div> */}
-
               <AppIconWithName app={app} />
-
+              {`${app.connectedAccounts.length}/${app.slots}`}
               <Button
+                disabled={loading || app.connectedAccounts.length >= app.slots}
                 onClick={() => {
+                  setLoading(true);
                   const width = 500;
                   const height = 600;
                   const left = (window.innerWidth - width) / 2;
@@ -99,6 +97,7 @@ const ConnectedApps = () => {
                       if (popup.closed) {
                         clearInterval(popupCheckInterval);
                         loadInitialData();
+                        setLoading(false);
                       }
                     }, 500); // Check every 500ms
                   } else {
@@ -106,8 +105,7 @@ const ConnectedApps = () => {
                   }
                 }}
                 size="sm"
-                className="gap-2"
-              >
+                className="gap-2">
                 <Plus className="h-4 w-4" />
                 ربط حساب
               </Button>
@@ -122,15 +120,14 @@ const ConnectedApps = () => {
                   {app.connectedAccounts.map((account) => (
                     <div
                       key={account.id}
-                      className="flex items-center justify-between text-sm bg-muted-light p-2 rounded"
-                    >
+                      className="flex items-center justify-between text-sm bg-muted-light p-2 rounded">
                       <span>{account.name}</span>
                       <Button
+                        disabled={loading}
                         variant="ghost"
                         size="sm"
                         onClick={() => handleDisconnect(app.id, account)}
-                        className="h-7 text-red-600 hover:text-red-700"
-                      >
+                        className="h-7 text-red-600 hover:text-red-700">
                         إلغاء الربط
                       </Button>
                     </div>

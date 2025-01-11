@@ -58,7 +58,7 @@ export default (app) => {
 
   return (req, res) => {
     res.status(404).json({
-      error: 'Route not found',
+      error: 'مسار غير موجود',
       message: `Route ${req.method} ${req.path} does not exist.`,
       availableRoutes: listRoutes(),
     });

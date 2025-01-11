@@ -26,6 +26,11 @@ const GiftsPage = () => {
   const [winnersCount, setWinnersCount] = useState(''); // New state for number of winners
   const [gifts, setGifts] = useState([]);
   const [error, setError] = useState('');
+  const [plan, setPlan] = useState({
+    slots: 10,
+    maxCoins: 20000,
+    maxUsers: 10,
+  });
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 5,
@@ -36,11 +41,19 @@ const GiftsPage = () => {
   const createGift = async (e) => {
     e.preventDefault();
     try {
-      const data = await api.mysteryGifts.create({
+      const newGift = {
         amount: parseFloat(amount),
         code,
         winnersCount: parseInt(winnersCount), // Send number of winners to backend
-      });
+      };
+      if (newGift.winnersCount > plan.maxUsers) {
+        setError('الحد الأقصى للمستخدمين هو ' + plan.maxUsers);
+        return;
+      } else if (newGift.amount > plan.maxCoins) {
+        setError('الحد الأقصى للمبلغ هو ' + plan.maxCoins);
+        return;
+      }
+      const data = await api.mysteryGifts.create(newGift);
       setGifts([data, ...gifts]);
       setAmount('');
       setCode('');
@@ -73,6 +86,7 @@ const GiftsPage = () => {
           total: data.pagination.total,
           hasMore: data.pagination.hasMore,
         });
+        setPlan(data.plan);
       } catch (err) {
         setError(err.data?.error || 'Error occurred');
       }
@@ -90,8 +104,7 @@ const GiftsPage = () => {
         من فضلك{' '}
         <a
           href="/login"
-          className="text-primary hover:underline transition-all duration-300"
-        >
+          className="text-primary hover:underline transition-all duration-300">
           سجل دخول
         </a>{' '}
         للوصول إلى هذه الصفحة.
@@ -116,7 +129,9 @@ const GiftsPage = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>إنشاء هدية</CardTitle>
+            <CardTitle>
+              إنشاء هدية {plan.slots}/{pagination.total}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={createGift} className="space-y-4">
@@ -211,8 +226,7 @@ const GiftsPage = () => {
           <div className="flex justify-between items-center mt-4">
             <Button
               onClick={handlePreviousPage}
-              disabled={pagination.page === 1}
-            >
+              disabled={pagination.page === 1}>
               السابق
             </Button>
             <span>
