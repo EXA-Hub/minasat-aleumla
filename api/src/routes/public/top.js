@@ -11,12 +11,10 @@ router.get('/richest', async (req, res) => {
     const cacheKey = 'richest_users';
     const cachedData = cache.get(cacheKey);
     if (cachedData) return res.json(JSON.parse(cachedData));
-
     const richestUsers = await User.find({})
       .sort({ balance: -1 })
       .limit(100)
       .select('username balance profile.profilePicture');
-
     const response = { users: richestUsers };
     cache.set(cacheKey, JSON.stringify(response));
     res.json(response);

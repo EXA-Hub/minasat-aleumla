@@ -8,6 +8,7 @@ import {
   Gift,
   FileCheck,
   CreditCard,
+  Code,
 } from 'lucide-react';
 
 const menuItems = [
@@ -33,6 +34,14 @@ const menuItems = [
         path: '/explore/support/subscriptions',
         component: React.lazy(
           () => import('../../pages/explore/support/plans.jsx')
+        ),
+      },
+      {
+        name: 'أكوادي',
+        icon: Code,
+        path: '/explore/support/codes',
+        component: React.lazy(
+          () => import('../../pages/explore/support/codes.jsx')
         ),
       },
     ],

@@ -1,9 +1,9 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
+import { useNavigate, Link } from 'react-router-dom';
+import { ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
-import { ArrowRight, Eye, EyeOff } from 'lucide-react';
-import HCaptcha from '@hcaptcha/react-hcaptcha';
 import api from '../utils/api';
 
 const LoginPage = () => {
@@ -125,8 +125,7 @@ const LoginPage = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-background flex items-center justify-center p-4"
-    >
+      className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8">
         <div className="mb-8 text-center">
           <h1 className="text-2xl font-bold mb-2 text-foreground">
@@ -183,8 +182,7 @@ const LoginPage = () => {
                 dark:text-gray-400 dark:hover:text-gray-200"
                 aria-label={
                   showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'
-                }
-              >
+                }>
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
@@ -215,8 +213,7 @@ const LoginPage = () => {
                     showConfirmPassword
                       ? 'إخفاء تأكيد كلمة المرور'
                       : 'إظهار تأكيد كلمة المرور'
-                  }
-                >
+                  }>
                   {showConfirmPassword ? (
                     <EyeOff size={20} />
                   ) : (
@@ -269,26 +266,23 @@ const LoginPage = () => {
               />
               <label
                 htmlFor="acceptTerms"
-                className="text-sm text-gray-600 dark:text-gray-300"
-              >
+                className="text-sm text-gray-600 dark:text-gray-300">
                 أوافق على{' '}
-                <a
-                  href="http://192.168.100.45:5173/terms"
+                <Link
+                  to="/terms"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
-                >
+                  className="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500">
                   الشروط والأحكام
-                </a>{' '}
+                </Link>{' '}
                 و{' '}
-                <a
-                  href="http://192.168.100.45:5173/privacy-policy"
+                <Link
+                  to="/privacy-policy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500"
-                >
+                  className="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500">
                   سياسة الخصوصية
-                </a>
+                </Link>
               </label>
             </div>
           )}
@@ -296,8 +290,7 @@ const LoginPage = () => {
           <Button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700"
-            disabled={isLoading}
-          >
+            disabled={isLoading}>
             {isLoading
               ? 'جاري التحميل...'
               : isLogin
@@ -314,8 +307,7 @@ const LoginPage = () => {
               setError('');
               setFormData({ username: '', password: '', confirmPassword: '' });
             }}
-            className="text-blue-600 hover:underline"
-          >
+            className="text-blue-600 hover:underline">
             {isLogin
               ? 'ليس لديك حساب؟ سجل الآن'
               : 'لديك حساب بالفعل؟ سجل دخولك'}
@@ -323,14 +315,12 @@ const LoginPage = () => {
         </div>
         <button
           onClick={() => navigate('/recoverAccount')}
-          className="mt-4 text-gray-600 dark:text-gray-300 hover:underline text-sm block mx-auto"
-        >
+          className="mt-4 text-gray-600 dark:text-gray-300 hover:underline text-sm block mx-auto">
           هل فقدت حسابك؟
         </button>
         <button
           onClick={() => navigate('/')}
-          className="mt-4 text-gray-600 dark:text-gray-300 hover:underline text-sm block mx-auto"
-        >
+          className="mt-4 text-gray-600 dark:text-gray-300 hover:underline text-sm block mx-auto">
           العودة إلى الصفحة الرئيسية
         </button>
       </Card>

@@ -91,6 +91,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
           break;
         case 'generate':
           await api.plans.generateCode(plan, quantity);
+          navigate('/explore/support/codes');
           break;
         case 'cancel':
           await api.plans.cancel();
@@ -441,7 +442,7 @@ const PlansPage = () => {
               <CardFooter className="justify-center pt-4">
                 <button
                   onClick={() => handlePlanSelection(planName)}
-                  className="w-full px-6 py-3 rounded-full bg-primary text-primary-foreground opacity-70 hover:opacity-100 transition-all duration-300 hover:shadow-lg text-lg font-bold">
+                  className="w-full px-6 py-3 bg-40primary rounded-full text-foreground hover:bg-primary transition-all duration-300 hover:shadow-lg text-lg font-bold">
                   اختيار الخطة
                 </button>
               </CardFooter>

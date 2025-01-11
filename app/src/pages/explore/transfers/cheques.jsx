@@ -1,10 +1,14 @@
 // react-app/src/pages/explore/transfers/cheques.jsx
+import { toast } from 'react-hot-toast';
 import { useState, useEffect, useCallback } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import BalanceCard from '../../../components/dashboard/widgets/BalanceCard';
+import { Alert, AlertTitle } from '@/components/ui/alert';
+import CoinIcon from '../../../components/ui/CoinIcon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Alert, AlertTitle } from '@/components/ui/alert';
+import api from '../../../utils/api';
 import {
   Table,
   TableBody,
@@ -13,10 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import api from '../../../utils/api';
-import BalanceCard from '../../../components/dashboard/widgets/BalanceCard';
-import CoinIcon from '../../../components/ui/CoinIcon';
-import { toast } from 'react-hot-toast';
 
 const ChequesPage = () => {
   const { user } = useOutletContext();
@@ -95,11 +95,11 @@ const ChequesPage = () => {
     return (
       <div>
         من فضلك{' '}
-        <a
-          href="/login"
+        <Link
+          to="/login"
           className="text-primary hover:underline transition-all duration-300">
           سجل دخول
-        </a>{' '}
+        </Link>{' '}
         للوصول إلى هذه الصفحة.
       </div>
     );

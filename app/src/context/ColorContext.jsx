@@ -44,9 +44,7 @@ export const ColorProvider = ({ children }) => {
   // Load saved templates from local storage on component mount
   useEffect(() => {
     const savedTemplates = JSON.parse(localStorage.getItem('userTemplates'));
-    if (savedTemplates) {
-      setTemplates(savedTemplates);
-    }
+    if (savedTemplates) setTemplates(savedTemplates);
   }, []);
 
   // Save templates to local storage

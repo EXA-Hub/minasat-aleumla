@@ -28,7 +28,7 @@ import { validateRequest } from '../../utils/middleware/validateRequest.js';
 
 // Generate subscription codes
 router.post(
-  '/plan/generate-code',
+  '/@me/plan/generate-code',
   [
     body('plan').isIn(Object.keys(subscriptions)),
     body('quantity').optional().isInt({ min: 1 }),
@@ -83,10 +83,28 @@ router.post(
 );
 
 // get all user codes
-router.get('/plan/codes', async (req, res) => {
+router.get('/@me/plan/codes', async (req, res) => {
   try {
-    const codes = await Code.find({ creator: req.user._id });
-    res.json(codes);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const [codes, total] = await Promise.all([
+      Code.find({ creator: req.user._id })
+        .select('code plan createdAt -_id')
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      Code.countDocuments({ creator: req.user._id }),
+    ]);
+
+    res.json({
+      codes,
+      page,
+      limit,
+      total,
+      hasMore: page * limit < total,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'فشل في جلب الكودات.' });
@@ -95,7 +113,7 @@ router.get('/plan/codes', async (req, res) => {
 
 // Claim a subscription code
 router.post(
-  '/plan/claim',
+  '/@me/plan/claim',
   [body('code').trim().notEmpty(), validateRequest],
   async (req, res) => {
     const { code } = req.body;
@@ -125,7 +143,7 @@ router.post(
 
 // Subscribe to a plan
 router.post(
-  '/plan/subscribe/:plan',
+  '/@me/plan/subscribe/:plan',
   [param('plan').isIn(Object.keys(subscriptions)), validateRequest],
   async (req, res) => {
     const { plan } = req.params;
@@ -151,7 +169,7 @@ router.post(
 );
 
 // Cancel subscription
-router.post('/plan/cancel', async (req, res) => {
+router.post('/@me/plan/cancel', async (req, res) => {
   if (req.user.tier === 'free')
     return res.status(400).json({ error: 'انت بالفعل في الخطة المجانية' });
 

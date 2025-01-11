@@ -1,9 +1,9 @@
 // src/pages/dashboard/transactions.jsx
-import { useState, useEffect } from 'react';
-import { Card } from '../../components/ui/card';
 import { Loader2 } from 'lucide-react';
-import TransactionsList from '../../components/dashboard/widgets/TransactionsList';
+import { useState, useEffect } from 'react';
 import api from '../../utils/api';
+import { Card } from '../../components/ui/card';
+import TransactionsList from '../../components/dashboard/widgets/TransactionsList';
 
 const Transactions = () => {
   const [transactions, setTransactions] = useState([]);
@@ -48,8 +48,7 @@ const Transactions = () => {
           <p className="font-bold">{error}</p>
           <button
             onClick={() => setPagination((prev) => ({ ...prev, page: 1 }))}
-            className="mt-4 text-blue-600 hover:underline"
-          >
+            className="mt-4 text-blue-600 hover:underline">
             إعادة المحاولة
           </button>
         </Card>
@@ -79,8 +78,7 @@ const Transactions = () => {
                 setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
               }
               className="px-4 py-2 text-blue-600 hover:underline disabled:opacity-50"
-              disabled={loading}
-            >
+              disabled={loading}>
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin inline mr-2" />
               ) : null}

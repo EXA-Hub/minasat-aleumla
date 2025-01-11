@@ -1,11 +1,12 @@
 // src/pages/dashboard/overview.jsx
+import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Card } from '../../components/ui/card';
-import { Alert, AlertDescription } from '../../components/ui/alert';
 import { Loader2, Info as InfoIcon } from 'lucide-react';
-import StatsGrid from '../../components/dashboard/widgets/StatsGrid';
-import BalanceCard from '../../components/dashboard/widgets/BalanceCard';
 import TransactionsList from '../../components/dashboard/widgets/TransactionsList';
+import BalanceCard from '../../components/dashboard/widgets/BalanceCard';
+import StatsGrid from '../../components/dashboard/widgets/StatsGrid';
+import { Alert, AlertDescription } from '../../components/ui/alert';
+import { Card } from '../../components/ui/card';
 import api from '../../utils/api';
 
 const Overview = () => {
@@ -84,7 +85,7 @@ const Overview = () => {
         <InfoIcon className="w-6 h-6 mr-3" />
         <AlertDescription className="text-sm">
           في حالة واجهتك مشاكل توجه إلى{' '}
-          <a href="/dashboard/security/help">صفحة المساعدة</a>
+          <Link to="/dashboard/security/help">صفحة المساعدة</Link>
         </AlertDescription>
       </Alert>
 
@@ -105,11 +106,11 @@ const Overview = () => {
               عرض آخر {recentTransactions.length} معاملات
             </p>
           </div>
-          <a
-            href="/dashboard/transactions"
+          <Link
+            to="/dashboard/transactions"
             className="text-sm text-blue-600 hover:underline">
             عرض الكل
-          </a>
+          </Link>
         </div>
 
         <TransactionsList

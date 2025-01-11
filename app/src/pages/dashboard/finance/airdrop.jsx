@@ -1,5 +1,16 @@
-import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import PropTypes from 'prop-types';
+import { toast } from 'react-hot-toast';
+import { useState, useEffect } from 'react';
+import CoinIcon from '../../../components/ui/CoinIcon';
+import { Input } from '../../../components/ui/input';
+import api from '../../../utils/api';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../../../components/ui/dialog';
 import {
   Card,
   CardHeader,
@@ -7,17 +18,6 @@ import {
   CardContent,
   CardFooter,
 } from '../../../components/ui/card';
-import { Input } from '../../../components/ui/input';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '../../../components/ui/dialog';
-import CoinIcon from '../../../components/ui/CoinIcon';
-import api from '../../../utils/api';
-import { toast } from 'react-hot-toast';
-import PropTypes from 'prop-types';
 
 const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
   const [loading, setLoading] = useState(false);
@@ -225,7 +225,7 @@ const AirdropPage = () => {
             <CardContent>
               {gift.url && (
                 <a
-                  href={gift.url}
+                  to={gift.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:underline block mb-4">

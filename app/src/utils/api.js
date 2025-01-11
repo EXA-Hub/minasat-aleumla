@@ -99,11 +99,17 @@ const api = {
   plans: {
     getAll: async () => axiosInstance.get('/api/public/plans'),
     subscribe: async (plan) =>
-      axiosInstance.post(`/api/auth/plan/subscribe/${plan}`),
-    claim: async (code) => axiosInstance.post('/api/auth/plan/claim', { code }),
-    cancel: async () => axiosInstance.post('/api/auth/plan/cancel'),
+      axiosInstance.post(`/api/auth/@me/plan/subscribe/${plan}`),
+    claim: async (code) =>
+      axiosInstance.post('/api/auth/@me/plan/claim', { code }),
+    cancel: async () => axiosInstance.post('/api/auth/@me/plan/cancel'),
     generateCode: async (plan, quantity) =>
-      axiosInstance.post('/api/auth/plan/generate-code', { plan, quantity }),
+      axiosInstance.post('/api/auth/@me/plan/generate-code', {
+        plan,
+        quantity,
+      }),
+    getCodes: async (page = 1, limit = 10) =>
+      axiosInstance.get(`/api/auth/@me/plan/codes?page=${page}&limit=${limit}`),
   },
   cheques: {
     create: async (data) => axiosInstance.post('/api/auth/@me/cheque', data),

@@ -1,4 +1,6 @@
 // src/components/dashboard/widgets/TransactionsList.jsx
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { ArrowUpRight, ArrowDownLeft } from 'lucide-react';
 import CoinIcon from '../../ui/CoinIcon';
 
@@ -25,20 +27,18 @@ const TransactionsList = ({ transactions }) => {
         transactions?.map((transaction) => (
           <div
             key={transaction.id}
-            className="flex items-center justify-between p-4 rounded-lg bg-card border"
-          >
+            className="flex items-center justify-between p-4 rounded-lg bg-card border">
             <div className="flex items-center gap-4">
               {getTransactionIcon(transaction.type)}
               <div>
                 <p className="font-medium">
                   {transaction.description}
                   {'  -  '}
-                  <a
-                    href={`/profile/@${transaction.otherParty}`}
-                    className="underline text-inherit"
-                  >
+                  <Link
+                    to={`/@${transaction.otherParty}`}
+                    className="underline text-inherit">
                     @{transaction.otherParty}
-                  </a>
+                  </Link>
                 </p>
                 <p className="text-sm text-muted-foreground">
                   {new Date(transaction.date).toLocaleDateString('ar-SA')}
@@ -51,8 +51,7 @@ const TransactionsList = ({ transactions }) => {
                   transaction.type === 'incoming'
                     ? 'text-green-600'
                     : 'text-red-600'
-                }
-              >
+                }>
                 {transaction.type === 'incoming' ? '+' : '-'}
               </span>
               <CoinIcon amount={transaction.amount} />
@@ -62,6 +61,20 @@ const TransactionsList = ({ transactions }) => {
       )}
     </div>
   );
+};
+
+// PropTypes validation
+TransactionsList.propTypes = {
+  transactions: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      description: PropTypes.string.isRequired,
+      type: PropTypes.oneOf(['incoming', 'outgoing']).isRequired,
+      otherParty: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      amount: PropTypes.number.isRequired,
+    })
+  ).isRequired,
 };
 
 export default TransactionsList;

@@ -41,28 +41,30 @@ export function ThemeProvider({ children }) {
     // Add the current theme class
     root.classList.add(theme);
 
+    // Utility function to convert hex to rgba with opacity
+    const hexToRgba = (hex, opacity) => {
+      // Remove the '#' from the hex color
+      const hexWithoutHash = hex.replace('#', '');
+
+      // Convert the hex color to RGB
+      const r = parseInt(hexWithoutHash.substring(0, 2), 16);
+      const g = parseInt(hexWithoutHash.substring(2, 4), 16);
+      const b = parseInt(hexWithoutHash.substring(4, 6), 16);
+
+      // Return the rgba string with the specified opacity
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    };
+
     // Apply the corresponding color template
     const activeTemplate = templates[theme];
     Object.entries(activeTemplate).forEach(([key, value]) => {
-      root.style.setProperty(`--${key}`, value);
-      // Utility function to convert hex to rgba with opacity
-      const hexToRgba = (hex, opacity) => {
-        // Remove the '#' from the hex color
-        const hexWithoutHash = hex.replace('#', '');
-
-        // Convert the hex color to RGB
-        const r = parseInt(hexWithoutHash.substring(0, 2), 16);
-        const g = parseInt(hexWithoutHash.substring(2, 4), 16);
-        const b = parseInt(hexWithoutHash.substring(4, 6), 16);
-
-        // Return the rgba string with the specified opacity
-        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-      };
+      root.style.setProperty(`--${key}`, hexToRgba(value, 1)); // Set base color
       // Generate opacity variants for the color
-      for (let opacity = 5; opacity <= 100; opacity += 5) {
-        const rgbaValue = hexToRgba(value, opacity / 100); // Convert hex to rgba
-        root.style.setProperty(`--${key}-${opacity}`, rgbaValue); // Set opacity variant
-      }
+      for (let opacity = 5; opacity <= 100; opacity += 5)
+        root.style.setProperty(
+          `--${opacity}${key}`,
+          hexToRgba(value, opacity / 100)
+        ); // Set opacity variant
     });
 
     // Save the theme to local storage
