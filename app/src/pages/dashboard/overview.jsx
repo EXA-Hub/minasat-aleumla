@@ -12,7 +12,7 @@ const Overview = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState(null);
-  const [balance, setBalance] = useState(null);
+  const [balance, setBalance] = useState(0);
   const [recentTransactions, setRecentTransactions] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(new Date());
 
@@ -53,8 +53,7 @@ const Overview = () => {
           <p className="font-bold">{error}</p>
           <button
             onClick={() => fetchDashboardData()}
-            className="mt-4 text-blue-600 hover:underline"
-          >
+            className="mt-4 text-blue-600 hover:underline">
             إعادة المحاولة
           </button>
         </Card>
@@ -81,8 +80,7 @@ const Overview = () => {
 
       <Alert
         variant="info"
-        className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md"
-      >
+        className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
         <InfoIcon className="w-6 h-6 mr-3" />
         <AlertDescription className="text-sm">
           في حالة واجهتك مشاكل توجه إلى{' '}
@@ -109,8 +107,7 @@ const Overview = () => {
           </div>
           <a
             href="/dashboard/transactions"
-            className="text-sm text-blue-600 hover:underline"
-          >
+            className="text-sm text-blue-600 hover:underline">
             عرض الكل
           </a>
         </div>
@@ -126,8 +123,7 @@ const Overview = () => {
           <h3 className="text-xl font-semibold mb-4">التحويلات الشهرية</h3>
           <Alert
             variant="info"
-            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md"
-          >
+            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
             <InfoIcon className="w-6 h-6 mr-3" />
             <AlertDescription className="text-sm">
               سيتم إضافة هذه الميزة قريباً للمشتركين
@@ -139,8 +135,7 @@ const Overview = () => {
           <h3 className="text-xl font-semibold mb-4">توزيع المعاملات</h3>
           <Alert
             variant="info"
-            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md"
-          >
+            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
             <InfoIcon className="w-6 h-6 mr-3" />
             <AlertDescription className="text-sm">
               سيتم إضافة هذه الميزة قريباً للمشتركين

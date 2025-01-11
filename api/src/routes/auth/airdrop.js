@@ -1,6 +1,6 @@
 // my-api/src/routes/public/airdrop.js
 import express from 'express';
-import { param, body, validationResult } from 'express-validator';
+import { param, body } from 'express-validator';
 const router = express.Router();
 import mongoose from 'mongoose';
 import config from '../../config.js';
@@ -95,16 +95,16 @@ router.get('/airdrop', async (req, res) => {
   }
 });
 
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+
 // Existing route to claim a gift
 router.post(
   '/@me/airdrop/:id',
-  [param('id').isMongoId().withMessage('الرجاء إدخال معرف صالح للهدية')],
+  [
+    param('id').isMongoId().withMessage('الرجاء إدخال معرف صالح للهدية'),
+    validateRequest,
+  ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
       const gift = await Gifts.findById(req.params.id);
       if (!gift) return res.status(404).json({ error: 'الهدية غير موجودة' });
@@ -145,14 +145,9 @@ router.post(
       .isInt({ min: 1, max: 10000 })
       .withMessage('يجب أن يكون الحد الأقصى للمستخدمين بين 1 و 10000'),
     body('url').optional().isURL().withMessage('الرجاء إدخال رابط صالح'),
+    validateRequest,
   ],
   async (req, res) => {
-    // Validate request
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
       const { title, coins, max, url } = req.body;
       const { slots, maxCoins, maxUsers } =

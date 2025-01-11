@@ -3,7 +3,7 @@ import { validationResult, param } from 'express-validator';
 import User from '../../utils/schemas/mongoUserSchema.js';
 import { Product } from '../../utils/schemas/traderSchema.js';
 import Engagement from '../../utils/schemas/engagements.js';
-
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
 function requireAppWs(_app, ws) {
   const router = Router();
 
@@ -109,12 +109,11 @@ function requireAppWs(_app, ws) {
     userValidation,
     validateAndFetchUser,
     checkProfilePrivacy,
-    [param('productId').isMongoId().withMessage('معرف المنتج غير صالح.')],
+    [
+      param('productId').isMongoId().withMessage('معرف المنتج غير صالح.'),
+      validateRequest,
+    ],
     async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty())
-        return res.status(400).json({ errors: errors.array() });
-
       try {
         const { productId } = req.params; // The product being viewed
         const targetUserId = req.user._id; // The user who owns the product

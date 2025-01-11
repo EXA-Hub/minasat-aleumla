@@ -4,10 +4,10 @@ import {
   getUserTransactions,
   logTransaction,
 } from '../../utils/schemas/transactionLogger.js';
-import { body, validationResult, param } from 'express-validator';
+import { body, param } from 'express-validator';
 import User from '../../utils/schemas/mongoUserSchema.js'; // Path to your MongoDB user model
 import config from '../../config.js';
-
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
 const { subscriptions } = config;
 
 function requireAppWs(_app, ws) {
@@ -37,13 +37,9 @@ function requireAppWs(_app, ws) {
       body('payFee')
         .isBoolean()
         .withMessage('يجب أن يكون payFee قيمة منطقية (Boolean)'),
+      validateRequest,
     ],
     async (req, res) => {
-      // Check for validation errors
-      const errors = validationResult(req);
-      if (!errors.isEmpty())
-        return res.status(400).json({ errors: errors.array() });
-
       const { recipient, amount, description, payFee } = req.body;
       const { _id } = req.user; // Assuming req.user contains the current user's details
 
@@ -134,12 +130,9 @@ function requireAppWs(_app, ws) {
         .withMessage('يجب أن يكون اسم المستخدم نصًا')
         .matches(/^[a-zA-Z0-9_]+$/)
         .withMessage('يجب أن يحتوي اسم المستخدم على أحرف وأرقام فقط'),
+      validateRequest,
     ],
     async (req, res) => {
-      // Check for validation errors
-      const errors = validationResult(req);
-      if (!errors.isEmpty())
-        return res.status(400).json({ errors: errors.array() });
       const user = req.params.user; // Capture the username from the URL
       try {
         // Find the user by username

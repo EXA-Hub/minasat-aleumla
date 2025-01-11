@@ -1,7 +1,7 @@
 // api/src/routes/auth/cheque.js
 import { Router } from 'express';
 import mongoose from 'mongoose';
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 import NodeCache from 'node-cache';
 import config from '../../config.js';
 
@@ -29,6 +29,8 @@ ChequeSchema.index({ claimedAt: 1 }, { expireAfterSeconds: 86400 });
 
 const Cheque = mongoose.model('Cheque', ChequeSchema);
 
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+
 function requireAppWs(_app, ws) {
   const router = Router();
 
@@ -41,12 +43,9 @@ function requireAppWs(_app, ws) {
         .withMessage('يجب أن يكون المبلغ رقماً')
         .isFloat({ gt: 0 }),
       body('description').optional().isString().isLength({ max: 255 }),
+      validateRequest,
     ],
     async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty())
-        return res.status(400).json({ errors: errors.array() });
-
       const { amount, description } = req.body;
       const creator = req.user;
 
@@ -114,12 +113,8 @@ function requireAppWs(_app, ws) {
   // Claim cheque
   router.post(
     '/cheque/claim',
-    [body('code').isString().isLength({ min: 6, max: 13 })],
+    [body('code').isString().isLength({ min: 6, max: 13 }), validateRequest],
     async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty())
-        return res.status(400).json({ errors: errors.array() });
-
       const { code } = req.body;
       const recipient = req.user;
 

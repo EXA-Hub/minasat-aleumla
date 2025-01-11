@@ -7,7 +7,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import config from './config.js';
 import argon2 from 'argon2';
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 import bodyParser from 'body-parser';
 import createUser from './utils/createUser.js';
 import User from './utils/schemas/mongoUserSchema.js';
@@ -54,6 +54,8 @@ mongoose
     console.error('MongoDB connection error:', err);
   });
 
+import { validateRequest } from './utils/middleware/validateRequest.js';
+
 // Signup Route
 app.post(
   '/signup',
@@ -74,14 +76,10 @@ app.post(
       .withMessage('جرب كلمة سر أقوى.'),
     body('token').notEmpty().withMessage('أثبت أنك لست روبوت.'),
     body('referralId').optional(),
+    validateRequest,
   ],
   hcaptcha.middleware.validate(CAPTCHA_SECRET_KEY),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
       const { username, password, referralId } = req.body;
 
@@ -109,14 +107,10 @@ app.post(
     body('password').isStrongPassword(),
     body('token').notEmpty().withMessage('أثبت أنك لست روبوت.'),
     body('tfaCode').optional(),
+    validateRequest,
   ],
   hcaptcha.middleware.validate(CAPTCHA_SECRET_KEY),
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
       const { username, password, tfaCode } = req.body;
       const user = await User.findOne({ username });
@@ -150,8 +144,17 @@ app.post(
   }
 );
 
+const { port, host, subscriptions } = config;
+
 app.get('/@me', authenticateToken, (req, res) => {
-  res.send(req.user);
+  const { username, tier, balance, profile } = req.user; // Destructure the specific fields you want
+  res.send({
+    username,
+    balance,
+    fee: subscriptions[tier].features.wallet.fee,
+    profile,
+    tier,
+  }); // Send only those fields in the response
 });
 
 import { initializeWebSocket } from './webSockets/wss.js';
@@ -163,8 +166,6 @@ await loadRoutes(app, { authenticateToken }, ws);
 // Use the 404 handler
 import notFoundHandler from './404.js';
 app.use(notFoundHandler(app));
-
-const { port, host } = config;
 
 try {
   ws.server.listen(port, host, () => {

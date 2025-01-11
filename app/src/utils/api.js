@@ -32,13 +32,24 @@ const axiosInstance = axios.create({
   },
 });
 
+const cache = new Map(); // In-memory cache
+const cacheTimeout = 5 * 60 * 1000;
+const cleanUpCache = () => {
+  const now = Date.now();
+  for (const [key, { timestamp }] of cache.entries())
+    if (now - timestamp > cacheTimeout) cache.delete(key); // Remove entries older than 5 seconds
+};
+
 // Add request interceptor to handle auth token
 axiosInstance.interceptors.request.use(
   (config) => {
+    const key = `${config.method}:${config.url}:${JSON.stringify(config.data)}:${JSON.stringify(config.params)}`;
+    const cachedResponse = cache.get(key);
+    if (cachedResponse && Date.now() - cachedResponse.timestamp < cacheTimeout)
+      throw new axios.Cancel('cached-response-found' + key); // Short-circuit the request
     const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    console.log('New Request:', key);
     return config;
   },
   (error) => {
@@ -48,19 +59,39 @@ axiosInstance.interceptors.request.use(
 
 // Add response interceptor to handle errors
 axiosInstance.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    cache.set(
+      `${response.config.method}:${response.config.url}:${JSON.stringify(response.config.data)}:${JSON.stringify(response.config.params)}`,
+      {
+        response: response.data, // Cache only the response data
+        timestamp: Date.now(),
+      }
+    );
+    cleanUpCache();
+    return response.data; // Return only the response data
+  },
   async (error) => {
-    if (error.response) {
+    if (
+      axios.isCancel(error) &&
+      error.message.startsWith('cached-response-found')
+    ) {
+      const cachedResponse = cache.get(
+        error.message.replace('cached-response-found', '')
+      );
+      // console.log(
+      //   'Cached response:',
+      //   error.message.replace('cached-response-found', '')
+      // );
+      return Promise.resolve(cachedResponse.response);
+    } else if (error.response) {
       const { status } = error.response;
       const errorData = errors.find((err) => err.code === status);
-
-      if (errorData) {
+      if (errorData)
         if (errorData.path) window.location.href = errorData.path;
         else await showErrorWidget(errorData);
-      }
       return Promise.reject(error.response);
     }
-    return Promise.reject(new Error(error.message || 'Network error'));
+    return Promise.reject(new Error(error.message || 'خطأ في الاتصال بالخادم'));
   }
 );
 

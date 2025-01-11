@@ -29,8 +29,8 @@ const Wallet = () => {
     { day: 'الخميس', balance: 1750 },
     { day: 'الجمعة', balance: 1900 },
   ]);
-  const [balance, setBalance] = useState([]);
-  const [fee, setFee] = useState([]);
+  const [balance, setBalance] = useState(0);
+  const [fee, setFee] = useState(2);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,9 +89,7 @@ const Wallet = () => {
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-bold">الرصيد</h2>
-
       <BalanceCard balance={{ amount: balance }} />
-
       <Card className="p-6">
         <div className="flex items-center gap-4 mb-6">
           <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
@@ -111,8 +109,7 @@ const Wallet = () => {
               error
                 ? 'bg-red-100 text-red-600 dark:bg-red-900/20'
                 : 'bg-green-100 text-green-600 dark:bg-green-900/20'
-            }`}
-          >
+            }`}>
             {error || success}
           </div>
         )}
@@ -189,8 +186,7 @@ const Wallet = () => {
             <Button
               type="submit"
               className="flex items-center gap-2 bg-blue-600/90 dark:bg-blue-400/90"
-              disabled={loading}
-            >
+              disabled={loading}>
               <Send className="h-4 w-4" />
               {loading ? 'جاري التحويل...' : 'تحويل'}
             </Button>
@@ -199,8 +195,7 @@ const Wallet = () => {
               variant="outline"
               onClick={() =>
                 setFormData({ recipient: '', amount: '', description: '' })
-              }
-            >
+              }>
               إعادة تعيين
             </Button>
           </div>
@@ -211,21 +206,18 @@ const Wallet = () => {
         <div className="flex gap-4 mb-6">
           <Button
             onClick={() => setActiveTab('buy')}
-            className={`flex-1 ${activeTab === 'buy' ? 'bg-[#1d4ed8]' : 'bg-gray-200 text-gray-800'}`}
-          >
+            className={`flex-1 ${activeTab === 'buy' ? 'bg-[#1d4ed8]' : 'bg-gray-200 text-gray-800'}`}>
             شراء عملات
           </Button>
           <Button
             onClick={() => setActiveTab('sell')}
-            className={`flex-1 ${activeTab === 'sell' ? 'bg-[#1d4ed8]' : 'bg-gray-200 text-gray-800'}`}
-          >
+            className={`flex-1 ${activeTab === 'sell' ? 'bg-[#1d4ed8]' : 'bg-gray-200 text-gray-800'}`}>
             بيع عملات
           </Button>
         </div>
         <Alert
           variant="warning"
-          className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md"
-        >
+          className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
           <AlertTriangle className="w-6 h-6 mr-3" />
           <AlertDescription className="text-sm">
             شامل الضريبة التحويلية
@@ -235,8 +227,7 @@ const Wallet = () => {
           {rates.map((rate) => (
             <Card
               key={rate.coins}
-              className="hover:shadow-lg transition-shadow"
-            >
+              className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex justify-between items-center">
                   {Object.keys(rate).length < 6 ? (
@@ -256,8 +247,7 @@ const Wallet = () => {
                         .map((currency) => (
                           <span
                             key={currency}
-                            className="bg-[var(--muted)] p-1 rounded-lg font-bold text-sm max-w-[150px] text-center"
-                          >
+                            className="bg-[var(--muted)] p-1 rounded-lg font-bold text-sm max-w-[150px] text-center">
                             {rate[currency]} {currency.toUpperCase()}
                           </span>
                         ))}
@@ -279,8 +269,7 @@ const Wallet = () => {
         <Card>
           <Alert
             variant="info"
-            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md"
-          >
+            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
             <InfoIcon className="w-6 h-6 mr-3" />
             <AlertDescription className="text-sm">
               مجرد بيانات إفتراضية (سيتم العمل على هذه الميزة للمشتركين فقط)
@@ -298,8 +287,7 @@ const Wallet = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart
                   data={dailyData}
-                  margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
-                >
+                  margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
                   <CartesianGrid strokeDasharray="4 4" stroke="#e5e7eb" />
                   <XAxis
                     dataKey="day"

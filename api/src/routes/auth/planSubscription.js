@@ -15,6 +15,11 @@ const codeSchema = new mongoose.Schema({
     enum: Object.keys(subscriptions), // Only valid plans allowed
   }, // Plan associated with the code
   createdAt: { type: Date, default: Date.now }, // When the code was created
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
 });
 
 const Code = mongoose.model('Code', codeSchema);
@@ -55,6 +60,7 @@ router.post(
               `${plan}_` +
               Math.random().toString(36).substring(2, 10).toUpperCase(),
             plan,
+            creator: req.user._id,
           });
           return code;
         })
@@ -75,6 +81,17 @@ router.post(
     }
   }
 );
+
+// get all user codes
+router.get('/plan/codes', async (req, res) => {
+  try {
+    const codes = await Code.find({ creator: req.user._id });
+    res.json(codes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'فشل في جلب الكودات.' });
+  }
+});
 
 // Claim a subscription code
 router.post(

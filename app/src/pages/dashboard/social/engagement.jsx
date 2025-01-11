@@ -179,8 +179,8 @@ const EngagementPage = () => {
         />
         <StatCard
           icon={growthDay > 0 ? TrendingUp : TrendingDown}
-          label="معدل النمو"
-          value={`${Math.abs(growthDay)}%${growthDay > 0 ? '+' : growthDay < 0 && '-'}`} // Show growth percentage
+          label="معدل النمو اليومي"
+          value={`${Math.abs(growthDay)}%${growthDay > 0 ? '+' : growthDay < 0 ? '-' : '⋅'}`} // Show growth percentage
           color={growthDay > 0 ? 'green' : 'red'}
         />
       </div>
@@ -197,8 +197,7 @@ const EngagementPage = () => {
                     x1="0"
                     y1="0"
                     x2="0"
-                    y2="1"
-                  >
+                    y2="1">
                     <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1} />
                     <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
                   </linearGradient>
@@ -248,8 +247,7 @@ const EngagementPage = () => {
                   {currentViewers.map((viewerId, index) => (
                     <TableRow
                       key={index}
-                      className="hover:bg-muted/50 transition-colors"
-                    >
+                      className="hover:bg-muted/50 transition-colors">
                       <TableCell className="font-medium">
                         {indexOfFirstViewer + index + 1}
                       </TableCell>
@@ -257,8 +255,7 @@ const EngagementPage = () => {
                       <TableCell>
                         <Link
                           to={`/@${viewerId}`}
-                          className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 hover:underline flex items-center gap-2"
-                        >
+                          className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 hover:underline flex items-center gap-2">
                           <span>عرض الملف</span>
                           <Eye className="h-4 w-4" />
                         </Link>
@@ -281,8 +278,7 @@ const EngagementPage = () => {
                         currentPage === index + 1
                           ? 'bg-blue-500 text-white'
                           : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                      } border border-gray-300 dark:border-gray-700 rounded-md mx-1`}
-                    >
+                      } border border-gray-300 dark:border-gray-700 rounded-md mx-1`}>
                       {index + 1}
                     </button>
                   ))}

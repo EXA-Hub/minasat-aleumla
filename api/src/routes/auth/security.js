@@ -1,6 +1,6 @@
 // src/routes/security.js
 import express from 'express';
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 import argon2 from 'argon2';
 import User from '../../utils/schemas/mongoUserSchema.js';
 import { generateToken } from '../../utils/token-sys.js';
@@ -22,6 +22,8 @@ router.get('/@me/security/settings', async (req, res) => {
   }
 });
 
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+
 router.post(
   '/@me/security/password',
   [
@@ -33,13 +35,9 @@ router.post(
       }
       return true;
     }),
+    validateRequest,
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
       const user = req.user;
       const isValid = await argon2.verify(
@@ -76,13 +74,12 @@ router.post(
 // Change username
 router.post(
   '/@me/security/username',
-  [body('newUsername').isLength({ min: 3 }), body('password').notEmpty()],
+  [
+    body('newUsername').isLength({ min: 3 }),
+    body('password').notEmpty(),
+    validateRequest,
+  ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     try {
       const user = await User.findById(req.user.id);
       const isValid = await argon2.verify(user.password, req.body.password);

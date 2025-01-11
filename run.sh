@@ -11,7 +11,7 @@ case $CHOICE in
     npm test
     ;;
   "App")
-    cd react-app
+    cd app
     npm run dev
     ;;
   "Quit")

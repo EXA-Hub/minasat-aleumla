@@ -74,8 +74,8 @@ router.put('/@me/apps/disconnect', async (req, res) => {
   }
 });
 
-import { body, validationResult } from 'express-validator';
-
+import { body } from 'express-validator';
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
 router.post(
   '/@me/images',
   [
@@ -86,15 +86,9 @@ router.post(
       .optional()
       .isIn(['profilePicture', 'wallpaper'])
       .withMessage('نوع الصورة غير صالح'),
+    validateRequest,
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array().map((err) => ({ ...err, msg: err.msg })),
-      });
-    }
-
     try {
       const { action, appId, accountId, imageType } = req.body;
 

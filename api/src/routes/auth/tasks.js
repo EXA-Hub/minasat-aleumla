@@ -60,7 +60,7 @@ const generateShortURL = async (url, expirationMinutes = 15) => {
 };
 
 import { Router } from 'express';
-import { query, validationResult } from 'express-validator';
+import { query } from 'express-validator';
 import config from '../../config.js';
 
 const router = Router();
@@ -76,14 +76,15 @@ const saveTempCode = (ip, code) => {
 const generateCode = () =>
   String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
 
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+
 router.get(
   '/@me/daily',
-  [query('host').trim().notEmpty().withMessage('Host is required').isURL()],
+  [
+    query('host').trim().notEmpty().withMessage('Host is required').isURL(),
+    validateRequest,
+  ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     try {
       const { host } = req.query;
       const { clientIp } = req;
@@ -114,35 +115,35 @@ router.get(
   }
 );
 
-router.get('/verify-daily', [query('dailyCode').isInt()], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+router.get(
+  '/verify-daily',
+  [query('dailyCode').isInt(), validateRequest],
+  async (req, res) => {
+    try {
+      const { dailyCode } = req.query;
+      const { clientIp } = req;
+      const entry = tempMemory.get(clientIp);
+      if (!entry) return res.status(400).json({ error: 'لا توجد هدايا' });
+      tempMemory.delete(clientIp);
+      if (entry.code !== dailyCode)
+        return res.status(400).json({ error: 'رمز غير صحيح' });
+      if (Date.now() >= entry.expireTime)
+        return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
+      const dailyConfig =
+        subscriptions[req.user.subscription].features.tasks.daily;
+      const daily =
+        Math.ceil(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
+      req.user.balance += daily;
+      await req.user.save();
+      return res.status(200).json({
+        message: 'لقد حصلت على هديتك',
+        daily,
+      });
+    } catch (error) {
+      console.error(`Error in /verify-daily: ${error.message}`);
+      res.status(500).json({ error: 'خطأ في الخادم' });
+    }
   }
-  try {
-    const { dailyCode } = req.query;
-    const { clientIp } = req;
-    const entry = tempMemory.get(clientIp);
-    if (!entry) return res.status(400).json({ error: 'لا توجد هدايا' });
-    tempMemory.delete(clientIp);
-    if (entry.code !== dailyCode)
-      return res.status(400).json({ error: 'رمز غير صحيح' });
-    if (Date.now() >= entry.expireTime)
-      return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
-    const dailyConfig =
-      subscriptions[req.user.subscription].features.tasks.daily;
-    const daily =
-      Math.ceil(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
-    req.user.balance += daily;
-    await req.user.save();
-    return res.status(200).json({
-      message: 'لقد حصلت على هديتك',
-      daily,
-    });
-  } catch (error) {
-    console.error(`Error in /verify-daily: ${error.message}`);
-    res.status(500).json({ error: 'خطأ في الخادم' });
-  }
-});
+);
 
 export default router;

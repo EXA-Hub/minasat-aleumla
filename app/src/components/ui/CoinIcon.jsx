@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 const CoinIcon = ({ amount }) => {
   const [isHovered, setIsHovered] = useState(false);
-
   // Format amount with commas for full view
   const formattedAmount = new Intl.NumberFormat().format(amount);
   // Convert the amount to a more readable form, e.g., 21M
@@ -19,8 +18,7 @@ const CoinIcon = ({ amount }) => {
       className="relative flex items-center gap-2 text-lg font-semibold text-gray-800 dark:text-gray-200"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      aria-label={`المبلغ: ${formattedAmount}`}
-    >
+      aria-label={`المبلغ: ${formattedAmount}`}>
       {/* Short Amount (Visible by default) */}
       <span className="transition-opacity duration-300 ease-in-out">
         {shortAmount}

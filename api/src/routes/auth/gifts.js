@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import mongoose from 'mongoose';
-import { body, validationResult } from 'express-validator';
+import { body } from 'express-validator';
 import NodeCache from 'node-cache';
 import config from '../../config.js';
 
@@ -32,7 +32,7 @@ const MysteryGiftSchema = new mongoose.Schema({
 MysteryGiftSchema.index({ claimedAt: 1 }, { expireAfterSeconds: 86400 });
 
 const MysteryGift = mongoose.model('MysteryGift', MysteryGiftSchema);
-
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
 function requireAppWs(_app, ws) {
   const router = Router();
 
@@ -42,12 +42,9 @@ function requireAppWs(_app, ws) {
       body('amount').isNumeric().isFloat({ gt: 0 }),
       body('code').isString().isLength({ min: 1, max: 30 }),
       body('winnersCount').isInt({ min: 1 }), // Validate number of winners
+      validateRequest,
     ],
     async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty())
-        return res.status(400).json({ errors: errors.array() });
-
       const { amount, code, winnersCount } = req.body;
       const creator = req.user;
 
@@ -117,12 +114,8 @@ function requireAppWs(_app, ws) {
 
   router.post(
     '/mystery-gift/try',
-    [body('code').isString().isLength({ max: 30 })],
+    [body('code').isString().isLength({ max: 30 }), validateRequest],
     async (req, res) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty())
-        return res.status(400).json({ errors: errors.array() });
-
       const { code } = req.body;
       const user = req.user;
 

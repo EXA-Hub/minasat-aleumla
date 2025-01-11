@@ -1,7 +1,7 @@
 // my-api/src/routes/auth/donations.js
 import express from 'express';
 import User from '../../utils/schemas/mongoUserSchema.js';
-import { param, validationResult } from 'express-validator';
+import { param } from 'express-validator';
 
 const router = express.Router();
 
@@ -36,6 +36,8 @@ router.put('/@me/donations', async (req, res) => {
   }
 });
 
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+
 // Get public donation page
 router.get(
   '/tip/:username',
@@ -43,13 +45,9 @@ router.get(
     param('username')
       .matches(/^[A-Za-z0-9]+$/)
       .withMessage('Username can only contain letters and numbers.'),
+    validateRequest,
   ],
   async (req, res) => {
-    // Check for validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
     try {
       const user = await User.findOne({ username: req.params.username }).select(
         'username donationPage'

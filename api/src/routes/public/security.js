@@ -1,6 +1,6 @@
 // my-api/src/routes/public/security.js
 import express from 'express';
-import { body, validationResult } from 'express-validator';
+import { body, } from 'express-validator';
 import User from '../../utils/schemas/mongoUserSchema.js';
 import { generateToken } from '../../utils/token-sys.js';
 import argon2 from 'argon2';
@@ -21,6 +21,8 @@ setInterval(() => {
   }
 }, 60 * 1000); // Run every minute
 
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+
 // Update the /recovery/verify route to add backup code type
 router.post(
   '/recovery/verify',
@@ -28,13 +30,9 @@ router.post(
     body('type').isIn(['email', 'phone', 'backupCode']),
     body('value').notEmpty(),
     body('username').isString().isLength({ min: 3 }).trim().notEmpty(),
+    validateRequest,
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { type, value, username } = req.body;
 
     // Special handling for backup codes
@@ -124,13 +122,9 @@ router.post(
     }),
     body('newPassword').isStrongPassword(),
     body('username').isString().isLength({ min: 3 }).trim().notEmpty(),
+    validateRequest,
   ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { type, value, code, newPassword, username } = req.body;
     const user = await User.findOne({ username });
 

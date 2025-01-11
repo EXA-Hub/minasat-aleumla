@@ -41,9 +41,11 @@ NotificationItem.propTypes = {
   formatTimeDiff: PropTypes.func.isRequired,
 };
 
-function wss(token) {
+function wss() {
   return new WebSocket(
-    api.API_BASE_URL.replace(/^https?/, 'ws') + '/?token=' + token
+    api.API_BASE_URL.replace(/^https?/, 'ws') +
+      '/?token=' +
+      localStorage.getItem('token')
   );
 }
 
@@ -146,7 +148,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
 
     const delay = RECONNECT_BASE_DELAY * Math.pow(2, reconnectAttempts.current);
     reconnectTimeout.current = setTimeout(() => {
-      const ws = wss(user.token);
+      const ws = wss();
       wsRef.current = ws;
 
       ws.onmessage = (event) => {
@@ -164,7 +166,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
         ws.close();
       };
     }, delay);
-  }, [user.token, updateNotifications]);
+  }, [updateNotifications]);
 
   useEffect(() => {
     reconnectWebSocket();
@@ -188,8 +190,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           aria-haspopup="menu"
           aria-expanded={isOpen}
           className="flex items-center gap-2 hover:bg-accent hover:text-accent-foreground transition-all duration-200"
-          onClick={() => setIsOpen(!isOpen)}
-        >
+          onClick={() => setIsOpen(!isOpen)}>
           <img
             src={user.profile?.profilePicture || '/avatar.jpg'}
             alt={user.username}
@@ -206,8 +207,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
         </Button>
 
         <div
-          className={`absolute right-0 mt-2 w-48 bg-background rounded-lg shadow-lg border border-border overflow-hidden transition-all duration-200 z-50 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
-        >
+          className={`absolute right-0 mt-2 w-48 bg-background rounded-lg shadow-lg border border-border overflow-hidden transition-all duration-200 z-50 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
           {(() => {
             switch (activeSection) {
               case 'notifications':
@@ -216,8 +216,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
                     <div className="flex items-center px-3 pb-2 border-b border-border">
                       <button
                         onClick={() => setActiveSection('main')}
-                        className="text-sm hover:text-primary transition-colors duration-200"
-                      >
+                        className="text-sm hover:text-primary transition-colors duration-200">
                         <ArrowRightCircleIcon className="h-4 w-4" />
                       </button>
                       <span className="mr-2 font-medium">الإشعارات</span>
@@ -250,8 +249,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
                       <button
                         key={item.label}
                         onClick={item.action}
-                        className="w-full px-3 py-2.5 text-sm flex items-center justify-end gap-3 hover:bg-accent transition-colors duration-200 group"
-                      >
+                        className="w-full px-3 py-2.5 text-sm flex items-center justify-end gap-3 hover:bg-accent transition-colors duration-200 group">
                         {item.badge && (
                           <span className="mr-auto bg-primary text-primary-foreground text-xs rounded-full px-2 py-0.5 bg-red-500">
                             {item.badge}
@@ -280,7 +278,6 @@ User.propTypes = {
   ThemeToggle: PropTypes.func.isRequired,
   user: PropTypes.shape({
     username: PropTypes.string.isRequired,
-    token: PropTypes.string.isRequired,
     profile: PropTypes.shape({
       profilePicture: PropTypes.string,
     }),
