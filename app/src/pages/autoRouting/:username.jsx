@@ -155,7 +155,7 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
           }}>
           <div className="absolute inset-0 bg-black bg-opacity-60">
             {/* Badges container moved to top left */}
-            <div className="absolute top-4 right-4 flex gap-2">
+            <div className="absolute sm:top-4 sm:right-4 top-2 right-2 flex flex-wrap gap-1.5 sm:gap-2 max-w-[calc(100%-1rem)]">
               {badges?.map((badge) => (
                 <Badge
                   key={badge.name}

@@ -4,12 +4,12 @@ import config from '../../config.js';
 import CronJob from '../../utils/schemas/CronJob.js'; // Import the CronJob model
 import User from '../../utils/schemas/mongoUserSchema.js'; // Import your user model
 
-const { jobName, cronTime } = config.corn.checkExpiredSubscriptions;
+const { jobName, cronTime, days } = config.corn.checkExpiredSubscriptions;
 
 // Function to check for expired subscriptions
 const checkExpiredSubscriptions = async (sendNotification) => {
   try {
-    const thirtyDaysAgo = new Date(Date.now() - cronTime); // 30 days ago
+    const thirtyDaysAgo = new Date(Date.now() - cronTime * days);
 
     // Find users whose subscription has expired
     const expiredUsers = await User.find({

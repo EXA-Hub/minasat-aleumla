@@ -274,9 +274,9 @@ const ProductsPage = () => {
                   <h3 className="text-2xl font-semibold">
                     {selectedProduct.name}
                   </h3>
-                  <p className="text-xl font-bold mt-2">
+                  <div className="text-xl font-bold mt-2">
                     <CoinIcon amount={selectedProduct.price} />
-                  </p>
+                  </div>
                 </div>
               </div>
               <MarkdownDisplay content={selectedProduct.description} />

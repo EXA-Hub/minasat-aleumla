@@ -99,13 +99,13 @@ const badges = [
   {
     name: 'متبرع',
     icon: '/icons/donation-badge.svg', // Donation badge icon
-    msg: 'تبرع بمبلغ لا يقل عن عشرة آلاف.',
+    msg: 'تبرع بمبلغ لا يقل عن عشرة آلاف',
     isPremium: false,
   },
   {
     name: 'متبرع سخي',
     icon: '/icons/generous-donor-badge.svg', // Generous donor badge icon
-    msg: 'تبرع بمبلغ لا يقل عن مئة ألف.',
+    msg: 'تبرع بمبلغ لا يقل عن مئة ألف',
     isPremium: true,
   },
   {
@@ -146,6 +146,7 @@ export default {
     checkExpiredSubscriptions: {
       cornTime: 24 * 60 * 60 * 1000,
       jobName: 'checkExpiredSubscriptions',
+      days: 30,
     },
   },
   rates: convertedCoins,
