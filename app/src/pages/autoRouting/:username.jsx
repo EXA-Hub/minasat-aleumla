@@ -1,11 +1,12 @@
 // my-react-app/src/pages/autoRouting/:username.jsx
+import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import api from '../../utils/api.js';
-import { Button } from '../../components/ui/button.jsx';
-import PropTypes from 'prop-types';
-import CoinIcon from '../../components/ui/CoinIcon.jsx';
 import { useModal } from '../../context/ModalManager.jsx';
+import { Button } from '../../components/ui/button.jsx';
+import CoinIcon from '../../components/ui/CoinIcon.jsx';
+import Badge from '@/components/ui/badge.jsx';
+import api from '../../utils/api.js';
 
 const ProductList = ({ username, products }) => {
   const { openModal } = useModal();
@@ -19,8 +20,7 @@ const ProductList = ({ username, products }) => {
         <div
           key={product._id}
           className="cursor-pointer bg-secondary p-4 rounded-lg shadow-sm border border-border hover:bg-muted-light hover:rounded"
-          onClick={() => handleProductClick(product._id)}
-        >
+          onClick={() => handleProductClick(product._id)}>
           {/* Existing product card content */}
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold text-foreground">
@@ -31,8 +31,7 @@ const ProductList = ({ username, products }) => {
                 product.isLocked
                   ? 'bg-red-100 text-red-700'
                   : 'bg-green-100 text-green-700'
-              }`}
-            >
+              }`}>
               {product.isLocked ? 'مقفل' : 'مفتوح'}
             </span>
           </div>
@@ -133,7 +132,7 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
     );
 
   const {
-    profile: { profile, online },
+    profile: { profile, online, badges },
     wallet,
     products,
   } = data;
@@ -146,27 +145,43 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
   return (
     <div
       className="min-h-screen bg-background text-foreground flex items-center justify-center p-4"
-      dir="ltr"
-    >
+      dir="ltr">
       <div className="bg-card rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden border border-border">
         {/* Header Section */}
         <div
           className="h-64 bg-cover bg-center relative"
           style={{
             backgroundImage: `url(${profile?.wallpaper || '/wallpaper.jpg'})`,
-          }}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-60 flex items-end p-6">
-            <img
-              src={profile?.profilePicture || '/avatar.jpg'}
-              alt={`${profile?.username}'s profile`}
-              className="w-24 h-24 rounded-full border-4 border-card shadow-lg"
-            />
-            <div className="ml-6">
-              <h1 className="text-2xl font-bold text-foreground">
-                {profile?.username}
-              </h1>
-              <p className="text-sm text-muted-foreground">{profile?.title}</p>
+          }}>
+          <div className="absolute inset-0 bg-black bg-opacity-60">
+            {/* Badges container moved to top left */}
+            <div className="absolute top-4 right-4 flex gap-2">
+              {badges?.map((badge) => (
+                <Badge
+                  key={badge.name}
+                  name={badge.name}
+                  icon={badge.icon}
+                  tooltipMessage={badge.msg}
+                  isPremium={badge.isPremium}
+                />
+              ))}
+            </div>
+
+            {/* Profile info container */}
+            <div className="absolute bottom-6 left-6 flex items-center">
+              <img
+                src={profile?.profilePicture || '/avatar.jpg'}
+                alt={`${profile?.username}'s profile`}
+                className="w-24 h-24 rounded-full border-4 border-card shadow-lg"
+              />
+              <div className="ml-6">
+                <h1 className="text-2xl font-bold text-white">
+                  {profile?.username}
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  {profile?.title}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -184,8 +199,7 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
                 online
                   ? 'bg-green-100 text-green-700'
                   : 'bg-red-100 text-red-700'
-              }`}
-            >
+              }`}>
               {online ? 'متصل' : 'غير متصل'}
             </span>
           </div>
@@ -213,7 +227,7 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
               </div>
               <div className="flex justify-between">
                 <span>الرسوم:</span>
-                <span className="font-semibold">{wallet?.fee}%</span>
+                <span className="font-semibold">{wallet?.fee || '0'}%</span>
               </div>
             </div>
           </div>
@@ -235,8 +249,7 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
             size="sm"
             variant="outline"
             className="w-full hover:bg-accent hover:text-accent-foreground"
-            onClick={handleBack}
-          >
+            onClick={handleBack}>
             العودة للوراء
           </Button>
         </div>

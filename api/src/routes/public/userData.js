@@ -1,9 +1,13 @@
 import { Router } from 'express';
 import { validationResult, param } from 'express-validator';
-import User from '../../utils/schemas/mongoUserSchema.js';
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
 import { Product } from '../../utils/schemas/traderSchema.js';
 import Engagement from '../../utils/schemas/engagements.js';
-import { validateRequest } from '../../utils/middleware/validateRequest.js';
+import User from '../../utils/schemas/mongoUserSchema.js';
+import config from '../../config.js';
+
+const { badges } = config;
+
 function requireAppWs(_app, ws) {
   const router = Router();
 
@@ -96,6 +100,12 @@ function requireAppWs(_app, ws) {
         res.json({
           profile: req.user.profile,
           online: ws.clients.has(req.user.username),
+          badges: [
+            ...badges.map((badge) =>
+              req.user.badges.includes(badge.name) ? badge : null
+            ),
+            badges.find((badge) => req.user.tier === badge.tier),
+          ].filter(Boolean),
         });
       } catch (error) {
         console.error(error);

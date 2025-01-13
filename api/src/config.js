@@ -56,7 +56,7 @@ const plans = {
     },
   },
   professional: {
-    coins: 15000,
+    coins: 25000,
     features: {
       wallet: { maxSend: 100000, fee: 0.5, maxCoins: 1000000 },
       tasks: { daily: { limit: 400, bonus: 40 } },
@@ -81,6 +81,59 @@ const plans = {
   },
 };
 
+const badges = [
+  {
+    name: 'محترف',
+    tier: 'professional',
+    icon: '/icons/professional-badge.svg', // Professional badge icon
+    msg: 'الإشتراك الإحترافي',
+    isPremium: false,
+  },
+  {
+    name: 'النخبة',
+    tier: 'elite',
+    icon: '/icons/elite-badge.svg', // Elite badge icon
+    msg: 'إشتراك النخبة المميزة',
+    isPremium: true,
+  },
+  {
+    name: 'متبرع',
+    icon: '/icons/donation-badge.svg', // Donation badge icon
+    msg: 'تبرع بمبلغ لا يقل عن عشرة آلاف.',
+    isPremium: false,
+  },
+  {
+    name: 'متبرع سخي',
+    icon: '/icons/generous-donor-badge.svg', // Generous donor badge icon
+    msg: 'تبرع بمبلغ لا يقل عن مئة ألف.',
+    isPremium: true,
+  },
+  {
+    name: 'مطور',
+    icon: '/icons/developer-badge.svg', // Developer badge icon
+    msg: 'أحد مطوري المنصة',
+    isPremium: false,
+  },
+  {
+    name: 'مشرف',
+    icon: '/icons/moderator-badge.svg', // Moderator badge icon
+    msg: 'أحد مشرفي المنصة',
+    isPremium: false,
+  },
+  {
+    name: 'مدير',
+    icon: '/icons/manager-badge.svg', // Manager badge icon
+    msg: 'أحد مديري المنصة',
+    isPremium: false,
+  },
+  {
+    name: 'أوائل الداعمين',
+    icon: '/icons/early-supporter-badge.svg', // Early supporter badge icon
+    msg: 'شارة مخصصة للداعمين الأوائل',
+    isPremium: true,
+  },
+];
+
 import discordApp from './apps/discord.js';
 import youtubeApp from './apps/youtube.js';
 
@@ -97,6 +150,7 @@ export default {
   },
   rates: convertedCoins,
   subscriptions: plans,
+  badges,
   apps: [
     discordApp,
     // youtubeApp

@@ -1,3 +1,4 @@
+// app/src/components/explore/ExploreRoutes.js
 import React from 'react';
 import {
   Notebook,
@@ -9,6 +10,7 @@ import {
   FileCheck,
   CreditCard,
   Code,
+  Crown,
 } from 'lucide-react';
 
 const menuItems = [
@@ -42,6 +44,14 @@ const menuItems = [
         path: '/explore/support/codes',
         component: React.lazy(
           () => import('../../pages/explore/support/codes.jsx')
+        ),
+      },
+      {
+        name: 'المتبرعين',
+        icon: Crown,
+        path: '/explore/support/donators',
+        component: React.lazy(
+          () => import('../../pages/explore/support/donators.jsx')
         ),
       },
     ],

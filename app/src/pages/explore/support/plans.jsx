@@ -322,22 +322,22 @@ const PlansPage = () => {
     setDialogOpen(true);
   };
 
-  const planColors = {
+  const planStyle = {
     free: {
-      light: '--secondary-50',
-      dark: '--muted',
+      light: 'bg-black/10', // Light background for free plan
+      dark: 'bg-white/10', // Dark background for free plan
     },
     basic: {
-      light: '--primary-30',
-      dark: '--primary-35',
+      light: 'bg-30primary border-foreground', // Light background for basic plan
+      dark: 'bg-30primary border-foreground', // Dark background for basic plan
     },
     professional: {
-      light: '--accent-10',
-      dark: '--accent-5',
+      light: 'bg-gradient-to-r from-30primary to-30accent', // Light gradient for professional plan
+      dark: 'bg-gradient-to-r from-30primary to-30accent', // Dark gradient for professional plan
     },
     elite: {
-      light: '--primary-50',
-      dark: '--accent-50',
+      light: 'animate-moving-gradient',
+      dark: 'animate-moving-gradient',
     },
   };
 
@@ -391,15 +391,12 @@ const PlansPage = () => {
         {Object.entries(plans).map(([planName, planDetails], index) => (
           <Card
             key={planName}
-            className="border-2 border-border transition-all duration-300 hover:scale-105 animate-slideUp"
+            className={
+              'border-2 border-border transition-all duration-300 hover:scale-5 animate-slideUp ' +
+              planStyle[planName][theme]
+            }
             style={{
               animationDelay: `${index * 150}ms`,
-              background:
-                index === Object.entries(plans).length - 1
-                  ? `linear-gradient(75deg, var(${theme === 'dark' ? planColors[planName].dark : planColors[planName].light}), var(--background))`
-                  : index === 1
-                    ? `linear-gradient(45deg, var(${planColors[planName].dark}), var(${planColors[planName].light}))`
-                    : `var(${theme === 'dark' ? planColors[planName].dark : planColors[planName].light})`,
             }}>
             <CardHeader className="relative">
               <div className="flex justify-between items-center mb-4">
@@ -475,37 +472,88 @@ const PlansPage = () => {
         ))}
       </div>
 
+      <style>
+        {`
+    /* Consolidated styles for elite plan card */
+    .animate-moving-gradient {
+      position: relative;
+      overflow: hidden;
+      border: 2px solid white;
+      box-shadow: 0 0 20px 5px var(--neon-color); /* Neon glow effect */
+      border-radius: 12px; /* Match card border radius */
+      background-color: rgba(255, 255, 255, 0.9); /* White with 90% opacity for light theme */
+    }
+
+    /* Dark theme adjustments */
+    .dark .animate-moving-gradient {
+      background-color: rgba(0, 0, 0, 0.9); /* Black with 90% opacity for dark theme */
+    }
+
+    /* Neon color for light and dark themes */
+    :root {
+      --neon-color: rgba(79, 70, 229, 0.7); /* Indigo neon for light theme */
+    }
+
+    .dark {
+      --neon-color: rgba(147, 51, 234, 0.7); /* Purple neon for dark theme */
+    }
+
+    /* Gradient animation background */
+    .animate-moving-gradient::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        270deg,
+        rgba(147, 51, 234, 0.4),
+        rgba(79, 70, 229, 0.4),
+        rgba(51, 100, 234, 0.4)
+      );
+      background-size: 200% 200%;
+      animation: moving-gradient 1s ease infinite;
+      z-index: -1; /* Place behind card content */
+    }
+
+    /* Keyframes for gradient animation */
+    @keyframes moving-gradient {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  `}
+      </style>
+
       <style>{`
-        /* Animations */
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
+/* Animation */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-        @keyframes slideUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out;
+}
 
-        .animate-fadeIn {
-          animation: fadeIn 0.6s ease-out;
-        }
-
-        .animate-slideUp {
-          animation: slideUp 0.6s ease-out forwards;
-          opacity: 0;
-        }
-      `}</style>
+.animate-slideUp {
+  animation: slideUp 0.6s ease-out forwards;
+  opacity: 0;
+}
+`}</style>
     </div>
   );
 };

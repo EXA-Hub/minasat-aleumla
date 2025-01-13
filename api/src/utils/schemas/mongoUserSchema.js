@@ -2,7 +2,8 @@
 import mongoose from 'mongoose';
 import config from '../../config.js';
 
-const { defaultBalance, apps, subscriptions } = config;
+const { defaultBalance, apps, subscriptions, badges } = config;
+const validBadgeNames = badges.slice(2).map((badge) => badge.name);
 
 const privacySchema = new mongoose.Schema({
   showProfile: {
@@ -44,8 +45,8 @@ const profileSchema = new mongoose.Schema({
   },
   age: {
     type: Number,
-    min: 13, // Minimum age 13
-    max: 120, // Maximum age 120
+    min: [13, 'العمر يجب ان يكون على الاقل 13'], // Minimum age 13
+    max: [120, 'العمر يجب ان يكون على الاكثر 120'], // Maximum age 120
   },
 });
 
@@ -73,7 +74,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    match: [/^[A-Za-z0-9]+$/, 'Username can only contain letters and numbers.'], // Regex for username: A-Z, a-z, 0-9
+    match: [/^[A-Za-z0-9]+$/, 'إسم المستخدم يجب ان يحتوى على حروف وارقام'], // Regex for username: A-Z, a-z, 0-9
   },
   password: {
     type: String,
@@ -109,14 +110,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     match: [
       /^\+?[0-9]{7,15}$/, // Matches E.164 and local formats (7 to 15 digits with optional leading +)
-      'Invalid phone number',
+      'رقم الجوال غير صالح',
     ],
     // Optional field
     default: null, // Default value
   },
   recoveryEmail: {
     type: String,
-    match: [/^\S+@\S+\.\S+$/, 'Invalid email address'], // Simple email regex
+    match: [/^\S+@\S+\.\S+$/, 'بريد إلكتروني غير صالح'], // Simple email regex
     // Optional field
     default: null, // Default value
   },
@@ -152,7 +153,7 @@ const userSchema = new mongoose.Schema({
   notifications: [
     {
       text: { type: String, required: true },
-      time: { type: Number, default: Date.now() },
+      time: { type: Number, default: () => Date.now() },
       _id: false,
     },
   ],
@@ -163,6 +164,17 @@ const userSchema = new mongoose.Schema({
     }, {}),
     default: {},
     _id: false,
+  },
+  badges: {
+    type: [String],
+    default: [],
+    enum: validBadgeNames, // Only valid badge names
+    validate: {
+      validator: function (value) {
+        return value.every((badge) => validBadgeNames.includes(badge));
+      },
+      message: 'اسم الشارة غير صالح', // Error message for invalid badge names
+    },
   },
   tier: {
     type: String,
