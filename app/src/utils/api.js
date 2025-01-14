@@ -22,8 +22,8 @@ const showErrorWidget = async (errorData) => {
   );
 };
 
-const API_BASE_URL = import.meta.env.VITE_API; // You can easily change this when deploying
-
+const API_BASE_URL = import.meta.env.VITE_API;
+console.log(API_BASE_URL);
 // Create axios instance with default config
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
