@@ -11,4 +11,8 @@ export default defineConfig({
     },
   },
   base: '/',
+  server: {
+    // This helps with local development
+    historyApiFallback: true,
+  },
 });
