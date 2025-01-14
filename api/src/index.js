@@ -46,7 +46,10 @@ app.use(
 );
 app.use(
   cors({
-    origin: ['http://192.168.100.45:5173'],
+    origin: [
+      'http://192.168.100.45:5173',
+      'https://minasat-aleumla.vercel.app',
+    ],
   })
 );
 app.use(helmet());
