@@ -33,7 +33,7 @@ const axiosInstance = axios.create({
 });
 
 const cache = new Map(); // In-memory cache
-const cacheTimeout = 5 * 60 * 1000;
+const cacheTimeout = 10 * 60 * 1000;
 const cleanUpCache = () => {
   const now = Date.now();
   for (const [key, { timestamp }] of cache.entries())

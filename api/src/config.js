@@ -5,9 +5,9 @@ const conversionRates = {
   coinToUsdRate: 1 / (50 * 1000), // BASED ON EGP TO USD
 };
 
-const coins = [1, 5, 10, 25, 50, 100].map(
-  (a) => a * Math.ceil(1 / conversionRates.coinToUsdRate)
-); // Coins array
+const coins = [
+  1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000,
+];
 
 // Function to convert coins to various currencies
 const convertCoins = (coins) => {
@@ -142,11 +142,11 @@ export default {
   defaultBalance: 5,
   host: '192.168.100.45',
   emailUser: 'zampx.98@gmail.com',
-  corn: {
+  cron: {
+    // Changed from 'corn' to 'cron'
     checkExpiredSubscriptions: {
-      cornTime: 24 * 60 * 60 * 1000,
       jobName: 'checkExpiredSubscriptions',
-      days: 30,
+      days: 1,
     },
   },
   rates: convertedCoins,

@@ -41,16 +41,6 @@ body {
   color: var(--foreground);
 }
 
-.markdown-content {
-  direction: rtl;
-  text-align: right;
-}
-
-.markdown-content * {
-  background: none !important;
-  color: inherit !important;
-}
-
 .dark\:bg-green-900\/10:is(.dark *) {
   background-color: rgb(20 83 45 / 0.1);
 }

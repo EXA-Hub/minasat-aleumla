@@ -60,6 +60,7 @@ const ConnectPage = () => {
       ) : (
         <div className="text-lg text-red-500 font-bold">
           حدث خطأ أثناء الاتصال. حاول مرة أخرى لاحقًا.
+          <br />
           <span className="text-foreground">{responseStatus}</span>
         </div>
       )}
@@ -67,8 +68,7 @@ const ConnectPage = () => {
       {!loading && (
         <Button
           onClick={handleBackToApps}
-          className="bg-primary text-primary-foreground rounded-md px-6 py-3 text-lg transition duration-200 hover:bg-primary/90 disabled:bg-gray-400 disabled:cursor-not-allowed mt-4"
-        >
+          className="bg-primary text-primary-foreground rounded-md px-6 py-3 text-lg transition duration-200 hover:bg-primary/90 disabled:bg-gray-400 disabled:cursor-not-allowed mt-4">
           العودة للتطبيقات
         </Button>
       )}

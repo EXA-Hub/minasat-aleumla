@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import User from '../../utils/schemas/mongoUserSchema.js';
 import config from '../../config.js';
 
 const router = Router();
@@ -42,12 +43,18 @@ router.post('/@me/apps/verifyConnection', async (req, res) => {
     const { slots } = subscriptions[req.user.tier].features.apps;
     if (req.user.apps[app.id].length >= slots)
       return res.status(400).json({ error: 'تم تجاوز حد التطبيقات' });
-    else await app.connect(body, req.user);
-    // Respond with a success status
+    else await app.connect(body, req.user, User);
     res.sendStatus(200);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'خطآ في الخادم' }); // 'Server error' in Arabic
+    return res
+      .status(500)
+      .json({
+        error:
+          error.message === 'i have a boyfriend'
+            ? 'هذا التطبيق مرتبط بحساب من قبل'
+            : 'خطآ في الخادم',
+      }); // 'Server error' in Arabic
   }
 });
 
@@ -55,6 +62,11 @@ router.post('/@me/apps/verifyConnection', async (req, res) => {
 router.put('/@me/apps/disconnect', async (req, res) => {
   try {
     const { body } = req;
+
+    if (!body.appId || !body.account)
+      return res
+        .status(400)
+        .json({ error: 'الحقول المطلوبة مفقودة لإجراء التعيين' });
 
     // Validate if the app in the body exists in the apps array
     const appExists = apps.some((app) => app.id === body.appId);

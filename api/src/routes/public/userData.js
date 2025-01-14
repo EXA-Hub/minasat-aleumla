@@ -6,7 +6,7 @@ import Engagement from '../../utils/schemas/engagements.js';
 import User from '../../utils/schemas/mongoUserSchema.js';
 import config from '../../config.js';
 
-const { badges } = config;
+const { badges, subscriptions } = config;
 
 function requireAppWs(_app, ws) {
   const router = Router();
@@ -152,8 +152,13 @@ function requireAppWs(_app, ws) {
     checkWalletPrivacy,
     async (req, res) => {
       try {
-        const { username, balance, fee, _id } = req.user;
-        res.json({ username, balance, fee, _id });
+        const { username, balance, tier, _id } = req.user;
+        res.json({
+          username,
+          balance,
+          fee: subscriptions[tier].features.wallet.fee,
+          _id,
+        });
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'خطآ في الخادم' });

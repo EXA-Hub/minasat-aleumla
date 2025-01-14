@@ -3,46 +3,88 @@ dotenv.config({
   allowEmptyValues: true,
 });
 
+import cors from 'cors';
+import argon2 from 'argon2';
+import helmet from 'helmet';
+import morgan from 'morgan';
 import express from 'express';
 import mongoose from 'mongoose';
-import config from './config.js';
-import argon2 from 'argon2';
-import { body } from 'express-validator';
-import bodyParser from 'body-parser';
-import createUser from './utils/createUser.js';
-import User from './utils/schemas/mongoUserSchema.js';
-import { rateLimit } from 'express-rate-limit';
-import { authenticateToken } from './utils/authenticateToken.js';
-import cors from 'cors';
-import hcaptcha from 'express-hcaptcha';
-import { authenticator } from 'otplib';
-import helmet from 'helmet';
-import blockVpnProxy from './utils/blockVpnProxy.js';
 import requestIp from 'request-ip';
+import bodyParser from 'body-parser';
+import { authenticator } from 'otplib';
+import hcaptcha from 'express-hcaptcha';
+import { body } from 'express-validator';
+import { rateLimit } from 'express-rate-limit';
+import cachingMiddleware from './utils/middleware/cachingMiddleware.js';
+import { authenticateToken } from './utils/authenticateToken.js';
+import User from './utils/schemas/mongoUserSchema.js';
+import blockVpnProxy from './utils/blockVpnProxy.js';
+import createUser from './utils/createUser.js';
+import config from './config.js';
 
 const CAPTCHA_SECRET_KEY = process.env.CAPTCHA_SECRET_KEY;
 const app = express();
 
 app.set('trust proxy', false);
+app.disable('x-powered-by');
+
+app.use(morgan('dev'));
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'خطآ في الخادم' });
+});
 app.use(requestIp.mw());
 app.use(blockVpnProxy);
-app.use(cors());
 app.use(
   rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
-    standardHeaders: 'draft-8', // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
+    limit: 1000, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+    standardHeaders: false, // draft-6: `RateLimit-*` headers; draft-7 & draft-8: combined `RateLimit` header
     legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
     // store: ... , // Redis, Memcached, etc. See below.
   })
 );
 app.use(
-  helmet({
-    contentSecurityPolicy: true,
-    crossOriginEmbedderPolicy: true,
+  cors({
+    origin: ['http://192.168.100.45:5173'],
   })
 );
+app.use(helmet());
+/**
+ * 
+ * underTest
+ * 
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"], // Restrict sources for scripts, styles, etc.
+        scriptSrc: ["'self'", 'trusted-cdn.com'],
+        styleSrc: ["'self'", 'trusted-cdn.com'],
+      },
+    },
+    crossOriginEmbedderPolicy: false, // Disable this header
+    hsts: {
+      maxAge: 31536000, // Enforce HTTPS for 1 year
+      includeSubDomains: true,
+    },
+    referrerPolicy: { policy: 'no-referrer' }, // Prevent referrer leakage
+  })
+);
+app.use((req, res, next) => {
+  res.setHeader('X-Directory-Listing', 'disabled');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  next();
+});
+app.use(helmet.noSniff());
+app.use(helmet.frameguard({ action: 'deny' }));
+app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }));
+app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
+
+ */
 app.use(bodyParser.json());
+app.use(cachingMiddleware);
 
 // Connect to MongoDB
 mongoose
@@ -181,5 +223,5 @@ try {
   }
 }
 
-import startTask from './functions/cornJobs/ExpiredSubscriptions.js';
+import startTask from './functions/jobs/ExpiredSubscriptions.js';
 startTask(ws.wss.sendNotification);

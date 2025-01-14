@@ -10,8 +10,10 @@ const App = {
   bgColor: '', // the barnd color of the app in hex format
   // user is the user from database (check the user schema)
   // data is coming from the react page
+  // User is the user schema to check if other user connected the account
+  // <>it's one-many (one user to many accounts)<>
   // my-react-app/src/pages/autoRouting/connect/:app.jsx
-  connect: async (data, user) => {}, // if oauth method used then make this to oauth the account and to get tokens
+  connect: async (data, user, User) => {}, // if oauth method used then make this to oauth the account and to get tokens
   schema: new mongoose.Schema({
     // the schema for the accounts of this app
     /*

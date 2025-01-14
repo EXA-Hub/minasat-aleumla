@@ -78,11 +78,9 @@ function requireAppWs(_app, ws) {
         const feeAmount = Math.ceil(
           (amount * subscriptions[creator.tier].features.wallet.fee) / 100
         );
-        const totalAmount = (amount + feeAmount) * winnersCount; // Calculate total amount including fee for all winners
-
+        const totalAmount = (amount + feeAmount) * winnersCount;
         if (creator.balance < totalAmount)
           return res.status(400).json({ error: 'رصيد غير كافٍ' });
-
         creator.balance -= totalAmount;
         creator.transactionStats.totalSpent += totalAmount;
         if (creator.referralId) creator.tax += Math.floor(feeAmount / 2);

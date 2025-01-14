@@ -15,7 +15,7 @@ const discordApp = {
     process.env.DISCORD_REDIRECT_URI
   )}&scope=identify`,
   bgColor: '#7289DA',
-  connect: async (data, user) => {
+  connect: async (data, user, User) => {
     const code = data.query.code;
     const url = 'https://discord.com/api/oauth2/token';
 
@@ -52,6 +52,10 @@ const discordApp = {
         }
       );
       const userData = await userResponse.json();
+
+      // Check if userData.id exists in other users' apps
+      if (await User.exists({ [`apps.${AppID}.id`]: userData.id }))
+        throw new Error('i have a boyfriend');
 
       // Save to database
       user.apps[AppID] = [

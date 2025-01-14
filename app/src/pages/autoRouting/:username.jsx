@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useModal } from '../../context/ModalManager.jsx';
 import { Button } from '../../components/ui/button.jsx';
 import CoinIcon from '../../components/ui/CoinIcon.jsx';
-import Badge from '@/components/ui/badge.jsx';
+import Badges from '@/components/ui/badges.jsx';
 import api from '../../utils/api.js';
 
 const ProductList = ({ username, products }) => {
@@ -155,17 +155,7 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
           }}>
           <div className="absolute inset-0 bg-black bg-opacity-60">
             {/* Badges container moved to top left */}
-            <div className="absolute sm:top-4 sm:right-4 top-2 right-2 flex flex-wrap gap-1.5 sm:gap-2 max-w-[calc(100%-1rem)]">
-              {badges?.map((badge) => (
-                <Badge
-                  key={badge.name}
-                  name={badge.name}
-                  icon={badge.icon}
-                  tooltipMessage={badge.msg}
-                  isPremium={badge.isPremium}
-                />
-              ))}
-            </div>
+            <Badges BadgesArray={badges} />
 
             {/* Profile info container */}
             <div className="absolute bottom-6 left-6 flex items-center">

@@ -332,8 +332,8 @@ const PlansPage = () => {
       dark: 'bg-30primary border-foreground', // Dark background for basic plan
     },
     professional: {
-      light: 'bg-gradient-to-r from-30primary to-30accent', // Light gradient for professional plan
-      dark: 'bg-gradient-to-r from-30primary to-30accent', // Dark gradient for professional plan
+      light: 'bg-gradient-to-tl from-70primary to-background', // Light gradient for professional plan
+      dark: 'bg-gradient-to-br from-30primary to-background', // Dark gradient for professional plan
     },
     elite: {
       light: 'animate-moving-gradient',
@@ -507,26 +507,27 @@ const PlansPage = () => {
       right: 0;
       bottom: 0;
       background: linear-gradient(
-        270deg,
+        90deg,
         rgba(147, 51, 234, 0.4),
         rgba(79, 70, 229, 0.4),
-        rgba(51, 100, 234, 0.4)
+        rgba(51, 100, 234, 0.4),
+        rgba(147, 51, 234, 0.4),
+        rgba(79, 70, 229, 0.4),
+        rgba(51, 100, 234, 0.4),
+        rgba(147, 51, 234, 0.4)
       );
-      background-size: 200% 200%;
-      animation: moving-gradient 1s ease infinite;
+      background-size: 200% 100%;
+      animation: moving-gradient 3s linear infinite;
       z-index: -1; /* Place behind card content */
     }
 
     /* Keyframes for gradient animation */
     @keyframes moving-gradient {
       0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
+        background-position: 0 0;
       }
       100% {
-        background-position: 0% 50%;
+        background-position: -200% 0;
       }
     }
   `}

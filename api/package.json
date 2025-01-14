@@ -21,6 +21,7 @@
     "helmet": "^8.0.0",
     "moment-timezone": "^0.5.46",
     "mongoose": "^8.9.2",
+    "morgan": "^1.10.0",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",

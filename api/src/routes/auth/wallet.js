@@ -43,8 +43,7 @@ function requireAppWs(_app, ws) {
       const { recipient, amount, description, payFee } = req.body;
       const { _id } = req.user; // Assuming req.user contains the current user's details
 
-      const tier = subscriptions[req.user.tier];
-      const { maxSend, fee } = tier.features.wallet;
+      const { maxSend, fee } = subscriptions[req.user.tier].features.wallet;
       if (isNaN(amount) || amount <= 0 || !maxSend > amount)
         return res
           .status(400)
@@ -57,7 +56,6 @@ function requireAppWs(_app, ws) {
         if (!recipientUser)
           return res.status(404).json({ error: 'المستلم غير موجود' });
 
-        // Calculate the fee and amount to pay
         const feeAmount = Math.ceil((amount * fee) / 100);
         let taking = payFee ? amount + feeAmount : amount;
         let giving = payFee ? amount : amount - feeAmount;
