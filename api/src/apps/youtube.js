@@ -1,50 +1,50 @@
 // my-api/src/apps/youtube.js
-import mongoose from "mongoose";
-const AppID = "YouTube";
-import dotenv from "dotenv-safe";
-dotenv.config({
-  allowEmptyValues: true,
-});
+import mongoose from 'mongoose';
+const AppID = 'YouTube';
+// import dotenv from "dotenv-safe";
+// dotenv.config({
+//   allowEmptyValues: true,
+// });
 const youtubeApp = {
   id: AppID,
-  name: "يوتيوب",
-  svg: "https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/youtube.svg",
+  name: 'يوتيوب',
+  svg: 'https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/youtube.svg',
   redirectUrl: `https://accounts.google.com/o/oauth2/v2/auth?client_id=${
     process.env.YOUTUBE_CLIENT_ID
   }&redirect_uri=${encodeURIComponent(
     process.env.YOUTUBE_REDIRECT_URI
   )}&response_type=code&scope=https://www.googleapis.com/auth/youtube.readonly&access_type=offline&prompt=consent`,
-  bgColor: "#FF0000",
+  bgColor: '#FF0000',
   connect: async (data, user) => {
     const code = data.query.code;
-    const tokenUrl = "https://oauth2.googleapis.com/token";
+    const tokenUrl = 'https://oauth2.googleapis.com/token';
 
     const body = new URLSearchParams({
       client_id: process.env.YOUTUBE_CLIENT_ID,
       client_secret: process.env.YOUTUBE_CLIENT_SECRET,
       code: code,
-      grant_type: "authorization_code",
+      grant_type: 'authorization_code',
       redirect_uri: data.redirectUrl,
     });
 
     try {
       // Get token
       const tokenResponse = await fetch(tokenUrl, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: body.toString(),
       });
       const tokenData = await tokenResponse.json();
 
       if (!tokenData.access_token) {
-        throw new Error("Failed to get access token");
+        throw new Error('Failed to get access token');
       }
 
       // Get channel data
       const channelResponse = await fetch(
-        "https://www.googleapis.com/youtube/v3/channels?part=snippet,brandingSettings&mine=true",
+        'https://www.googleapis.com/youtube/v3/channels?part=snippet,brandingSettings&mine=true',
         {
           headers: {
             Authorization: `Bearer ${tokenData.access_token}`,
@@ -72,7 +72,7 @@ const youtubeApp = {
 
       await user.save();
     } catch (error) {
-      console.error("YouTube connection error:", error);
+      console.error('YouTube connection error:', error);
       throw error;
     }
   },
@@ -98,7 +98,7 @@ const youtubeApp = {
   image: (user, accountId, imageType) => {
     const account = user.apps[AppID].find((acc) => acc.id === accountId);
     if (!account) return;
-    return imageType === "profilePicture"
+    return imageType === 'profilePicture'
       ? account.profilePicture
       : account.banner;
   },

@@ -146,7 +146,7 @@ export default {
     // Changed from 'corn' to 'cron'
     checkExpiredSubscriptions: {
       jobName: 'checkExpiredSubscriptions',
-      days: 1,
+      days: 30,
     },
   },
   rates: convertedCoins,
