@@ -140,7 +140,7 @@ import youtubeApp from './apps/youtube.js';
 export default {
   port: 6969,
   defaultBalance: 5,
-  host: '192.168.100.45',
+  host: 'localhost' || '192.168.100.45',
   emailUser: 'zampx.98@gmail.com',
   cron: {
     // Changed from 'corn' to 'cron'

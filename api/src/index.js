@@ -1,7 +1,7 @@
-import dotenv from 'dotenv-safe';
-dotenv.config({
-  allowEmptyValues: true,
-});
+// import dotenv from 'dotenv-safe';
+// dotenv.config({
+//   allowEmptyValues: true,
+// });
 
 import cors from 'cors';
 import argon2 from 'argon2';
@@ -228,3 +228,5 @@ try {
 
 import startTask from './functions/jobs/ExpiredSubscriptions.js';
 startTask(ws.wss.sendNotification);
+
+export default app;

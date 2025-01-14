@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "nodemon src/index.js"
+    "test": "nodemon src/index.js",
+    "vercel-build": "echo 'vercel-build'"
   },
   "author": "zampx",
   "license": "ISC",
