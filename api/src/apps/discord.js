@@ -1,10 +1,10 @@
 // my-api/src/apps/discord.js
 import mongoose from 'mongoose';
 const AppID = 'Discord';
-import dotenv from 'dotenv-safe';
-dotenv.config({
-  allowEmptyValues: true,
-});
+// import dotenv from 'dotenv-safe';
+// dotenv.config({
+//   allowEmptyValues: true,
+// });
 const discordApp = {
   id: AppID,
   name: 'ديسكورد',
