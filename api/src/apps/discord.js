@@ -102,7 +102,9 @@ const discordApp = {
     const { id, avatar, banner } = account;
     const image = imageType === 'profilePicture' ? avatar : banner;
     const extension = image.startsWith('a_') ? 'gif' : 'png';
-    return `https://cdn.discordapp.com/avatars/${id}/${image}.${extension}`;
+    return `https://cdn.discordapp.com/${
+      imageType === 'profilePicture' ? 'avatars' : 'banners'
+    }/${id}/${image}.${extension}`;
   },
 };
 export default discordApp;
