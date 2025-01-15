@@ -134,14 +134,17 @@ const badges = [
   },
 ];
 
+import { isProduction } from './utils/env.js';
 import discordApp from './apps/discord.js';
 import youtubeApp from './apps/youtube.js';
 
 export default {
-  port: 6969,
+  port: isProduction
+    ? Math.floor(Math.random() * (65535 - 1024 + 1) + 1024)
+    : 6969,
   defaultBalance: 5,
-  // only on dev
-  host: process.env.NODE_ENV !== 'production' ? '192.168.100.45' : 'localhost',
+  isProduction,
+  host: isProduction ? 'localhost' : '192.168.100.45',
   emailUser: 'zampx.98@gmail.com',
   cron: {
     // Changed from 'corn' to 'cron'

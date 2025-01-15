@@ -14,5 +14,11 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  }
+  },
+  "crons": [
+    {
+      "path": "src/jobs/ExpiredSubscriptions",
+      "schedule": "0 10 * * *"
+    }
+  ]
 }

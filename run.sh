@@ -2,10 +2,16 @@
 
 CHOICE=$(whiptail --title "Menu" --menu "Use arrow keys to choose an option:" 15 50 3 \
 "API" "Run API tests" \
+"Server" "Run server tests" \
 "App" "Start React app" \
+"API (Vercel)" "Run API tests (Vercel)" \
 "Quit" "Exit the script" 3>&1 1>&2 2>&3)
 
 case $CHOICE in
+  "Server")
+    cd server
+    npm test
+    ;;
   "API")
     cd api
     npm test
@@ -13,6 +19,10 @@ case $CHOICE in
   "App")
     cd app
     npm run dev
+    ;;
+  "API (Vercel)")
+    cd api
+    npm run vercel-dev
     ;;
   "Quit")
     echo "Exiting..."

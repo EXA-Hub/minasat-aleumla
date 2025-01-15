@@ -1,11 +1,10 @@
-import { Router } from 'express';
 import mongoose from 'mongoose';
+import { Router } from 'express';
 import { body } from 'express-validator';
-import NodeCache from 'node-cache';
+import getRedisClient from '../../utils/libs/redisClient.js';
 import config from '../../config.js';
 
 const { subscriptions } = config;
-const giftCache = new NodeCache({ stdTTL: 3600 });
 
 const MysteryGiftSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true },
@@ -61,9 +60,9 @@ function requireAppWs(_app, ws) {
         return res
           .status(400)
           .json({ error: 'الحد الأقصى للمبلغ هو ' + maxCoins });
-
-      if (giftCache.has(code))
-        return res.status(400).json({ error: 'الكود مستخدم مسبقاً' });
+      const redisClient = await getRedisClient();
+      const exists = await redisClient.exists(`gift:${code}`);
+      if (exists) return res.status(400).json({ error: 'الكود مستخدم مسبقاً' });
 
       const giftsCount = await MysteryGift.find({
         creator: req.user._id,
@@ -94,7 +93,10 @@ function requireAppWs(_app, ws) {
           creator: creator._id,
         });
         await gift.save();
-        giftCache.set(code, gift);
+        const redisClient = await getRedisClient();
+        await redisClient.set(`gift:${code}`, JSON.stringify(gift), {
+          EX: 3600,
+        }); // 1 hour TTL
 
         res.json({
           amount,
@@ -118,10 +120,14 @@ function requireAppWs(_app, ws) {
       const user = req.user;
 
       try {
-        let gift = giftCache.get(code);
+        const redisClient = await getRedisClient();
+        let gift = await redisClient.get(`gift:${code}`);
         if (!gift) {
           gift = await MysteryGift.findOne({ code, status: 'active' });
-          if (gift) giftCache.set(code, gift);
+          if (gift)
+            await redisClient.set(`gift:${code}`, JSON.stringify(gift), {
+              EX: 3600,
+            });
         }
 
         if (!gift || gift.status !== 'active') {
@@ -147,7 +153,8 @@ function requireAppWs(_app, ws) {
           user.balance += gift.amount;
           user.transactionStats.totalReceived += gift.amount;
           await user.save();
-          giftCache.del(code);
+          const redisClient = await getRedisClient();
+          await redisClient.del(`gift:${code}`);
 
           await ws.wss.sendNotification(
             'تم ربح هديتك! 🎁',

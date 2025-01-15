@@ -1,19 +1,11 @@
-console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-import dotenvSafe from 'dotenv-safe';
-import dotenv from 'dotenv';
-// only on dev
-if (process.env.NODE_ENV !== 'production')
-  dotenvSafe.config({
-    allowEmptyValues: true,
-  });
-else dotenv.config();
+import { env } from './utils/env.js';
+env();
 
 import cors from 'cors';
 import argon2 from 'argon2';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import express from 'express';
-import mongoose from 'mongoose';
 import requestIp from 'request-ip';
 import bodyParser from 'body-parser';
 import { authenticator } from 'otplib';
@@ -22,6 +14,7 @@ import { body } from 'express-validator';
 import { rateLimit } from 'express-rate-limit';
 import cachingMiddleware from './utils/middleware/cachingMiddleware.js';
 import { authenticateToken } from './utils/authenticateToken.js';
+import { connectToMongoDB } from './utils/libs/mongoose.js';
 import User from './utils/schemas/mongoUserSchema.js';
 import blockVpnProxy from './utils/blockVpnProxy.js';
 import createUser from './utils/createUser.js';
@@ -30,7 +23,7 @@ import config from './config.js';
 const CAPTCHA_SECRET_KEY = process.env.CAPTCHA_SECRET_KEY;
 const app = express();
 
-app.set('trust proxy', false);
+app.set('trust proxy', config.isProduction ? 1 : false);
 app.disable('x-powered-by');
 
 app.use(morgan('dev'));
@@ -94,21 +87,11 @@ app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
 app.use(bodyParser.json());
 app.use(cachingMiddleware);
 
-// Connect to MongoDB
-let mongoConnection;
 // Add before any route handlers:
-app.use(async (req, res, next) => {
-  if (mongoConnection) return;
-  mongoConnection = await mongoose
-    .connect(process.env.MONGO_URI)
-    .then(() => {
-      console.log('MongoDB connected successfully');
-      next();
-    })
-    .catch((err) => {
-      console.error('MongoDB connection error:', err);
-      throw err;
-    });
+app.use((req, res, next) => {
+  connectToMongoDB()
+    .then(() => next())
+    .catch((error) => res.status(500).json({ error: 'خطآ في الخادم' }));
 });
 
 import { validateRequest } from './utils/middleware/validateRequest.js';
@@ -214,8 +197,24 @@ app.get('/@me', authenticateToken, (req, res) => {
   }); // Send only those fields in the response
 });
 
-import { initializeWebSocket } from './webSockets/wss.js';
-export const ws = initializeWebSocket(app);
+// mock function until
+// i make the server that will handle the websocket
+const ws = {
+  wss: {
+    sendNotification: async (msg, date, username) => {
+      console.log(msg, date, username);
+    },
+    brodcast: async (msg, date) => {
+      console.log(msg, date);
+    },
+  },
+  clients: {
+    has: (username) => {
+      console.log(username);
+      return true;
+    },
+  },
+};
 
 import { loadRoutes } from './routeLoader.js';
 await loadRoutes(app, { authenticateToken }, ws);
@@ -225,20 +224,17 @@ import notFoundHandler from './404.js';
 app.use(notFoundHandler(app));
 
 try {
-  ws.server.listen(port, host, () => {
+  app.listen(port, host, () => {
     console.log(`App listening at http://${host}:${port}`);
   });
 } catch (e) {
   console.error(`Failed to start server at http://${host}:${port}:`, e);
   if (host !== 'localhost') {
     console.log('Retrying with localhost...');
-    ws.server.listen(port, () => {
+    app.listen(port, () => {
       console.log(`App listening at http://localhost:${port}`);
     });
   }
 }
-
-// import startTask from './functions/jobs/ExpiredSubscriptions.js';
-// startTask(ws.wss.sendNotification);
 
 export default app;

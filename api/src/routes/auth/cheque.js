@@ -1,12 +1,11 @@
 // api/src/routes/auth/cheque.js
-import { Router } from 'express';
 import mongoose from 'mongoose';
+import { Router } from 'express';
 import { body } from 'express-validator';
-import NodeCache from 'node-cache';
+import getRedisClient from '../../utils/libs/redisClient.js';
 import config from '../../config.js';
 
 const { subscriptions } = config;
-const chequeCache = new NodeCache({ stdTTL: 3600 }); // 1 hour cache
 
 const ChequeSchema = new mongoose.Schema({
   code: { type: String, required: true, unique: true },
@@ -94,7 +93,10 @@ function requireAppWs(_app, ws) {
         });
         await cheque.save();
 
-        chequeCache.set(code, cheque);
+        const redisClient = await getRedisClient();
+        await redisClient.set(`cheque:${code}`, JSON.stringify(cheque), {
+          EX: 3600,
+        });
 
         res.json({
           code,
@@ -120,10 +122,14 @@ function requireAppWs(_app, ws) {
 
       try {
         // Check cache first
-        let cheque = chequeCache.get(code);
+        const redisClient = await getRedisClient();
+        let cheque = await redisClient.get(`cheque:${code}`);
         if (!cheque) {
           cheque = await Cheque.findOne({ code, status: 'active' });
-          if (cheque) chequeCache.set(code, cheque);
+          if (cheque)
+            await redisClient.set(`cheque:${code}`, JSON.stringify(cheque), {
+              EX: 3600,
+            }); // 1 hour TTL
         }
 
         if (!cheque || cheque.status !== 'active') {
@@ -147,7 +153,7 @@ function requireAppWs(_app, ws) {
         await cheque.save();
 
         // Invalidate cache
-        chequeCache.del(code);
+        await redisClient.del(`cheque:${code}`);
 
         // Send notification
         await ws.wss.sendNotification(

@@ -1,6 +1,7 @@
 // my-react-app/src/components/ui/user.jsx
+import PropTypes from 'prop-types';
+import { toast } from 'react-hot-toast';
 import { useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
-import { Button } from './button';
 import {
   LogOut,
   Bell,
@@ -10,9 +11,7 @@ import {
   ArrowRightCircleIcon,
   Globe2,
 } from 'lucide-react';
-import api from '../../utils/api';
-import { toast } from 'react-hot-toast';
-import PropTypes from 'prop-types';
+import { Button } from './button';
 
 const notificationItemStyles = {
   wrapper:
@@ -43,9 +42,7 @@ NotificationItem.propTypes = {
 
 function wss() {
   return new WebSocket(
-    api.API_BASE_URL.replace(/^https?/, 'ws') +
-      '/?token=' +
-      localStorage.getItem('token')
+    import.meta.env.VITE_WS + '/?token=' + localStorage.getItem('token')
   );
 }
 

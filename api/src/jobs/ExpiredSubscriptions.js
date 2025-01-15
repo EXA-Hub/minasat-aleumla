@@ -1,16 +1,16 @@
-// api/src/functions/jobs/ExpiredSubscriptions.js
-import cron from 'node-cron';
+// api/src/jobs/ExpiredSubscriptions.js
 import moment from 'moment-timezone';
-import config from '../../config.js';
-import CronJob from '../../utils/schemas/CronJob.js';
-import User from '../../utils/schemas/mongoUserSchema.js';
+import { connectToMongoDB } from '../utils/libs/mongoose.js';
+import User from '../utils/schemas/mongoUserSchema.js';
+import CronJob from '../utils/schemas/CronJob.js';
+import config from '../config.js';
 
-const { jobName, days } = config.cron.checkExpiredSubscriptions; // Fixed typo in config reference
+const { jobName, days } = config.cron.checkExpiredSubscriptions;
 
 // Function to check for expired subscriptions
 const checkExpiredSubscriptions = async (sendNotification) => {
+  await connectToMongoDB();
   const lockKey = `${jobName}_lock`;
-
   try {
     // Try to acquire lock
     const lock = await CronJob.findOneAndUpdate(
@@ -92,47 +92,17 @@ const checkExpiredSubscriptions = async (sendNotification) => {
   }
 };
 
-// Function to check if it's time to run the task
-const shouldRunTask = async () => {
+// Export the function as a serverless endpoint
+export default async function handler(req, res) {
+  // Authorization check (optional but recommended)
+  if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`)
+    return res.status(401).json({ message: 'Unauthorized' });
+
   try {
-    const cronJob = await CronJob.findOne({ jobName });
-
-    if (!cronJob?.lastRun) {
-      return true;
-    }
-
-    const now = moment().tz('Asia/Riyadh');
-    const lastRun = moment(cronJob.lastRun).tz('Asia/Riyadh');
-
-    // Check if 24 hours have passed
-    return now.diff(lastRun, 'hours') >= 24;
+    await checkExpiredSubscriptions(); // Call your cron job logic
+    res.status(200).json({ message: 'Cron job executed successfully' });
   } catch (error) {
-    console.error('Error checking last run time:', error);
-    return false;
+    console.error('Error in cron job:', error);
+    res.status(500).json({ message: 'Cron job failed', error: error.message });
   }
-};
-
-// Function to start the task
-const startTask = async (sendNotification) => {
-  // Initial check
-  const shouldRun = await shouldRunTask();
-
-  if (shouldRun) {
-    console.log('Running task immediately...');
-    await checkExpiredSubscriptions(sendNotification);
-  }
-
-  // Schedule the task to run daily at 12:00 PM Mecca time
-  cron.schedule(
-    '0 12 * * *',
-    async () => {
-      console.log('Running scheduled task at 12:00 PM Mecca time...');
-      await checkExpiredSubscriptions(sendNotification);
-    },
-    {
-      timezone: 'Asia/Riyadh',
-    }
-  );
-};
-
-export default startTask;
+}

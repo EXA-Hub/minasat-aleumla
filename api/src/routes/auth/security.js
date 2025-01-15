@@ -1,10 +1,9 @@
-// src/routes/security.js
-import express from 'express';
-import { body } from 'express-validator';
 import argon2 from 'argon2';
+import express from 'express';
+import { authenticator } from 'otplib';
+import { body } from 'express-validator';
 import User from '../../utils/schemas/mongoUserSchema.js';
 import { generateToken } from '../../utils/token-sys.js';
-import { authenticator } from 'otplib';
 import mail from '../../utils/mail.js';
 
 const router = express.Router();
@@ -52,7 +51,6 @@ router.post(
       const hashedPassword = await argon2.hash(req.body.newPassword);
       user.password = hashedPassword;
 
-      // Generate new token
       const newToken = generateToken(
         user.username,
         user._id.toString(),
@@ -71,7 +69,6 @@ router.post(
   }
 );
 
-// Change username
 router.post(
   '/@me/security/username',
   [
@@ -97,7 +94,6 @@ router.post(
 
       user.username = req.body.newUsername;
 
-      // Generate new token
       const newToken = generateToken(
         req.body.newUsername,
         user._id.toString(),
@@ -116,14 +112,7 @@ router.post(
   }
 );
 
-const tempVerificationStore = new Map();
-
-const setTempVerification = (userId, data) => {
-  tempVerificationStore.set(userId, data);
-  setTimeout(() => {
-    tempVerificationStore.delete(userId);
-  }, 5 * 60 * 1000);
-};
+import getRedisClient from '../../utils/libs/redisClient.js';
 
 router.post(
   '/@me/security/verify',
@@ -152,10 +141,17 @@ router.post(
               'منصة العملة',
               secret
             );
-            setTempVerification(userId, { secret });
+            const redisClient = await getRedisClient();
+            await redisClient.set(
+              `tempVerification:${userId}`,
+              JSON.stringify({ secret }),
+              { EX: 300 }
+            ); // 5 minutes TTL
             return res.json({ otpauth, secret });
           } else if (type === 'verify') {
-            const tempData = tempVerificationStore.get(userId);
+            const tempData = await redisClient.get(
+              `tempVerification:${userId}`
+            );
             if (!tempData || !tempData.secret) {
               return res
                 .status(400)
@@ -171,7 +167,8 @@ router.post(
             req.user.twoFactorSecret = tempData.secret;
             req.user.twoFactorEnabled = true;
             await req.user.save();
-            tempVerificationStore.delete(userId);
+            const redisClient = await getRedisClient();
+            await redisClient.del(`tempVerification:${userId}`);
             return res.json({ enabled: true });
           } else if (type === 'disable') {
             if (!req.user.twoFactorEnabled) {
@@ -202,10 +199,15 @@ router.post(
             const verificationCode = Math.floor(
               100000 + Math.random() * 900000
             ).toString();
-            setTempVerification(userId, {
-              email: value,
-              code: verificationCode,
-            });
+            const redisClient = await getRedisClient();
+            await redisClient.set(
+              `tempVerification:${userId}`,
+              JSON.stringify({
+                email: value,
+                code: verificationCode,
+              }),
+              { EX: 300 }
+            ); // 5 minutes TTL
             try {
               mail.sendMail({
                 to: value,
@@ -237,13 +239,16 @@ router.post(
               message: 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
             });
           } else if (type === 'verify') {
-            const tempData = tempVerificationStore.get(userId);
-            if (!tempData || token !== tempData.code) {
+            const redisClient = await getRedisClient();
+            const tempData = await redisClient.get(
+              `tempVerification:${userId}`
+            );
+            if (!tempData || token !== tempData.code)
               return res.status(400).json({ error: 'رمز غير صالح' });
-            }
             req.user.recoveryEmail = tempData.email;
             await req.user.save();
-            tempVerificationStore.delete(userId);
+
+            await redisClient.del(`tempVerification:${userId}`);
             return res.json({ success: true });
           }
           break;
@@ -259,17 +264,18 @@ router.post(
               phone: value,
               code: verificationCode,
             });
-            // Mock SMS sending
             console.log(`SMS Code: ${verificationCode} to ${value}`);
             return res.json({ message: 'تم إرسال رمز التحقق إلى هاتفك' });
           } else if (type === 'verify') {
-            const tempData = tempVerificationStore.get(userId);
-            if (!tempData || token !== tempData.code) {
+            const redisClient = await getRedisClient();
+            const tempData = await redisClient.get(
+              `tempVerification:${userId}`
+            );
+            if (!tempData || token !== tempData.code)
               return res.status(400).json({ error: 'رمز غير صالح' });
-            }
             req.user.recoveryPhone = tempData.phone;
             await req.user.save();
-            tempVerificationStore.delete(userId);
+            await redisClient.del(`tempVerification:${userId}`);
             return res.json({ success: true });
           }
           break;
@@ -280,7 +286,6 @@ router.post(
   }
 );
 
-// Generate backup codes
 router.post(
   '/@me/security/backup-codes',
   [body('password').notEmpty(), body('twoFactorCode').optional()],
@@ -289,13 +294,11 @@ router.post(
       const user = req.user;
       const { password, twoFactorCode } = req.body;
 
-      // Verify password
       const isValid = await argon2.verify(user.password, password);
       if (!isValid) {
         return res.status(401).json({ error: 'كلمة المرور غير صحيحة' });
       }
 
-      // Verify 2FA if enabled
       if (user.twoFactorEnabled) {
         if (!twoFactorCode) {
           return res.status(400).json({ error: 'رمز المصادقة الثنائية مطلوب' });
@@ -311,12 +314,10 @@ router.post(
         }
       }
 
-      // Generate 8 backup codes
       const backupCodes = Array.from({ length: 8 }, () =>
         Math.random().toString(36).substr(2, 9).toUpperCase()
       );
 
-      // Hash backup codes before storing
       const hashedCodes = await Promise.all(
         backupCodes.map((code) => argon2.hash(code))
       );
@@ -331,7 +332,6 @@ router.post(
   }
 );
 
-// Remove recovery option
 router.post(
   '/@me/security/remove-recovery',
   [
@@ -344,13 +344,11 @@ router.post(
       const user = req.user;
       const { type, password, twoFactorCode } = req.body;
 
-      // Verify password
       const isValid = await argon2.verify(user.password, password);
       if (!isValid) {
         return res.status(401).json({ error: 'كلمة المرور غير صحيحة' });
       }
 
-      // Verify 2FA if enabled
       if (user.twoFactorEnabled) {
         if (!twoFactorCode) {
           return res.status(400).json({ error: 'رمز المصادقة الثنائية مطلوب' });
@@ -366,7 +364,6 @@ router.post(
         }
       }
 
-      // Remove the specified recovery option
       if (type === 'email') {
         user.recoveryEmail = undefined;
       } else {

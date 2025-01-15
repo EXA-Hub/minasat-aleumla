@@ -61,17 +61,12 @@ const generateShortURL = async (url, expirationMinutes = 15) => {
 
 import { Router } from 'express';
 import { query } from 'express-validator';
+import getRedisClient from '../../utils/libs/redisClient.js';
 import config from '../../config.js';
 
 const router = Router();
 const tempMemory = new Map();
 const { subscriptions } = config;
-
-const saveTempCode = (ip, code) => {
-  const expireTime = Date.now() + 15 * 60 * 1000;
-  tempMemory.set(ip, { code, expireTime });
-  setTimeout(() => tempMemory.delete(ip), 15 * 60 * 1000);
-};
 
 const generateCode = () =>
   String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
@@ -106,7 +101,12 @@ router.get(
       }
       const code = generateCode();
       const shortUrl = await generateShortURL(`${host}?dailyCode=${code}`);
-      saveTempCode(clientIp, code);
+      const redisClient = await getRedisClient();
+      await redisClient.set(
+        `tempCode:${clientIp}`,
+        JSON.stringify({ code, expireTime: Date.now() + 15 * 60 * 1000 }),
+        { EX: 900 } // 15 minutes
+      );
       res.status(200).json({ dailyUrl: shortUrl });
     } catch (error) {
       console.error(error);
@@ -120,11 +120,12 @@ router.get(
   [query('dailyCode').isInt(), validateRequest],
   async (req, res) => {
     try {
+      const redisClient = await getRedisClient();
       const { dailyCode } = req.query;
       const { clientIp } = req;
-      const entry = tempMemory.get(clientIp);
+      const entry = await redisClient.get(`tempCode:${clientIp}`);
       if (!entry) return res.status(400).json({ error: 'لا توجد هدايا' });
-      tempMemory.delete(clientIp);
+      await redisClient.del(`tempCode:${clientIp}`);
       if (entry.code !== dailyCode)
         return res.status(400).json({ error: 'رمز غير صحيح' });
       if (Date.now() >= entry.expireTime)

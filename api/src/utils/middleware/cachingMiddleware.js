@@ -1,8 +1,6 @@
-import { error } from 'console';
+// api/src/utils/middleware/cachingMiddleware.js
 import { createHash } from 'crypto';
-import NodeCache from 'node-cache';
-
-const cache = new NodeCache({ stdTTL: 10 }); // Cache TTL is 600 seconds
+import getRedisClient from '../libs/redisClient.js';
 
 function generateCacheKey(req) {
   const keyData = {
@@ -16,21 +14,24 @@ function generateCacheKey(req) {
   return createHash('sha256').update(JSON.stringify(keyData)).digest('hex');
 }
 
-function cachingMiddleware(req, res, next) {
+async function cachingMiddleware(req, res, next) {
   try {
+    const redisClient = await getRedisClient();
+
     const key = generateCacheKey(req);
-    const cachedResponse = cache.get(key);
+    const cachedResponse = await redisClient.get(key);
 
     if (cachedResponse) {
       console.log(
         '\x1b[33m🔄 Using cached response for: \x1b[36m' + key + '\x1b[0m'
       );
       if (!res.headersSent) {
-        res.writeHead(cachedResponse.statusCode, {
-          ...cachedResponse.headers,
+        const data = JSON.parse(cachedResponse);
+        res.writeHead(data.statusCode, {
+          ...data.headers,
           'Content-Type': 'application/json; charset=utf-8', // Ensure proper JSON and encoding
         });
-        res.end(cachedResponse.body);
+        res.end(data.body);
       }
       return;
     }
@@ -47,24 +48,22 @@ function cachingMiddleware(req, res, next) {
       originalWrite.call(this, chunk);
     };
 
-    res.end = function (chunk) {
-      if (chunk) {
-        cachedData += chunk;
-      }
-
+    res.end = async function (chunk) {
+      if (chunk) cachedData += chunk;
       if (!res.headersSent) {
         originalEnd.call(this, chunk);
-
         statusCode = res.statusCode;
-        if (res.headers) {
+        if (res.headers)
           Object.keys(res.headers).forEach((header) => {
             headers[header] = res.headers[header];
           });
-        }
-
-        cache.set(key, { statusCode, headers, body: cachedData });
         console.log(
           '\x1b[32m🌟 Caching response for: \x1b[34m' + key + '\x1b[0m'
+        );
+        await redisClient.set(
+          key,
+          JSON.stringify({ statusCode, headers, body: cachedData }),
+          { EX: 10 } // Cache for 10 seconds
         );
       }
     };
@@ -73,7 +72,7 @@ function cachingMiddleware(req, res, next) {
   } catch (error) {
     console.error('Error caching response:', error);
     if (!res.headersSent) {
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'حدث خطأ أثناء إيجاد البيانات' });
     }
   }
 }

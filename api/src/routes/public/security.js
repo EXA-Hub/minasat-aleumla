@@ -1,25 +1,13 @@
 // my-api/src/routes/public/security.js
+import argon2 from 'argon2';
 import express from 'express';
-import { body, } from 'express-validator';
+import { body } from 'express-validator';
+import getRedisClient from '../../utils/libs/redisClient.js';
 import User from '../../utils/schemas/mongoUserSchema.js';
 import { generateToken } from '../../utils/token-sys.js';
-import argon2 from 'argon2';
 import mail from '../../utils/mail.js';
 
 const router = express.Router();
-
-// In-memory storage for recovery codes
-const recoveryCodes = new Map(); // { key: { code, expiresAt } }
-
-// Function to clean expired codes periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, value] of recoveryCodes.entries()) {
-    if (value.expiresAt < now) {
-      recoveryCodes.delete(key);
-    }
-  }
-}, 60 * 1000); // Run every minute
 
 import { validateRequest } from '../../utils/middleware/validateRequest.js';
 
@@ -34,14 +22,11 @@ router.post(
   ],
   async (req, res) => {
     const { type, value, username } = req.body;
-
     // Special handling for backup codes
     if (type === 'backupCode') {
       const user = await User.findOne({ username });
-      if (!user) {
+      if (!user)
         return res.status(404).json({ error: 'لم يتم العثور على الحساب' });
-      }
-
       const isValidCode = await Promise.any(
         user.backupCodes.map((hash) =>
           argon2.verify(hash, value).then((result) => {
@@ -50,16 +35,16 @@ router.post(
           })
         )
       ).catch(() => false);
-
-      if (!isValidCode) {
-        return res.status(401).json({ error: 'رمز غير صالح' });
-      }
-
+      if (!isValidCode) return res.status(401).json({ error: 'رمز غير صالح' });
       // Store the verified backup code for later removal
-      recoveryCodes.set(`backupCode:${username}`, {
-        code: value,
-        expiresAt: Date.now() + 5 * 60 * 1000,
-      });
+      const redisClient = await getRedisClient();
+      await redisClient.set(
+        `recovery:${
+          type === 'backupCode' ? `backupCode:${username}` : `${type}:${value}`
+        }`,
+        JSON.stringify({ code, expiresAt }),
+        { EX: 300 }
+      ); // 5 minutes TTL
 
       return res.json({ message: 'تم التحقق من الرمز' });
     }
@@ -70,13 +55,18 @@ router.post(
       [type === 'email' ? 'recoveryEmail' : 'recoveryPhone']: value,
     });
 
-    if (!user) {
+    if (!user)
       return res.status(404).json({ error: 'لم يتم العثور على الحساب' });
-    }
 
     const code = Math.random().toString().slice(2, 8);
-    const key = `${type}:${value}`;
-    recoveryCodes.set(key, { code, expiresAt: Date.now() + 5 * 60 * 1000 });
+    const key =
+      type === 'backupCode' ? `backupCode:${username}` : `${type}:${value}`;
+    const redisClient = await getRedisClient();
+    await redisClient.set(
+      `recovery:${key}`,
+      JSON.stringify({ code, expiresAt }),
+      { EX: 300 }
+    ); // 5 minutes TTL
 
     try {
       mail.sendMail({
@@ -127,22 +117,19 @@ router.post(
   async (req, res) => {
     const { type, value, code, newPassword, username } = req.body;
     const user = await User.findOne({ username });
-
-    if (!user) {
+    if (!user)
       return res.status(404).json({ error: 'لم يتم العثور على الحساب' });
-    }
-
     if (type === 'backupCode') {
-      const storedCode = recoveryCodes.get(`backupCode:${username}`);
+      const redisClient = await getRedisClient();
+      const storedCode = await redisClient.get(`recovery:${key}`);
       if (
         !storedCode ||
         storedCode.code !== value ||
         storedCode.expiresAt < Date.now()
-      ) {
+      )
         return res
           .status(401)
           .json({ error: 'رمز غير صالح أو منتهي الصلاحية' });
-      }
 
       // Remove the used backup code
       user.backupCodes = user.backupCodes.filter(async (hash) => {
@@ -150,17 +137,17 @@ router.post(
         return !isMatch;
       });
     } else {
-      const key = `${type}:${value}`;
-      const storedCode = recoveryCodes.get(key);
+      const key =
+        type === 'backupCode' ? `backupCode:${username}` : `${type}:${value}`;
+      const storedCode = await redisClient.get(`recovery:${key}`);
       if (
         !storedCode ||
         storedCode.code !== code ||
         storedCode.expiresAt < Date.now()
-      ) {
+      )
         return res
           .status(401)
           .json({ error: 'رمز غير صالح أو منتهي الصلاحية' });
-      }
     }
 
     // Update password and token
@@ -173,9 +160,12 @@ router.post(
     user.twoFactorEnabled = false;
     await user.save();
 
-    // Clean up recovery code
-    recoveryCodes.delete(
-      type === 'backupCode' ? `backupCode:${username}` : `${type}:${value}`
+    // Remove recovery code from Redis
+    const redisClient = await getRedisClient();
+    await redisClient.del(
+      `recovery:${
+        type === 'backupCode' ? `backupCode:${username}` : `${type}:${value}`
+      }`
     );
 
     res.json({

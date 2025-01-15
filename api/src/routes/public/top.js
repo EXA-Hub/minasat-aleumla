@@ -1,24 +1,26 @@
 // api/src/routes/public/top.js
 import { Router } from 'express';
-import NodeCache from 'node-cache';
 import User from '../../utils/schemas/mongoUserSchema.js';
+import getRedisClient from '../../utils/libs/redisClient.js';
 import config from '../../config.js';
 
 const router = Router();
 const { badges: AllBadges } = config;
-const cache = new NodeCache({ stdTTL: 1 * 60 * 60 });
 
 router.get('/richest', async (req, res) => {
   try {
-    const cacheKey = 'richest_users';
-    const cachedData = cache.get(cacheKey);
+    const redisClient = await getRedisClient();
+    const cachedData = await redisClient.get('richest_users');
     if (cachedData) return res.json(JSON.parse(cachedData));
     const richestUsers = await User.find({})
       .sort({ balance: -1 })
       .limit(100)
       .select('username balance profile.profilePicture');
     const response = { users: richestUsers };
-    cache.set(cacheKey, JSON.stringify(response));
+
+    await redisClient.set('richest_users', JSON.stringify(response), {
+      EX: 3600,
+    });
     res.json(response);
   } catch (error) {
     console.error(error);
@@ -29,7 +31,8 @@ router.get('/richest', async (req, res) => {
 // Route to get all usernames of donators
 router.get('/donators', async (req, res) => {
   try {
-    const cachedData = cache.get('donators');
+    const redisClient = await getRedisClient();
+    const cachedData = await redisClient.get('donators');
     if (cachedData) return res.json(JSON.parse(cachedData));
 
     // Define the badge names for donators
@@ -46,13 +49,15 @@ router.get('/donators', async (req, res) => {
     }));
 
     // Cache the response
-    cache.set('donators', JSON.stringify(response));
+    await redisClient.set('donators', JSON.stringify(response), {
+      EX: 3600,
+    });
 
     // Send the response
     res.json(response);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'خطأ في الخادم' });
+    console.error('Error fetching richest users:', error);
+    res.status(500).json({ error: 'فشل في جلب أغنى المستخدمين.' });
   }
 });
 

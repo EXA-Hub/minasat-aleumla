@@ -54,7 +54,6 @@ function generateToken(username, uid, password) {
  */
 function decryptToken(token) {
   if (!token) return null;
-
   // Split the token into IV and encrypted data
   const [ivHex, encryptedData] = token.split(':');
   const iv = Buffer.from(ivHex, 'hex');

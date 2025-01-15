@@ -1,20 +1,18 @@
 import express from 'express';
 import Engagement from '../../utils/schemas/engagements.js';
+import getRedisClient from '../../utils/libs/redisClient.js';
 import User from '../../utils/schemas/mongoUserSchema.js';
-import NodeCache from 'node-cache'; // Import node-cache
 
 const router = express.Router();
-const cache = new NodeCache({ stdTTL: 1 * 24 * 60 * 60 }); // Cache with a TTL of hour
 
 router.get('/@me/engagement', async (req, res) => {
   try {
     const userId = req.user._id; // Get the authenticated user's ID
-
+    const redisClient = await getRedisClient();
     // Check if data is already cached
     const cacheKey = `userEngagementData_${userId}`;
-    const cachedData = cache.get(cacheKey);
-
-    if (cachedData) return res.json(JSON.parse(cachedData)); // Return cached data if available
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) return res.json(JSON.parse(cachedData));
 
     // Calculate the date 30 days ago
     const thirtyDaysAgo = new Date();
@@ -58,13 +56,9 @@ router.get('/@me/engagement', async (req, res) => {
     const uniqueUsernames = usernames.map((user) => user.username);
 
     // Cache the data
-    cache.set(
-      cacheKey,
-      JSON.stringify({
-        viewsData: formattedViewsData,
-        viewerIds: uniqueUsernames,
-      })
-    );
+    await redisClient.set(cacheKey, JSON.stringify({ viewsData, viewerIds }), {
+      EX: 86400,
+    }); // 24 hours TTL
 
     // Send the response
     res.json({ viewsData: formattedViewsData, viewerIds: uniqueUsernames });

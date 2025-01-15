@@ -99,7 +99,7 @@ function requireAppWs(_app, ws) {
       try {
         res.json({
           profile: req.user.profile,
-          online: ws.clients.has(req.user.username),
+          online: await ws.clients.has(req.user.username),
           badges: [
             ...badges.map((badge) =>
               req.user.badges.includes(badge.name) ? badge : null

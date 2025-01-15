@@ -1,8 +1,9 @@
 // my-api/src/webSockets/wss.js
 import http from 'http';
 import { WebSocketServer } from 'ws';
-import { decryptToken } from '../utils/token-sys.js';
-import User from '../utils/schemas/mongoUserSchema.js';
+import { decryptToken } from '../../../api/src/utils/token-sys.js';
+import User from '../../../api/src/utils/schemas/mongoUserSchema.js';
+import { connectToMongoDB } from '../../../api/src/utils/libs/mongoose.js';
 
 const clients = new Map();
 
@@ -12,16 +13,14 @@ function initializeWebSocket(app) {
 
   wss.on('connection', async function (ws, req) {
     try {
-      const url = new URL(req.url, 'ws://' + req.headers.host);
-      const token = url.searchParams.get('token');
-
-      if (!token) {
+      const token = req.url.replace('/?token=', '');
+      if (!token || ['undefined', 'null', ''].includes(token)) {
         ws.close(1008, 'Token required');
         return;
       }
-
       const decryptedData = decryptToken(token);
       const [username, uid, password] = decryptedData.split('\n');
+      await connectToMongoDB();
       const user = await User.findOne({ username, _id: uid });
       if (!user) return ws.close(1008, 'User not found');
       if (password !== user.password) return ws.close(1008, 'Invalid token');

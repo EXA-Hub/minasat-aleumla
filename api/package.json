@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "nodemon src/index.js",
-    "vercel-build": "echo 'vercel-build'"
+    "vercel-build": "echo 'vercel-build'",
+    "vercel-dev": "nodemon --exec 'vercel dev'"
   },
   "author": "zampx",
   "license": "ISC",
@@ -20,6 +21,7 @@
     "express-rate-limit": "^7.5.0",
     "express-validator": "^7.2.0",
     "helmet": "^8.0.0",
+    "ip": "^2.0.1",
     "moment-timezone": "^0.5.46",
     "mongoose": "^8.9.2",
     "morgan": "^1.10.0",
@@ -29,6 +31,7 @@
     "nodemailer": "^6.9.16",
     "otplib": "^12.0.1",
     "proxycheck-ts": "^0.0.11",
+    "redis": "^4.7.0",
     "request-ip": "^3.3.0",
     "sqlite3": "^5.1.7",
     "ws": "^8.18.0"
