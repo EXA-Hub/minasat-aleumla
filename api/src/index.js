@@ -1,10 +1,12 @@
 console.log('process.env.NODE_ENV', process.env.NODE_ENV);
-import dotenv from 'dotenv-safe';
-dotenv.config({
-  allowEmptyValues: true,
-});
-
-console.log(process.env.MONGO_URI);
+import dotenvSafe from 'dotenv-safe';
+import dotenv from 'dotenv';
+// only on dev
+if (process.env.NODE_ENV !== 'production')
+  dotenvSafe.config({
+    allowEmptyValues: true,
+  });
+else dotenv.config();
 
 import cors from 'cors';
 import argon2 from 'argon2';
