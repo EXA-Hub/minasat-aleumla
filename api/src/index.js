@@ -1,10 +1,8 @@
 console.log('process.env.NODE_ENV', process.env.NODE_ENV);
 import dotenv from 'dotenv-safe';
-// only on dev
-if (process.env.NODE_ENV !== 'production')
-  dotenv.config({
-    allowEmptyValues: true,
-  });
+dotenv.config({
+  allowEmptyValues: true,
+});
 
 import cors from 'cors';
 import argon2 from 'argon2';
