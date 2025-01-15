@@ -4,6 +4,8 @@ dotenv.config({
   allowEmptyValues: true,
 });
 
+console.log(process.env.MONGO_URI);
+
 import cors from 'cors';
 import argon2 from 'argon2';
 import helmet from 'helmet';
