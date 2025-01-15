@@ -1,10 +1,11 @@
 // my-api/src/apps/youtube.js
 import mongoose from 'mongoose';
 const AppID = 'YouTube';
-// import dotenv from 'dotenv-safe';
-// dotenv.config({
-//   allowEmptyValues: true,
-// });
+import dotenv from 'dotenv-safe';
+if (process.env.NODE_ENV !== 'production')
+  dotenv.config({
+    allowEmptyValues: true,
+  });
 const youtubeApp = {
   id: AppID,
   name: 'يوتيوب',

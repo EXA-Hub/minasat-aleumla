@@ -1,3 +1,4 @@
+import { error } from 'console';
 import { createHash } from 'crypto';
 import NodeCache from 'node-cache';
 
@@ -25,7 +26,10 @@ function cachingMiddleware(req, res, next) {
         '\x1b[33m🔄 Using cached response for: \x1b[36m' + key + '\x1b[0m'
       );
       if (!res.headersSent) {
-        res.writeHead(cachedResponse.statusCode, cachedResponse.headers);
+        res.writeHead(cachedResponse.statusCode, {
+          ...cachedResponse.headers,
+          'Content-Type': 'application/json; charset=utf-8', // Ensure proper JSON and encoding
+        });
         res.end(cachedResponse.body);
       }
       return;

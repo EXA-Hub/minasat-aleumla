@@ -1,7 +1,10 @@
-// import dotenv from 'dotenv-safe';
-// dotenv.config({
-//   allowEmptyValues: true,
-// });
+console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+import dotenv from 'dotenv-safe';
+// only on dev
+if (process.env.NODE_ENV !== 'production')
+  dotenv.config({
+    allowEmptyValues: true,
+  });
 
 import cors from 'cors';
 import argon2 from 'argon2';
@@ -90,14 +93,21 @@ app.use(bodyParser.json());
 app.use(cachingMiddleware);
 
 // Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log('MongoDB connected successfully');
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-  });
+let mongoConnection;
+// Add before any route handlers:
+app.use(async (req, res, next) => {
+  if (mongoConnection) return;
+  mongoConnection = await mongoose
+    .connect(process.env.MONGO_URI)
+    .then(() => {
+      console.log('MongoDB connected successfully');
+      next();
+    })
+    .catch((err) => {
+      console.error('MongoDB connection error:', err);
+      throw err;
+    });
+});
 
 import { validateRequest } from './utils/middleware/validateRequest.js';
 
@@ -226,7 +236,7 @@ try {
   }
 }
 
-import startTask from './functions/jobs/ExpiredSubscriptions.js';
-startTask(ws.wss.sendNotification);
+// import startTask from './functions/jobs/ExpiredSubscriptions.js';
+// startTask(ws.wss.sendNotification);
 
 export default app;
