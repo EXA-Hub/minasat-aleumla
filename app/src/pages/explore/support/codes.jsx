@@ -2,6 +2,7 @@
 import { Copy } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useState, useEffect } from 'react';
+import { useOutletContext, Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import api from '../../../utils/api';
@@ -14,6 +15,7 @@ const planTranslations = {
 };
 
 const CodesPage = () => {
+  const { user } = useOutletContext();
   const [codes, setCodes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,6 +38,19 @@ const CodesPage = () => {
     };
     fetchCodes();
   }, [page]);
+
+  if (!user)
+    return (
+      <div>
+        من فضلك{' '}
+        <Link
+          to="/login"
+          className="text-primary hover:underline transition-all duration-300">
+          سجل دخول
+        </Link>{' '}
+        للوصول إلى هذه الصفحة.
+      </div>
+    );
 
   const copyToClipboard = async (code) => {
     if (navigator.clipboard) {

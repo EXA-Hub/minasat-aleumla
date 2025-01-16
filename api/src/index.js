@@ -197,35 +197,17 @@ app.get('/@me', authenticateToken, (req, res) => {
   }); // Send only those fields in the response
 });
 
-// mock function until
-// i make the server that will handle the websocket
-const ws = {
-  wss: {
-    sendNotification: async (msg, date, username) => {
-      console.log(msg, date, username);
-    },
-    brodcast: async (msg, date) => {
-      console.log(msg, date);
-    },
-  },
-  clients: {
-    has: (username) => {
-      console.log(username);
-      return true;
-    },
-  },
-};
-
 import { loadRoutes } from './routeLoader.js';
-await loadRoutes(app, { authenticateToken }, ws);
+await loadRoutes(app, { authenticateToken });
 
 // Use the 404 handler
 import notFoundHandler from './404.js';
-app.use(notFoundHandler(app));
+app.use(notFoundHandler(app, config.isProduction));
 
 try {
   app.listen(port, host, () => {
-    console.log(`App listening at http://${host}:${port}`);
+    if (!config.isProduction)
+      console.log(`App listening at http://${host}:${port}`);
   });
 } catch (e) {
   console.error(`Failed to start server at http://${host}:${port}:`, e);

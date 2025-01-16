@@ -150,13 +150,6 @@ const userSchema = new mongoose.Schema({
     default: () => ({}),
     _id: false,
   },
-  notifications: [
-    {
-      text: { type: String, required: true },
-      time: { type: Number, default: () => Date.now() },
-      _id: false,
-    },
-  ],
   apps: {
     type: apps.reduce((acc, app) => {
       acc[app.id] = [app.schema]; // Define an array of schemas for each app

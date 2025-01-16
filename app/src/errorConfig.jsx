@@ -40,6 +40,16 @@ const errors = [
       text: 'صفحة المساعدة',
     },
   },
+  {
+    code: 400,
+    description:
+      'بيانات غير صالحة. يرجى التحقق من البيانات والمحاولة مرة أخرى.',
+    image: '/icon.svg',
+    button: {
+      path: '/help',
+      text: 'صفحة المساعدة',
+    },
+  },
 ];
 
 // Function to generate error pages dynamically

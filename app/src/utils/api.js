@@ -6,7 +6,7 @@ import errors from '../errorConfig';
 import React from 'react';
 
 // Create a function to dynamically import the ErrorWidget
-const showErrorWidget = async (errorData) => {
+const showErrorWidget = async (errorData, resData) => {
   const root = document.createElement('div');
   root.id = 'error-widget-root';
   document.body.appendChild(root);
@@ -17,6 +17,7 @@ const showErrorWidget = async (errorData) => {
   createRoot(root).render(
     React.createElement(ErrorWidget, {
       error: errorData,
+      response: resData,
       onClose: () => document.body.removeChild(root),
     })
   );
@@ -85,11 +86,11 @@ axiosInstance.interceptors.response.use(
         );
       return Promise.resolve(cachedResponse.response);
     } else if (error.response) {
-      const { status } = error.response;
+      const { status, data } = error.response;
       const errorData = errors.find((err) => err.code === status);
       if (errorData)
         if (errorData.path) window.location.href = errorData.path;
-        else await showErrorWidget(errorData);
+        else await showErrorWidget(errorData, data);
       return Promise.reject(error.response);
     }
     return Promise.reject(new Error(error.message || 'خطأ في الاتصال بالخادم'));

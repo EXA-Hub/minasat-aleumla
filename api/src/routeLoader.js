@@ -1,8 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { ws } from './utils/webhook.js';
 
-export const loadRoutes = async (app, { authenticateToken }, ws) => {
+export const loadRoutes = async (app, { authenticateToken }) => {
   const loadRoutesFromDir = async (dir, basePath = '', requireAuth = false) => {
     const files = fs.readdirSync(dir);
 
@@ -42,6 +43,11 @@ export const loadRoutes = async (app, { authenticateToken }, ws) => {
   await loadRoutesFromDir(
     path.join(baseDir, 'routes', 'auth'),
     '/api/auth',
+    true
+  );
+  await loadRoutesFromDir(
+    path.join(baseDir, 'routes', 'websockets'),
+    '/webhooks',
     true
   );
 };

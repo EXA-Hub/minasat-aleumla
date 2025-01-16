@@ -10,7 +10,7 @@ CHOICE=$(whiptail --title "Menu" --menu "Use arrow keys to choose an option:" 15
 case $CHOICE in
   "Server")
     cd server
-    npm test
+    npm run dev
     ;;
   "API")
     cd api

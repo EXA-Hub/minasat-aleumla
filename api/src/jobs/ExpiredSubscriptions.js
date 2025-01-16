@@ -3,12 +3,13 @@ import moment from 'moment-timezone';
 import { connectToMongoDB } from '../utils/libs/mongoose.js';
 import User from '../utils/schemas/mongoUserSchema.js';
 import CronJob from '../utils/schemas/CronJob.js';
+import { ws } from '../utils/webhook.js';
 import config from '../config.js';
 
 const { jobName, days } = config.cron.checkExpiredSubscriptions;
 
 // Function to check for expired subscriptions
-const checkExpiredSubscriptions = async (sendNotification) => {
+const checkExpiredSubscriptions = async () => {
   await connectToMongoDB();
   const lockKey = `${jobName}_lock`;
   try {
@@ -44,13 +45,11 @@ const checkExpiredSubscriptions = async (sendNotification) => {
           subscribedAt: new Date(),
         });
 
-        if (sendNotification) {
-          await sendNotification(
-            '⚠️ إنتهت صلاحية خطتك ⏰',
-            Date.now(),
-            user.username
-          );
-        }
+        await ws.wss.sendNotification(
+          '⚠️ إنتهت صلاحية خطتك ⏰',
+          Date.now(),
+          user.username
+        );
 
         console.log(
           `User ${user.username} has been downgraded to the free plan.`

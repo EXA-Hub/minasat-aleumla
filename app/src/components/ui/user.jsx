@@ -24,7 +24,7 @@ const NotificationItem = memo(({ notification, onClick, formatTimeDiff }) => (
   <div onClick={onClick} className={notificationItemStyles.wrapper}>
     <div className={notificationItemStyles.text}>{notification.text}</div>
     <div className={notificationItemStyles.time}>
-      {formatTimeDiff(notification.time)}
+      {formatTimeDiff(notification.date)}
     </div>
   </div>
 ));
@@ -34,7 +34,7 @@ NotificationItem.displayName = 'NotificationItem';
 NotificationItem.propTypes = {
   notification: PropTypes.shape({
     text: PropTypes.string.isRequired,
-    time: PropTypes.number.isRequired,
+    date: PropTypes.number.isRequired,
   }).isRequired,
   onClick: PropTypes.func.isRequired,
   formatTimeDiff: PropTypes.func.isRequired,
@@ -135,7 +135,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
 
   const reconnectWebSocket = useCallback(() => {
     if (reconnectAttempts.current >= RECONNECT_MAX_ATTEMPTS) {
-      toast.error('فشل الاتصال بالخادم. يرجى تحديث الصفحة.');
+      toast.error('فشل الاتصال بخدمة الإشعارات.');
       return;
     }
 

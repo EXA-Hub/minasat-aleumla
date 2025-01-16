@@ -1,4 +1,4 @@
-export default (app) => {
+export default (app, isProduction) => {
   const listRoutes = () => {
     const routes = [];
 
@@ -59,8 +59,12 @@ export default (app) => {
   return (req, res) => {
     res.status(404).json({
       error: 'مسار غير موجود',
-      message: `Route ${req.method} ${req.path} does not exist.`,
-      availableRoutes: listRoutes(),
+      ...(isProduction
+        ? {}
+        : {
+            message: `Route ${req.method} ${req.path} does not exist.`,
+            availableRoutes: listRoutes(),
+          }),
     });
   };
 };
