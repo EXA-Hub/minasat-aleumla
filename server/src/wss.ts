@@ -1,6 +1,8 @@
 // server/src/wss.ts
+import fs from 'fs';
+import path from 'path';
 import http from 'http';
-import { QuickDB } from 'quick.db';
+import fetch from 'node-fetch';
 import { Application } from 'express';
 import { WebSocketServer, WebSocket } from 'ws';
 
@@ -18,8 +20,25 @@ interface CustomWebSocketServer extends WebSocketServer {
   broadcast: (notification: string, time?: number) => void;
 }
 
-const db = new QuickDB();
+const notificationsFilePath = path.join(__dirname, 'notifications.json');
 const clients = new Map<string, WebSocket>();
+
+// Helper function to read notifications from the file
+function readNotifications(): Record<string, Notification[]> {
+  if (!fs.existsSync(notificationsFilePath)) {
+    return {};
+  }
+  const data = fs.readFileSync(notificationsFilePath, 'utf-8');
+  return JSON.parse(data);
+}
+
+// Helper function to write notifications to the file
+function writeNotifications(notifications: Record<string, Notification[]>) {
+  fs.writeFileSync(
+    notificationsFilePath,
+    JSON.stringify(notifications, null, 2)
+  );
+}
 
 function initializeWebSocket(app: Application) {
   const server = http.createServer(app);
@@ -51,12 +70,18 @@ function initializeWebSocket(app: Application) {
       const username = await response.text();
       clients.set(username, ws);
 
-      const waitedNotifications =
-        (await db.get(`notifications.${username}`)) || [];
-      for (const notify of waitedNotifications) {
+      // Read pending notifications for the user
+      const notifications = readNotifications();
+      const userNotifications = notifications[username] || [];
+
+      // Send pending notifications to the user
+      for (const notify of userNotifications) {
         ws.send(JSON.stringify(notify));
       }
-      await db.delete(`notifications.${username}`);
+
+      // Clear the user's notifications after sending
+      delete notifications[username];
+      writeNotifications(notifications);
 
       ws.on('close', () => {
         clients.delete(username);
@@ -79,10 +104,13 @@ function initializeWebSocket(app: Application) {
       if (client?.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(notify));
       } else {
-        const waitedNotifications =
-          (await db.get(`notifications.${username}`)) || [];
-        waitedNotifications.push(notify);
-        await db.set(`notifications.${username}`, waitedNotifications);
+        // Store the notification in the file if the user is offline
+        const notifications = readNotifications();
+        if (!notifications[username]) {
+          notifications[username] = [];
+        }
+        notifications[username].push(notify);
+        writeNotifications(notifications);
       }
     } catch (error) {
       console.error('Error sending notification:', error);

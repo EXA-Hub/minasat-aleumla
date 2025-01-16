@@ -135,7 +135,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
 
   const reconnectWebSocket = useCallback(() => {
     if (reconnectAttempts.current >= RECONNECT_MAX_ATTEMPTS) {
-      toast.error('فشل الاتصال بخدمة الإشعارات.');
+      toast.error('فشل الاتصال بخدمات الإشعارات.');
       return;
     }
 
