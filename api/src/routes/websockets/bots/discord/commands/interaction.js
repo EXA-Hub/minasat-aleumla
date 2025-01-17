@@ -45,7 +45,7 @@ router.post(
       });
 
       if (!user)
-        return await sendFollowUpMessage({
+        return await sendFollowUpMessage(interaction, {
           content: `مرحبًا <@${interaction.member.user.id}>، يبدو أنك لم تقم بربط أي حساب من المنصة بعد ${emojis.icon}!`,
           allowed_mentions: { parse: [] },
         });
@@ -53,7 +53,7 @@ router.post(
       switch (interaction.data.name) {
         case 'ping': {
           const latency = Date.now() - interaction.id / 4194304 + 1420070400000;
-          await sendFollowUpMessage({
+          await sendFollowUpMessage(interaction, {
             content: `بونج بونج <@${interaction.member.user.id}>!${
               interaction.data.options?.[0]?.value
                 ? `\n${latency}ms (مللي ثانية)`
@@ -73,65 +73,55 @@ router.post(
             : user;
 
           if (!target)
-            return await sendFollowUpMessage(
-              interaction,
-              JSON.stringify({
-                content:
-                  'المستخدم غير موجود. أو لم يتم ربط حساب الديسكورد هذا.',
-              })
-            );
+            return await sendFollowUpMessage(interaction, {
+              content: 'المستخدم غير موجود. أو لم يتم ربط حساب الديسكورد هذا.',
+            });
 
           if (target.privacy.showWallet || target.privacy.showProfile)
-            await sendFollowUpMessage(
-              interaction,
-              JSON.stringify({
-                embeds: [
-                  {
-                    title: 'معلومات المستخدم', // Embed title
-                    fields: [
-                      {
-                        name: 'إسم المستخدم', // Field name
-                        value: `\`@${target.username}\``, // Field value
-                        inline: true, // Display inline (side by side)
-                      },
-                      {
-                        name: 'الرصيد', // Field name
-                        value: `**${target.balance}${emojis.icon}**`, // Field value
-                        inline: true, // Display inline (side by side)
-                      },
-                      {
-                        name: 'الرسوم', // Field name
-                        value: `*${
-                          subscriptions[target.tier].features.wallet.fee
-                        }%*`, // Field value
-                        inline: true, // Display inline (side by side)
-                      },
-                    ],
-                    color: 0x00ff00, // Embed color (green in this case)
-                    footer: {
-                      text: 'طلب بواسطة ' + interaction.member.user.username, // Footer text
-                      icon_url: discordApp.image(
-                        user,
-                        interaction.member.user.id,
-                        'profilePicture'
-                      ), // Footer icon (user avatar)
+            await sendFollowUpMessage(interaction, {
+              embeds: [
+                {
+                  title: 'معلومات المستخدم', // Embed title
+                  fields: [
+                    {
+                      name: 'إسم المستخدم', // Field name
+                      value: `\`@${target.username}\``, // Field value
+                      inline: true, // Display inline (side by side)
                     },
+                    {
+                      name: 'الرصيد', // Field name
+                      value: `**${target.balance}${emojis.icon}**`, // Field value
+                      inline: true, // Display inline (side by side)
+                    },
+                    {
+                      name: 'الرسوم', // Field name
+                      value: `*${
+                        subscriptions[target.tier].features.wallet.fee
+                      }%*`, // Field value
+                      inline: true, // Display inline (side by side)
+                    },
+                  ],
+                  color: 0x00ff00, // Embed color (green in this case)
+                  footer: {
+                    text: 'طلب بواسطة ' + interaction.member.user.username, // Footer text
+                    icon_url: discordApp.image(
+                      user,
+                      interaction.member.user.id,
+                      'profilePicture'
+                    ), // Footer icon (user avatar)
                   },
-                ],
-              })
-            );
+                },
+              ],
+            });
           else
-            await sendFollowUpMessage(
-              interaction,
-              JSON.stringify({
-                content: `> لا يمكن إظهار الرصيد لـ${target.username}`,
-              })
-            );
+            await sendFollowUpMessage(interaction, {
+              content: `> لا يمكن إظهار الرصيد لـ${target.username}`,
+            });
           break;
         }
 
         default: {
-          await sendFollowUpMessage({
+          await sendFollowUpMessage(interaction, {
             content: 'كيف وصلت لهذا الأمر؟ لا أستطيع الرد عليك :skull:',
           });
         }
