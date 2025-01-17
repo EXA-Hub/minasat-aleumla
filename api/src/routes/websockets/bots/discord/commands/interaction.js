@@ -45,7 +45,7 @@ router.post(
       });
 
       if (!user)
-        return await interaction.editReply({
+        return await sendFollowUpMessage({
           content: `مرحبًا <@${interaction.member.user.id}>، يبدو أنك لم تقم بربط أي حساب من المنصة بعد ${emojis.icon}!`,
           allowed_mentions: { parse: [] },
         });
@@ -53,7 +53,7 @@ router.post(
       switch (interaction.data.name) {
         case 'ping': {
           const latency = Date.now() - interaction.id / 4194304 + 1420070400000;
-          await interaction.editReply({
+          await sendFollowUpMessage({
             content: `بونج بونج <@${interaction.member.user.id}>!${
               interaction.data.options?.[0]?.value
                 ? `\n${latency}ms (مللي ثانية)`
@@ -131,7 +131,7 @@ router.post(
         }
 
         default: {
-          await interaction.editReply({
+          await sendFollowUpMessage({
             content: 'كيف وصلت لهذا الأمر؟ لا أستطيع الرد عليك :skull:',
           });
         }
