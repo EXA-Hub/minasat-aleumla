@@ -169,6 +169,12 @@ app.get('/@me', authenticateToken, (req, res) => {
 import { loadRoutes } from './routeLoader.js';
 await loadRoutes(app, { authenticateToken });
 
+app.all('/', (req, res) => {
+  res
+    .status(200)
+    .json({ message: 'لقد وصلت إلى الخادم, عالم آخر يمكنك تركه وشأنه.' });
+});
+
 // Use the 404 handler
 import notFoundHandler from './404.js';
 app.use(notFoundHandler(app, config.isProduction));

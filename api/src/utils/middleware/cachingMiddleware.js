@@ -60,11 +60,6 @@ async function cachingMiddleware(req, res, next) {
       if (!res.headersSent) {
         const statusCode = res.statusCode;
         originalEnd.call(this, chunk);
-        if (
-          statusCode === 404 &&
-          JSON.parse(cachedData).error === 'مسار غير موجود'
-        )
-          return;
         console.log(
           '\x1b[32m🌟 Caching response for: \x1b[34m' + key + '\x1b[0m'
         );

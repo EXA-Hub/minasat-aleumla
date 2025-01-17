@@ -22,17 +22,5 @@
         "required": true
       }
     ]
-  },
-  {
-    "name": "profile",
-    "description": "عرض الملف الشخصي للحساب المرتبط",
-    "options": [
-      {
-        "name": "target",
-        "type": 6,
-        "description": "المستخدم المراد عرض ملفه الشخصي",
-        "required": false
-      }
-    ]
   }
 ]
