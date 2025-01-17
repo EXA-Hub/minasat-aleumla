@@ -16,6 +16,7 @@ import { body } from 'express-validator';
 import cachingMiddleware from './utils/middleware/cachingMiddleware.js';
 import { authenticateToken } from './utils/authenticateToken.js';
 import { connectToMongoDB } from './utils/libs/mongoose.js';
+import notFoundHandler, { listRoutes } from './404.js';
 import User from './utils/schemas/mongoUserSchema.js';
 import { limiter } from './utils/libs/redisClient.js';
 import blockVpnProxy from './utils/blockVpnProxy.js';
@@ -46,13 +47,25 @@ app.use(
   })
 );
 app.use(helmet());
+// Serve static files from the public folder
+app.use(
+  express.static(
+    join(dirname(fileURLToPath(import.meta.url)), '..', 'public'),
+    {
+      maxAge: '1d',
+      immutable: true,
+    }
+  )
+);
+
 app.use((req, res, next) => {
   if (req.path.includes('bots')) next();
   else bodyParser.json()(req, res, next);
 });
 app.use((req, res, next) => {
-  if (req.path.includes('bots')) next();
-  else cachingMiddleware(req, res, next);
+  cachingMiddleware(req, res, next, listRoutes(app, true), [
+    '/webhooks/bots/discord/commands/interactions',
+  ]);
 });
 
 // Add before any route handlers:
@@ -177,13 +190,7 @@ app.all('/', (req, res) => {
     .json({ message: 'لقد وصلت إلى الخادم, عالم آخر يمكنك تركه وشأنه.' });
 });
 
-// Serve static files from the public folder
-app.use(
-  express.static(join(dirname(fileURLToPath(import.meta.url)), '..', 'public'))
-);
-
 // Use the 404 handler
-import notFoundHandler from './404.js';
 app.use(notFoundHandler(app, config.isProduction));
 
 try {

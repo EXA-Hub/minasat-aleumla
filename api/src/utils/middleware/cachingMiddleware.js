@@ -26,10 +26,21 @@ function generateCacheKey(req) {
  * @param {import('express').Response} res
  * @param {import('express').NextFunction} next
  */
-async function cachingMiddleware(req, res, next) {
+async function cachingMiddleware(
+  req,
+  res,
+  next,
+  includedRoutes = [],
+  excludedRoutes = []
+) {
   try {
-    const redisClient = await getRedisClient();
+    // console.log('Included Routes:', includedRoutes);
+    // console.log('Excluded Routes:', excludedRoutes);
+    // Skip caching if the route is not in the includedRoutes or if it is in excludedRoutes
+    if (!includedRoutes.includes(req.path) || excludedRoutes.includes(req.path))
+      return next(); // Skip caching and continue to the next middleware
 
+    const redisClient = await getRedisClient();
     const key = generateCacheKey(req);
     const cachedResponse = await redisClient.get(key);
 
