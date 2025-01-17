@@ -7,7 +7,9 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import express from 'express';
 import requestIp from 'request-ip';
+import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
+import { join, dirname } from 'path';
 import { authenticator } from 'otplib';
 import hcaptcha from 'express-hcaptcha';
 import { body } from 'express-validator';
@@ -174,6 +176,11 @@ app.all('/', (req, res) => {
     .status(200)
     .json({ message: 'لقد وصلت إلى الخادم, عالم آخر يمكنك تركه وشأنه.' });
 });
+
+// Serve static files from the public folder
+app.use(
+  express.static(join(dirname(fileURLToPath(import.meta.url)), '..', 'public'))
+);
 
 // Use the 404 handler
 import notFoundHandler from './404.js';
