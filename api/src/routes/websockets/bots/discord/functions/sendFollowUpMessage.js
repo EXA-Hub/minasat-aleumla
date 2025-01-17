@@ -1,5 +1,5 @@
 // api/src/routes/websockets/bots/discord/functions/sendFollowUpMessage.js
-async function sendFollowUpMessage(interaction, data) {
+async function sendFollowUpMessage(interaction, payload) {
   const url = `https://discord.com/api/v10/webhooks/${process.env.DISCORD_CLIENT_ID}/${interaction.token}`;
   console.log(url);
   try {
@@ -9,7 +9,7 @@ async function sendFollowUpMessage(interaction, data) {
         'Content-Type': 'application/json',
         Authorization: `Bot ${process.env.DISCORD_BOT_TOKEN}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
