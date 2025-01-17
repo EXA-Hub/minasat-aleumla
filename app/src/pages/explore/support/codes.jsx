@@ -36,8 +36,8 @@ const CodesPage = () => {
         setLoading(false);
       }
     };
-    fetchCodes();
-  }, [page]);
+    if (user) fetchCodes();
+  }, [page, user]);
 
   if (!user)
     return (

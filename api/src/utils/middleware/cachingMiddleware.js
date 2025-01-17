@@ -14,6 +14,18 @@ function generateCacheKey(req) {
   return createHash('sha256').update(JSON.stringify(keyData)).digest('hex');
 }
 
+/**
+ * Caching middleware to store responses in Redis.
+ * Handles caching for GET requests only.
+ * The cache key is generated using the request method, path, query, body, params, and token.
+ * The cached response is stored in Redis as a JSON string containing the status code, headers, and body.
+ * The cached response is used if the key is found in Redis.
+ * If the cached response is a 302 redirect, the redirect is followed.
+ * If not, the cached response is sent with the proper headers and content type.
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
+ */
 async function cachingMiddleware(req, res, next) {
   try {
     const redisClient = await getRedisClient();
@@ -27,18 +39,13 @@ async function cachingMiddleware(req, res, next) {
       );
       if (!res.headersSent) {
         const data = JSON.parse(cachedResponse);
-        res.writeHead(data.statusCode, {
-          ...data.headers,
-          'Content-Type': 'application/json; charset=utf-8', // Ensure proper JSON and encoding
-        });
+        res.writeHead(data.statusCode, data.headers);
         res.end(data.body);
       }
       return;
     }
 
     let cachedData = '';
-    const headers = {};
-    let statusCode;
 
     const originalWrite = res.write;
     const originalEnd = res.end;
@@ -51,19 +58,24 @@ async function cachingMiddleware(req, res, next) {
     res.end = async function (chunk) {
       if (chunk) cachedData += chunk;
       if (!res.headersSent) {
+        const statusCode = res.statusCode;
         originalEnd.call(this, chunk);
-        statusCode = res.statusCode;
-        if (res.headers)
-          Object.keys(res.headers).forEach((header) => {
-            headers[header] = res.headers[header];
-          });
+        if (
+          statusCode === 404 &&
+          JSON.parse(cachedData).error === 'مسار غير موجود'
+        )
+          return;
         console.log(
           '\x1b[32m🌟 Caching response for: \x1b[34m' + key + '\x1b[0m'
         );
         await redisClient.set(
           key,
-          JSON.stringify({ statusCode, headers, body: cachedData }),
-          { EX: 10 } // Cache for 10 seconds
+          JSON.stringify({
+            statusCode,
+            headers: res.getHeaders(),
+            body: cachedData,
+          }),
+          { EX: 60 * 10 }
         );
       }
     };

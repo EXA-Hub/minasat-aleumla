@@ -1,0 +1,38 @@
+[
+  {
+    "name": "wallet",
+    "description": "عرض المحفظة",
+    "options": [
+      {
+        "name": "target",
+        "type": 6,
+        "description": "اختر المستخدم المراد عرض محفظته",
+        "required": false
+      }
+    ]
+  },
+  {
+    "name": "ping",
+    "description": "إختبار سرعة الإستجابة",
+    "options": [
+      {
+        "name": "test",
+        "type": 5,
+        "description": "الحصول على بيانات السرعة",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "profile",
+    "description": "عرض الملف الشخصي للحساب المرتبط",
+    "options": [
+      {
+        "name": "target",
+        "type": 6,
+        "description": "المستخدم المراد عرض ملفه الشخصي",
+        "required": false
+      }
+    ]
+  }
+]

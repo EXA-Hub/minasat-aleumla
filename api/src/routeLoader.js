@@ -17,18 +17,13 @@ export const loadRoutes = async (app, { authenticateToken }) => {
       }
 
       if (!file.endsWith('.js')) continue;
-
       const routeModule = await import(fullPath);
       const exported =
         routeModule.default.name === 'requireAppWs'
           ? routeModule.default(app, ws)
           : routeModule.default;
-
-      if (requireAuth) {
-        app.use(basePath, authenticateToken, exported);
-      } else {
-        app.use(basePath, exported);
-      }
+      if (requireAuth) app.use(basePath, authenticateToken, exported);
+      else app.use(basePath, exported);
     }
   };
 
@@ -36,18 +31,16 @@ export const loadRoutes = async (app, { authenticateToken }) => {
 
   // Load routes separately to maintain proper auth context
   await loadRoutesFromDir(
-    path.join(baseDir, 'routes', 'public'),
-    '/api/public',
-    false
-  );
-  await loadRoutesFromDir(
     path.join(baseDir, 'routes', 'auth'),
     '/api/auth',
     true
   );
   await loadRoutesFromDir(
+    path.join(baseDir, 'routes', 'public'),
+    '/api/public'
+  );
+  await loadRoutesFromDir(
     path.join(baseDir, 'routes', 'websockets'),
-    '/webhooks',
-    true
+    '/webhooks'
   );
 };

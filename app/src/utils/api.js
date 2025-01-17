@@ -1,9 +1,9 @@
 // my-react-app/src/utils/api.js
+import React from 'react';
 import axios from 'axios';
-// At the top of the file, add these imports:
+import SHA256 from 'crypto-js/sha256';
 import { createRoot } from 'react-dom/client';
 import errors from '../errorConfig';
-import React from 'react';
 
 // Create a function to dynamically import the ErrorWidget
 const showErrorWidget = async (errorData, resData) => {
@@ -33,6 +33,30 @@ const axiosInstance = axios.create({
   },
 });
 
+function generateCacheKey(config) {
+  const keyData = {
+    method: config.method?.toLowerCase(),
+    url: config.url,
+    params: config.params || null,
+    data: config.data || null,
+    token: localStorage.getItem('token'),
+  };
+
+  const string = Object.entries(keyData)
+    .filter(([, value]) => value !== null)
+    .map(
+      ([key, value]) =>
+        `${key}:${value !== null && (Array.isArray(value) || typeof value === 'object') ? JSON.stringify(value) : value}`
+    )
+    .join('|');
+
+  const hash = SHA256(string).toString();
+
+  // console.log(string, hash);
+  // Hash the key string using SHA-256 from crypto-js
+  return hash;
+}
+
 const cache = new Map(); // In-memory cache
 const cacheTimeout = 10 * 60 * 1000;
 const cleanUpCache = () => {
@@ -44,13 +68,13 @@ const cleanUpCache = () => {
 // Add request interceptor to handle auth token
 axiosInstance.interceptors.request.use(
   (config) => {
-    const key = `${config.method}:${config.url}:${JSON.stringify(config.data)}:${JSON.stringify(config.params)}`;
+    const key = generateCacheKey(config);
     const cachedResponse = cache.get(key);
     if (cachedResponse && Date.now() - cachedResponse.timestamp < cacheTimeout)
       throw new axios.Cancel('cached-response-found' + key); // Short-circuit the request
     const token = localStorage.getItem('token');
     if (token) config.headers.Authorization = `Bearer ${token}`;
-    if (import.meta.env.DEV) console.log('New Request:', key);
+    if (import.meta.env.DEV) console.log('New Request:', config);
     return config;
   },
   (error) => {
@@ -61,14 +85,10 @@ axiosInstance.interceptors.request.use(
 // Add response interceptor to handle errors
 axiosInstance.interceptors.response.use(
   (response) => {
-    cache.set(
-      `${response.config.method}:${response.config.url}:${JSON.stringify(response.config.data)}:${JSON.stringify(response.config.params)}`,
-      {
-        response: response.data, // Cache only the response data
-        timestamp: Date.now(),
-      }
-    );
     cleanUpCache();
+    const key = generateCacheKey(response.config);
+    if (import.meta.env.DEV) console.log('Cacheing Response:', response);
+    cache.set(key, { response: response.data, timestamp: Date.now() });
     return response.data; // Return only the response data
   },
   async (error) => {
@@ -76,15 +96,10 @@ axiosInstance.interceptors.response.use(
       axios.isCancel(error) &&
       error.message.startsWith('cached-response-found')
     ) {
-      const cachedResponse = cache.get(
-        error.message.replace('cached-response-found', '')
+      if (import.meta.env.DEV) console.log('🚀 Using Cache');
+      return Promise.resolve(
+        cache.get(error.message.replace('cached-response-found', '')).response
       );
-      if (import.meta.env.DEV)
-        console.log(
-          'Cached response:',
-          error.message.replace('cached-response-found', '')
-        );
-      return Promise.resolve(cachedResponse.response);
     } else if (error.response) {
       const { status, data } = error.response;
       const errorData = errors.find((err) => err.code === status);

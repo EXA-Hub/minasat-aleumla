@@ -145,7 +145,7 @@ function requireAppWs(_app, ws) {
         res.json({ username, balance, fee, _id });
       } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Server error' });
+        res.status(500).json({ error: 'خطأ في الخادم' });
       }
     }
   );
@@ -174,7 +174,7 @@ function requireAppWs(_app, ws) {
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Server error' });
+      res.status(500).json({ error: 'خطأ في الخادم' });
     }
   });
 
@@ -183,7 +183,7 @@ function requireAppWs(_app, ws) {
       res.json(req.user.transactionStats);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Server error' });
+      res.status(500).json({ error: 'خطأ في الخادم' });
     }
   });
 

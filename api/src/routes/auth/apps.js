@@ -47,14 +47,12 @@ router.post('/@me/apps/verifyConnection', async (req, res) => {
     res.sendStatus(200);
   } catch (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({
-        error:
-          error.message === 'i have a boyfriend'
-            ? 'هذا التطبيق مرتبط بحساب من قبل'
-            : 'خطآ في الخادم',
-      }); // 'Server error' in Arabic
+    return res.status(500).json({
+      error:
+        error.message === 'i have a boyfriend'
+          ? 'هذا التطبيق مرتبط بحساب من قبل'
+          : 'خطآ في الخادم',
+    });
   }
 });
 
@@ -82,7 +80,7 @@ router.put('/@me/apps/disconnect', async (req, res) => {
     res.sendStatus(200);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'خطآ في الخادم' }); // 'Server error' in Arabic
+    return res.status(500).json({ error: 'خطآ في الخادم' });
   }
 });
 
