@@ -1,6 +1,7 @@
 // api/src/routes/websockets/bots/discord/functions/sendFollowUpMessage.js
 async function sendFollowUpMessage(interaction, body) {
   const url = `https://discord.com/api/v10/webhooks/${process.env.DISCORD_CLIENT_ID}/${interaction.token}`;
+  console.log(url);
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -17,6 +18,7 @@ async function sendFollowUpMessage(interaction, body) {
     }
 
     const data = await response.json();
+    console.log(data);
     return data;
   } catch (error) {
     console.error('Error sending follow-up message:', error.message);

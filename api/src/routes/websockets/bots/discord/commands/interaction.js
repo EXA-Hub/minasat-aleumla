@@ -80,7 +80,7 @@ router.post(
                   'المستخدم غير موجود. أو لم يتم ربط حساب الديسكورد هذا.',
               })
             );
-          console.log(interaction.member.user);
+
           if (target.privacy.showWallet || target.privacy.showProfile)
             await sendFollowUpMessage(
               interaction,
