@@ -16,11 +16,13 @@ export const appCmds = async (interaction) => {
     },
   });
 
-  if (!user)
-    return await sendFollowUpMessage(interaction, {
+  if (!user) {
+    await sendFollowUpMessage(interaction, {
       content: `مرحبًا <@${interaction.member.user.id}>، يبدو أنك لم تقم بربط أي حساب من المنصة بعد ${emojis.icon}!`,
       allowed_mentions: { parse: [] },
     });
+    return true;
+  }
 
   switch (interaction.data.name) {
     case 'ping': {
@@ -44,12 +46,14 @@ export const appCmds = async (interaction) => {
           })
         : user;
 
-      if (!target)
-        return await sendFollowUpMessage(interaction, {
+      if (!target) {
+        await sendFollowUpMessage(interaction, {
           content: 'المستخدم غير موجود. أو لم يتم ربط حساب الديسكورد هذا.',
         });
+        break;
+      }
 
-      if (target.privacy.showWallet || target.privacy.showProfile)
+      if (target.privacy.showWallet && target.privacy.showProfile)
         await sendFollowUpMessage(interaction, {
           embeds: [
             {
