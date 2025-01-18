@@ -10,7 +10,7 @@ import {
   InteractionResponseType,
   verifyKeyMiddleware,
 } from 'discord-interactions';
-import sendFollowUpMessage from '../functions/sendFollowUpMessage.js';
+import { sendFollowUpMessage } from '../functions/sendFollowUpMessage.js';
 import User from '../../../../../utils/schemas/mongoUserSchema.js';
 import discordApp from '../../../../../apps/discord.js';
 import config from '../../../../../config.js';

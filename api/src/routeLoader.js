@@ -18,6 +18,7 @@ export const loadRoutes = async (app, { authenticateToken }) => {
 
       if (!file.endsWith('.js')) continue;
       const routeModule = await import(fullPath);
+      if (!routeModule.default) continue;
       const exported =
         routeModule.default.name === 'requireAppWs'
           ? routeModule.default(app, ws)

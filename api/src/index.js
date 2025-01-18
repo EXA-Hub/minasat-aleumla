@@ -37,7 +37,10 @@ app.use((err, req, res, next) => {
 });
 app.use(requestIp.mw());
 // app.use(blockVpnProxy);
-app.use(limiter);
+app.use((req, res, next) => {
+  if (req.path.includes('bots')) next();
+  else limiter(req, res, next);
+});
 app.use(
   cors({
     origin: [
@@ -62,6 +65,7 @@ app.use((req, res, next) => {
   if (req.path.includes('bots')) next();
   else bodyParser.json()(req, res, next);
 });
+
 app.use((req, res, next) => {
   cachingMiddleware(req, res, next, listRoutes(app, true), [
     '/webhooks/bots/discord/commands/interactions',
