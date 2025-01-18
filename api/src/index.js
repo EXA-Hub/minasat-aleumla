@@ -175,14 +175,14 @@ app.post(
 const { port, host, subscriptions } = config;
 
 app.get('/@me', authenticateToken, (req, res) => {
-  const { username, tier, balance, profile } = req.user; // Destructure the specific fields you want
+  const { username, tier, balance, profile } = req.user;
   res.send({
     username,
     balance,
     fee: subscriptions[tier].features.wallet.fee,
     profile,
     tier,
-  }); // Send only those fields in the response
+  });
 });
 
 import { loadRoutes } from './routeLoader.js';
