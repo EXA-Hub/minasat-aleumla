@@ -57,7 +57,11 @@ async function main() {
         });
         console.log('\x1b[32m✅ Commands deployed!\x1b[0m');
       } catch (error) {
-        console.error('\x1b[31m❌ Deployment failed:', error, '\x1b[0m');
+        console.error(
+          '\x1b[31m❌ Deployment failed:',
+          JSON.stringify(error, null, 2),
+          '\x1b[0m'
+        );
       }
       break;
     }

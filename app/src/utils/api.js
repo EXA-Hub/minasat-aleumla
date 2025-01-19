@@ -1,9 +1,9 @@
 // my-react-app/src/utils/api.js
 import React from 'react';
 import axios from 'axios';
-import SHA256 from 'crypto-js/sha256';
 import { createRoot } from 'react-dom/client';
 import errors from '../errorConfig';
+import CacheManager from './cache';
 
 // Create a function to dynamically import the ErrorWidget
 const showErrorWidget = async (errorData, resData) => {
@@ -33,84 +33,55 @@ const axiosInstance = axios.create({
   },
 });
 
-function generateCacheKey(config) {
-  const keyData = {
-    method: config.method?.toLowerCase(),
-    url: config.url,
-    params: config.params || null,
-    data: config.data || null,
-    token: localStorage.getItem('token'),
-  };
+const cacheManager = new CacheManager({
+  maxSize: 200,
+  ttl: 10 * 60 * 1000,
+  cleanupInterval: 60 * 1000,
+});
 
-  const string = Object.entries(keyData)
-    .filter(([, value]) => value !== null)
-    .map(
-      ([key, value]) =>
-        `${key}:${value !== null && (Array.isArray(value) || typeof value === 'object') ? JSON.stringify(value) : value}`
-    )
-    .join('|');
-
-  const hash = SHA256(string).toString();
-
-  // console.log(string, hash);
-  // Hash the key string using SHA-256 from crypto-js
-  return hash;
-}
-
-const cache = new Map(); // In-memory cache
-const cacheTimeout = 10 * 60 * 1000;
-const cleanUpCache = () => {
-  const now = Date.now();
-  for (const [key, { timestamp }] of cache.entries())
-    if (now - timestamp > cacheTimeout) cache.delete(key); // Remove entries older than 5 seconds
-};
-
-// Add request interceptor to handle auth token
+// Modified axios interceptors
 axiosInstance.interceptors.request.use(
   (config) => {
-    const key = generateCacheKey(config);
-    const cachedResponse = cache.get(key);
-    if (cachedResponse && Date.now() - cachedResponse.timestamp < cacheTimeout)
-      throw new axios.Cancel('cached-response-found' + key); // Short-circuit the request
-    const token = localStorage.getItem('token');
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    if (import.meta.env.DEV) console.log('New Request:', config);
+    const key = cacheManager.generateKey(config);
+    const cachedResponse = cacheManager.get(key);
+    if (cachedResponse)
+      return Promise.reject({
+        __cacheKey: key,
+        __fromCache: true,
+      });
+    if (config.headers) {
+      const token = localStorage.getItem('token');
+      if (token) config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
+  (error) => Promise.reject(error)
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    cacheManager.set(cacheManager.generateKey(response.config), response.data);
+    return response.data;
+  },
   (error) => {
-    return Promise.reject(error);
+    if (error.__fromCache)
+      return Promise.resolve(cacheManager.get(error.__cacheKey));
+    return handleApiError(error);
   }
 );
 
-// Add response interceptor to handle errors
-axiosInstance.interceptors.response.use(
-  (response) => {
-    cleanUpCache();
-    const key = generateCacheKey(response.config);
-    if (import.meta.env.DEV) console.log('Cacheing Response:', response);
-    cache.set(key, { response: response.data, timestamp: Date.now() });
-    return response.data; // Return only the response data
-  },
-  async (error) => {
-    if (
-      axios.isCancel(error) &&
-      error.message.startsWith('cached-response-found')
-    ) {
-      if (import.meta.env.DEV) console.log('🚀 Using Cache');
-      return Promise.resolve(
-        cache.get(error.message.replace('cached-response-found', '')).response
-      );
-    } else if (error.response) {
-      const { status, data } = error.response;
-      const errorData = errors.find((err) => err.code === status);
-      if (errorData)
-        if (errorData.path) window.location.href = errorData.path;
-        else await showErrorWidget(errorData, data);
-      return Promise.reject(error.response);
-    }
-    return Promise.reject(new Error(error.message || 'خطأ في الاتصال بالخادم'));
+// Error handling helper
+const handleApiError = async (error) => {
+  if (error.response) {
+    const { status, data } = error.response;
+    const errorConfig = errors.find((err) => err.code === status);
+    if (errorConfig)
+      if (errorConfig.path) window.location.href = errorConfig.path;
+      else await showErrorWidget(errorConfig, data);
+    return Promise.reject(error.response);
   }
-);
+  return Promise.reject(new Error(error.message || 'خطأ في الاتصال بالخادم'));
+};
 
 const api = {
   donate: {

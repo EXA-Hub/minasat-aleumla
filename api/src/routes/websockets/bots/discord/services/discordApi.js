@@ -1,3 +1,4 @@
+// api/src/routes/websockets/bots/discord/services/discordApi.js
 import { CONFIG } from '../config/config.js';
 
 export class DiscordAPI {
@@ -13,6 +14,48 @@ export class DiscordAPI {
   static getInstance() {
     if (!this.#instance) this.#instance = new DiscordAPI();
     return this.#instance;
+  }
+
+  async #createDmChannel(userId) {
+    const response = await fetch(
+      `${this.#baseUrl}/${CONFIG.DISCORD_API_VERSION}/users/@me/channels`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bot ${this.#botToken}`,
+        },
+        body: JSON.stringify({ recipient_id: userId }),
+      }
+    );
+
+    if (!response.ok) throw new Error(await response.text());
+    return response.json();
+  }
+
+  async sendDM(userId, content) {
+    try {
+      const channel = await this.#createDmChannel(userId);
+      const response = await fetch(
+        `${this.#baseUrl}/${CONFIG.DISCORD_API_VERSION}/channels/${
+          channel.id
+        }/messages`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bot ${this.#botToken}`,
+          },
+          body: JSON.stringify(content),
+        }
+      );
+
+      if (!response.ok) throw new Error(await response.text());
+      return response.json();
+    } catch (error) {
+      console.error('Failed to send DM:', error);
+      throw error;
+    }
   }
 
   async sendFollowUpMessage(interaction, payload) {
@@ -31,13 +74,21 @@ export class DiscordAPI {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(JSON.stringify(errorData));
+        console.error(JSON.stringify(await response.json()));
+        throw new Error();
       }
 
       return await response.json();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      await this.sendDM(interaction.member?.user.id || interaction.user.id, {
+        ...payload,
+        content: (
+          payload.content +
+          '\n||لم أستطع أن أستجيب لذلك، سأقوم بالإرسال في الخاص.||'
+        )
+          .valueOf()
+          .replace('undefined', ''),
+      });
     }
   }
 }

@@ -5,6 +5,7 @@ export const CONFIG = {
   COMMANDS: {
     PING: 'ping',
     WALLET: 'wallet',
+    SEND: 'sendcoins',
   },
   EMOJIS: {
     icon: '<:coinIcon:1324922875203031050>',

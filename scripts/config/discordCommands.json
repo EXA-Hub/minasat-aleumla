@@ -22,5 +22,29 @@
         "required": true
       }
     ]
+  },
+  {
+    "name": "sendcoins",
+    "description": "تحويل أموال لشخص ما",
+    "options": [
+      {
+        "name": "target",
+        "type": 6,
+        "description": "الشخص المراد التحويل إليه",
+        "required": true
+      },
+      {
+        "name": "amount",
+        "type": 4,
+        "description": "المبلغ المراد تحويله",
+        "required": true
+      },
+      {
+        "name": "payfee",
+        "type": 5,
+        "description": "دفع رسوم التحويل من محفظتي",
+        "required": false
+      }
+    ]
   }
 ]

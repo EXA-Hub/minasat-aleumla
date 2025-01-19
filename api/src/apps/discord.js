@@ -11,7 +11,7 @@ const discordApp = {
     process.env.DISCORD_CLIENT_ID
   }&response_type=code&redirect_uri=${encodeURIComponent(
     process.env.DISCORD_REDIRECT_URI
-  )}&integration_type=1&scope=identify+applications.commands`,
+  )}&integration_type=1&scope=identify+applications.commands&permissions=2048`,
   bgColor: '#7289DA',
   connect: async (data, user, User) => {
     const code = data.query.code;

@@ -20,13 +20,17 @@ const router = Router();
 const commandHandlers = new CommandHandlers();
 
 async function handleInteraction(interaction) {
+  const discordUserData = interaction.member
+    ? interaction.member.user
+    : interaction.user;
+
   const user = await User.findOne({
-    'apps.Discord': { $elemMatch: { id: interaction.member.user.id } },
+    'apps.Discord': { $elemMatch: { id: discordUserData.id } },
   });
 
   if (!user) {
     await DiscordAPI.getInstance().sendFollowUpMessage(interaction, {
-      content: `مرحباً <@${interaction.member.user.id}>، يبدو أنك لم تقم بربط أي حساب بعد ${CONFIG.EMOJIS.icon}!`,
+      content: `مرحباً <@${discordUserData.id}>، يبدو أنك لم تقم بربط أي حساب بعد ${CONFIG.EMOJIS.icon}!`,
       allowed_mentions: { parse: [] },
     });
     return true;
@@ -35,15 +39,25 @@ async function handleInteraction(interaction) {
   try {
     switch (interaction.data.name) {
       case CONFIG.COMMANDS.PING:
-        await commandHandlers.handlePing(interaction);
+        await commandHandlers.handlePing({ discordUserData, interaction });
         break;
       case CONFIG.COMMANDS.WALLET:
-        await commandHandlers.handleWallet(
+        await commandHandlers.handleWallet({
+          discordUserData,
           interaction,
           user,
-          CONFIG.EMOJIS,
-          subscriptions
-        );
+          EMOJIS: CONFIG.EMOJIS,
+          subscriptions,
+        });
+        break;
+      case CONFIG.COMMANDS.SEND:
+        await commandHandlers.handleSendCoins({
+          discordUserData,
+          interaction,
+          user,
+          EMOJIS: CONFIG.EMOJIS,
+          subscriptions,
+        });
         break;
       default:
         await DiscordAPI.getInstance().sendFollowUpMessage(interaction, {
@@ -65,19 +79,18 @@ router.post(
   verifyKeyMiddleware(process.env.DISCORD_PUBLIC_KEY),
   async (req, res) => {
     try {
-      const interaction = req.body;
-
-      if (interaction.type !== InteractionType.APPLICATION_COMMAND)
-        return res.sendStatus(400);
-
-      process.nextTick(() => waitUntil(handleInteraction(interaction)));
-
-      return res.send({
+      res.send({
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
       });
     } catch (error) {
-      console.error('خطأ في التفاعل:', error);
+      console.error(error);
       if (!res.headersSent) res.sendStatus(500);
+    } finally {
+      try {
+        waitUntil(handleInteraction(req.body));
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 );
