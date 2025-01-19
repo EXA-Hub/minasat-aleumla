@@ -68,7 +68,7 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   cachingMiddleware(req, res, next, listRoutes(app, true), [
-    '/webhooks/bots/discord/commands/interactions',
+    '/webhooks/bots/discord/routes/interactions',
   ]);
 });
 
