@@ -92,10 +92,6 @@ const ConnectedApps = () => {
                     '_blank',
                     `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
                   );
-                  console.log(
-                    app,
-                    `${api.API_BASE_URL}/api/public/app/connect/${app.id}`
-                  );
                   if (popup) {
                     const popupCheckInterval = setInterval(() => {
                       if (popup.closed) {
