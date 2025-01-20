@@ -60,7 +60,7 @@ const ImageSelector = ({ type, close }) => {
         });
       });
     }
-
+    console.log(imageArray);
     return imageArray;
   };
 
