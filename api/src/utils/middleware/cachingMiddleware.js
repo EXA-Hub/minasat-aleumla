@@ -14,6 +14,35 @@ function generateCacheKey(req) {
   return createHash('sha256').update(JSON.stringify(keyData)).digest('hex');
 }
 
+function matchRoute(path, pattern) {
+  // Convert pattern to regex, replacing :param with regex group
+  return new RegExp(
+    `^${
+      pattern
+        .replace(/:[a-zA-Z]+/g, '([^/]+)') // Convert :param to capture group
+        .replace(/\//g, '\\/') // Escape forward slashes
+        .replace(/\*/g, '.*') // Handle wildcards if present
+    }$`
+  ).test(path);
+}
+
+function shouldCacheRoute(path, includedRoutes, excludedRoutes = []) {
+  // First check excluded routes
+  if (excludedRoutes.some((route) => matchRoute(path, route))) return false;
+  // Then check included routes
+  return includedRoutes.some((route) => matchRoute(path, route));
+}
+
+// Usage example:
+/*
+const path = '/api/public/@zampx/profile';
+const includedRoutes = ['/api/public/@:user/profile'];
+const excludedRoutes = ['/webhooks/bots/discord/routes/interactions'];
+
+const shouldCache = shouldCacheRoute(path, includedRoutes, excludedRoutes);
+console.log(shouldCache); // true
+*/
+
 /**
  * Caching middleware to store responses in Redis.
  * Handles caching for GET requests only.
@@ -34,11 +63,8 @@ async function cachingMiddleware(
   excludedRoutes = []
 ) {
   try {
-    // console.log('Included Routes:', includedRoutes);
-    // console.log('Excluded Routes:', excludedRoutes);
-    // Skip caching if the route is not in the includedRoutes or if it is in excludedRoutes
-    if (!includedRoutes.includes(req.path) || excludedRoutes.includes(req.path))
-      return next(); // Skip caching and continue to the next middleware
+    if (!shouldCacheRoute(req.path, includedRoutes, excludedRoutes))
+      return next();
 
     const redisClient = await getRedisClient();
     const key = generateCacheKey(req);

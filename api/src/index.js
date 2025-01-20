@@ -69,6 +69,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   cachingMiddleware(req, res, next, listRoutes(app, true), [
     '/webhooks/bots/discord/routes/interactions',
+    '/api/public/telegram',
   ]);
 });
 
@@ -197,19 +198,9 @@ app.all('/', (req, res) => {
 // Use the 404 handler
 app.use(notFoundHandler(app, config.isProduction));
 
-try {
-  app.listen(port, host, () => {
-    if (!config.isProduction)
-      console.log(`App listening at http://${host}:${port}`);
-  });
-} catch (e) {
-  console.error(`Failed to start server at http://${host}:${port}:`, e);
-  if (host !== 'localhost') {
-    console.log('Retrying with localhost...');
-    app.listen(port, () => {
-      console.log(`App listening at http://localhost:${port}`);
-    });
-  }
-}
+app.listen(port, host, () => {
+  if (!config.isProduction)
+    console.log(`App listening at http://${host}:${port}`);
+});
 
 export default app;

@@ -136,6 +136,7 @@ const badges = [
 
 import { isProduction } from './utils/env.js';
 import discordApp from './apps/discord.js';
+import telegramApp from './apps/telegram.js';
 import youtubeApp from './apps/youtube.js';
 
 export default {
@@ -144,7 +145,7 @@ export default {
     : 6969,
   defaultBalance: 5,
   isProduction,
-  host: isProduction ? 'localhost' : '192.168.100.45',
+  host: '0.0.0.0',
   emailUser: 'zampx.98@gmail.com',
   cron: {
     // Changed from 'corn' to 'cron'
@@ -158,6 +159,7 @@ export default {
   badges,
   apps: [
     discordApp,
+    telegramApp,
     // youtubeApp
   ],
 };

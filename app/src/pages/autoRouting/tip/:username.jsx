@@ -1,11 +1,12 @@
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+// app/src/pages/autoRouting/tip/:username.jsx
+import './animate.tips.css';
 import { Heart } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { walletService } from '../../../services/walletService';
 import CoinIcon from '@/components/ui/CoinIcon';
 import api from '../../../utils/api';
-import { toast } from 'react-hot-toast';
-import './animate.tips.css';
-import { walletService } from '../../../services/walletService';
 
 const TipPage = () => {
   const [loading, setLoading] = useState(true);
@@ -65,6 +66,8 @@ const TipPage = () => {
     }
 
     try {
+      setLoading(true);
+
       await walletService.transfer({
         recipient: data.username,
         amount: amountToDonate,
@@ -80,6 +83,8 @@ const TipPage = () => {
     } catch (error) {
       console.error(error);
       toast.error(error.data?.error || 'حدث خطأ أثناء التبرع');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -99,8 +104,7 @@ const TipPage = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 animate__animated animate__fadeIn animate__delay-1s"
-      >
+        className="space-y-6 animate__animated animate__fadeIn animate__delay-1s">
         <div className="grid grid-cols-3 gap-3 mb-6">
           {data.donationPage.customAmounts.map((amount) => (
             <button
@@ -111,8 +115,7 @@ const TipPage = () => {
                   ? 'transform scale-105 ease-in bg-blue-900'
                   : ''
               }`}
-              onClick={() => handleAmountSelect(amount)}
-            >
+              onClick={() => handleAmountSelect(amount)}>
               <div className="flex justify-center items-center">
                 <CoinIcon amount={amount} />
               </div>
@@ -135,8 +138,7 @@ const TipPage = () => {
           <div className="mb-4 animate__animated animate__fadeIn">
             <label
               htmlFor="custom-amount"
-              className="block text-sm font-medium text-blue-600"
-            >
+              className="block text-sm font-medium text-blue-600">
               مبلغ تبرع مخصص
             </label>
             <input
@@ -162,14 +164,14 @@ const TipPage = () => {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:bg-blue-500"
-        >
+          disabled={!selectedAmount || loading}
+          className="w-full bg-blue-600 text-white p-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:bg-blue-500">
           <Heart className="h-5 w-5 animate__animated animate__tada" />
           ادعم الآن
         </button>
       </form>
       <label className="block text-sm font-medium text-red-500">
-        سيتم فرض رسوم على التبرعات
+        سيتم خصم الرسوم من مبلغ التبرع
       </label>
     </div>
   );

@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Card } from '../../../components/ui/card';
+import { toast } from 'react-hot-toast';
 import { AlertTriangle, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '../../../components/ui/alert';
+import { Card } from '../../../components/ui/card';
+import api from '../../../utils/api';
 import {
   Dialog,
   DialogContent,
@@ -9,8 +11,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../../../components/ui/dialog';
-import { toast } from 'react-hot-toast';
-import api from '../../../utils/api';
 
 const HelpPage = () => {
   const [dialogData, setDialogData] = useState(false);
@@ -54,8 +54,7 @@ const HelpPage = () => {
               قمت بإدخاله.
               <DialogTrigger
                 className="px-6 py-2 bg-blue-500 hover:bg-blue-900 text-white rounded-md shadow-lg focus:ring focus:ring-primary-light focus:outline-none"
-                onClick={() => setDialogData(false)}
-              >
+                onClick={() => setDialogData(false)}>
                 إغلاق
               </DialogTrigger>
             </div>
@@ -66,11 +65,10 @@ const HelpPage = () => {
 
       <Alert
         variant="warning"
-        className="mb-6"
+        className="flex mb-6"
         style={{
           display: 'ruby-base',
-        }}
-      >
+        }}>
         <AlertTriangle className="h-5 w-5 ml-2 rtl:ml-2 rtl:mr-2" />
         <AlertDescription>
           البريد الإلكتروني الرسمي للدعم: {officialEmails.join('، ')}. احذر من
@@ -81,15 +79,14 @@ const HelpPage = () => {
       <Card className="p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="flex block text-sm font-medium mb-2">
               نوع الطلب
               {formData.type === 'bug' && (
                 <div
-                  className="mx-2 border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-200/30 dark:bg-blue-900/10 dark:text-blue-200"
+                  className="flex mx-2 border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-200/30 dark:bg-blue-900/10 dark:text-blue-200"
                   style={{
                     display: 'ruby-base',
-                  }}
-                >
+                  }}>
                   <Info className="h-5 w-5 mx-2" />
                   <AlertDescription>
                     ستحصل على مكآفأة في حال إكتشافك مشكلة أمنية في المنصة
@@ -103,8 +100,7 @@ const HelpPage = () => {
               name="type"
               onChange={(e) =>
                 setFormData({ ...formData, type: e.target.value })
-              }
-            >
+              }>
               <option value="help">طلب مساعدة</option>
               <option value="report">الإبلاغ عن مشكلة</option>
               <option value="bug">الإبلاغ عن خلل</option>
@@ -161,8 +157,7 @@ const HelpPage = () => {
           <button
             type="submit"
             disabled={dialogData}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-          >
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
             إرسال
           </button>
         </form>

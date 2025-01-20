@@ -124,16 +124,6 @@ export class CommandHandlers {
       return;
     }
 
-    const recipientUser = await User.findOne({
-      'apps.Discord': { $elemMatch: { id: target } },
-    });
-    if (!recipientUser) {
-      await this.#discordApi.sendFollowUpMessage(interaction, {
-        content: `⚠️ **المستخدم غير موجود أو لم يتم ربط حساب ديسكورد.** ⚠️`,
-      });
-      return;
-    }
-
     const feeAmount = Math.ceil((amount * fee) / 100);
     let taking = payFee ? amount + feeAmount : amount;
     let giving = payFee ? amount : amount - feeAmount;
@@ -141,6 +131,16 @@ export class CommandHandlers {
     if (user.balance < taking) {
       await this.#discordApi.sendFollowUpMessage(interaction, {
         content: `⚠️ **لا يوجد رصيد كافي في حسابك.**`,
+      });
+      return;
+    }
+
+    const recipientUser = await User.findOne({
+      'apps.Discord': { $elemMatch: { id: target } },
+    });
+    if (!recipientUser) {
+      await this.#discordApi.sendFollowUpMessage(interaction, {
+        content: `⚠️ **المستخدم غير موجود أو لم يتم ربط حساب ديسكورد.** ⚠️`,
       });
       return;
     }

@@ -43,6 +43,6 @@ app.post('/notification', auth, async (req: AuthRequest, res: Response) => {
   }
 });
 
-ws.server.listen(process.env.PORT || 3000, () => {
-  console.log('ws://localhost:' + (process.env.PORT || 3000));
+ws.server.listen(process.env.PORT || 3000, 0, () => {
+  console.log('ws://0.0.0.0:' + (process.env.PORT || 3000));
 });

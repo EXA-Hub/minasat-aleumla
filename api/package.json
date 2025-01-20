@@ -7,7 +7,7 @@
   "scripts": {
     "test": "nodemon src/index.js",
     "vercel-build": "echo 'vercel-build'",
-    "vercel-dev": "nodemon --exec 'vercel dev'"
+    "vercel-dev": "nodemon --exec 'vercel dev -l 0.0.0.0:6969'"
   },
   "author": "zampx",
   "license": "ISC",

@@ -72,7 +72,6 @@ const LoginPage = () => {
         referralId,
       };
 
-      handleResetCaptcha();
       const data = await (isLogin
         ? api.auth.login(credentials)
         : api.auth.signup(credentials));
@@ -103,6 +102,7 @@ const LoginPage = () => {
         );
       }
     } finally {
+      handleResetCaptcha();
       setIsLoading(false);
     }
   };
