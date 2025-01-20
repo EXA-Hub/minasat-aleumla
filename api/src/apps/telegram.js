@@ -61,15 +61,12 @@ const App = {
     photo_url: String,
     auth_date: Number,
   }),
-  images: (user) => {
-    const accounts = user.apps[AppID] || [];
-    return {
-      profilePictures: accounts
-        .filter((acc) => acc.photo_url)
-        .map((acc) => acc.photo_url),
-      wallpapers: [],
-    };
-  },
+  images: (user) => ({
+    profilePictures: user.apps[AppID].map(({ id, photo_url }) => ({
+      [id]: photo_url,
+    })),
+    wallpapers: [],
+  }),
   image: (user, accountId, imageType) => {
     if (imageType !== 'profilePicture') return;
     const account = user.apps[AppID]?.find((acc) => acc.id === accountId);
