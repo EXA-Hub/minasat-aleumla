@@ -38,9 +38,7 @@ const ImageSelector = ({ type, close }) => {
     }
   };
 
-  if (loading) {
-    return <div className="p-4 text-center">جارٍ التحميل...</div>;
-  }
+  if (loading) return <div className="p-4 text-center">جارٍ التحميل...</div>;
 
   const getImagesForApp = (app) => {
     const imageArray = [];
@@ -72,8 +70,7 @@ const ImageSelector = ({ type, close }) => {
         <button
           onClick={close}
           aria-label="close"
-          className="absolute top-2 left-2 bg-transparent border-none cursor-pointer rounded-full hover:bg-gray-600/60"
-        >
+          className="absolute top-2 left-2 bg-transparent border-none cursor-pointer rounded-full hover:bg-gray-600/60">
           <XCircleIcon size={24} />
         </button>
         <DialogHeader>
@@ -93,8 +90,7 @@ const ImageSelector = ({ type, close }) => {
                   <div className="flex items-center gap-2">
                     <div
                       className="w-8 h-8 flex items-center justify-center"
-                      style={{ backgroundColor: app.bgColor }}
-                    >
+                      style={{ backgroundColor: app.bgColor }}>
                       <img src={app.svg} alt={app.name} className="w-6 h-6" />
                     </div>
                     <span className="font-medium">{app.name}</span>
@@ -105,8 +101,7 @@ const ImageSelector = ({ type, close }) => {
                       <button
                         key={img.id}
                         onClick={() => handleImageSelect(app.id, img.id)}
-                        className="relative aspect-square overflow-hidden rounded-lg hover:opacity-90 transition-opacity"
-                      >
+                        className="relative aspect-square overflow-hidden rounded-lg hover:opacity-90 transition-opacity">
                         <img
                           src={img.url}
                           alt={`${app.name} ${img.id}`}
@@ -195,8 +190,7 @@ const ProfilePage = () => {
               setImageType('wallpaper');
               setShowImageSelector(true);
             }}
-            className="absolute bottom-4 right-4 p-2 bg-black/50 text-white rounded-md hover:bg-black/70"
-          >
+            className="absolute bottom-4 right-4 p-2 bg-black/50 text-white rounded-md hover:bg-black/70">
             <Upload className="h-5 w-5" />
           </Link>
         </div>
@@ -213,8 +207,7 @@ const ProfilePage = () => {
                 setImageType('profilePicture');
                 setShowImageSelector(true);
               }}
-              className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700"
-            >
+              className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">
               <Camera className="h-5 w-5" />
             </Link>
           </div>
@@ -277,8 +270,7 @@ const ProfilePage = () => {
                   <select
                     name="sex"
                     defaultValue={profile.sex}
-                    className="w-full p-2 border rounded-md bg-[var(--background)]"
-                  >
+                    className="w-full p-2 border rounded-md bg-[var(--background)]">
                     <option value="ذكر">ذكر</option>
                     <option value="أنثى">أنثى</option>
                   </select>
@@ -288,15 +280,13 @@ const ProfilePage = () => {
               <div className="flex space-x-4 rtl:space-x-reverse">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-                >
+                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
                   حفظ التغييرات
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300"
-                >
+                  className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">
                   إلغاء
                 </button>
               </div>
@@ -310,8 +300,7 @@ const ProfilePage = () => {
                 </div>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700"
-                >
+                  className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
                   تعديل الملف
                 </button>
               </div>
