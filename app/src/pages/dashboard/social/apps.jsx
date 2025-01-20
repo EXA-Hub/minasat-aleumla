@@ -74,6 +74,7 @@ const ConnectedApps = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {console.log(apps)}
         {apps.map((app) => (
           <div key={app.id} className="p-4 border rounded-lg bg-card h-full">
             <div className="flex items-center justify-between mb-4">

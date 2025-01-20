@@ -23,7 +23,7 @@ function verifyTelegramHash({ hash, ...userData }, botToken) {
   return computedHash === hash;
 }
 
-const AppID = 'telegram';
+const AppID = 'Telegram';
 const App = {
   id: AppID,
   name: 'تيليجرام',
