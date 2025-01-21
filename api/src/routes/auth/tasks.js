@@ -65,7 +65,6 @@ import getRedisClient from '../../utils/libs/redisClient.js';
 import config from '../../config.js';
 
 const router = Router();
-const tempMemory = new Map();
 const { subscriptions } = config;
 
 const generateCode = () =>
@@ -76,7 +75,12 @@ import { validateRequest } from '../../utils/middleware/validateRequest.js';
 router.get(
   '/@me/daily',
   [
-    query('host').trim().notEmpty().withMessage('Host is required').isURL(),
+    query('host')
+      .trim()
+      .notEmpty()
+      .withMessage('Host is required')
+      .isURL()
+      .withMessage('Host must be a valid URL'),
     validateRequest,
   ],
   async (req, res) => {
@@ -96,12 +100,10 @@ router.get(
         }
         ipRecord.lastClaimed = new Date();
         await ipRecord.save();
-      } else {
-        await DailyIp.create({ ip: clientIp, lastClaimed: new Date() });
-      }
+      } else await DailyIp.create({ ip: clientIp, lastClaimed: new Date() });
       const code = generateCode();
       const shortUrl = await generateShortURL(`${host}?dailyCode=${code}`);
-      console.log(shortUrl);
+      console.log(shortUrl, code);
       const redisClient = await getRedisClient();
       await redisClient.set(
         `tempCode:${clientIp}`,
@@ -124,17 +126,16 @@ router.get(
       const redisClient = await getRedisClient();
       const { dailyCode } = req.query;
       const { clientIp } = req;
-      const entry = await redisClient.get(`tempCode:${clientIp}`);
+      const entry = JSON.parse(await redisClient.get(`tempCode:${clientIp}`));
       if (!entry) return res.status(400).json({ error: 'لا توجد هدايا' });
       await redisClient.del(`tempCode:${clientIp}`);
       if (entry.code !== dailyCode)
         return res.status(400).json({ error: 'رمز غير صحيح' });
       if (Date.now() >= entry.expireTime)
         return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
-      const dailyConfig =
-        subscriptions[req.user.subscription].features.tasks.daily;
+      const dailyConfig = subscriptions[req.user.tier].features.tasks.daily;
       const daily =
-        Math.ceil(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
+        Math.floor(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
       req.user.balance += daily;
       await req.user.save();
       return res.status(200).json({
