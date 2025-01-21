@@ -25,16 +25,14 @@ const authenticateToken = async (req, res, next) => {
     const user = await User.findOne({ username, _id: uid });
 
     // If the user does not exist in the database, return an error
-    if (!user) {
+    if (!user)
       return res
         .status(401)
         .json({ error: 'ربما المستخدم غير موجود!؟ جرب تسجيل الدخول مجددا.' });
-    }
 
     // Optionally, verify that the password from the token matches the stored one
-    if (!(user.password === password)) {
+    if (!(user.password === password))
       return res.status(401).json({ error: 'يرجى إعادة تسجيل الدخول.' });
-    }
 
     // Attach the user object to the request (req.user), so it can be accessed in other routes
     req.user = user;

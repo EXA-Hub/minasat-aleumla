@@ -42,8 +42,8 @@ export const loadRoutes = async (app, { authenticateToken }) => {
     '/api/public'
   );
   await loadRoutesFromDir(
-    path.join(baseDir, 'routes', 'websockets'),
-    '/webhooks'
+    path.join(baseDir, 'routes', 'bots'),
+    '/webhooks/bots'
   );
 
   // cron job

@@ -2,6 +2,7 @@
 import fs from 'fs';
 import path from 'path';
 import http from 'http';
+import crypto from 'crypto';
 import fetch from 'node-fetch';
 import { Application } from 'express';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -40,6 +41,29 @@ function writeNotifications(notifications: Record<string, Notification[]>) {
   );
 }
 
+const serializeToken = (token: string) => {
+  try {
+    if (!token) return null;
+    const secretKey = process.env.TOKEN_SECRET;
+    if (!secretKey) return null;
+    const [ivHex, encryptedData] = token.split(':');
+    const decipher = crypto.createDecipheriv(
+      'aes-256-cbc',
+      crypto.createHash('sha256').update(secretKey).digest(),
+      Buffer.from(ivHex, 'hex')
+    );
+    let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    const [username, uid, password] = decrypted.split('\n');
+    if (!/^[A-Za-z0-9]{3,30}$/.test(username)) return null;
+    if (!/^[0-9a-fA-F]{24}$/.test(uid)) return null;
+    if (!/^\$argon2(id|i|d)\$.+/.test(password)) return null;
+    return username;
+  } catch (err) {
+    return null;
+  }
+};
+
 function initializeWebSocket(app: Application) {
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server }) as CustomWebSocketServer;
@@ -52,22 +76,11 @@ function initializeWebSocket(app: Application) {
         return;
       }
 
-      const response = await fetch(
-        process.env.WEBHOOK_URL + '/webhooks/getMe',
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
+      const username = serializeToken(token);
+      if (!username) {
         ws.close(1008, 'Authentication failed');
         return;
       }
-
-      const username = await response.text();
       clients.set(username, ws);
 
       // Read pending notifications for the user

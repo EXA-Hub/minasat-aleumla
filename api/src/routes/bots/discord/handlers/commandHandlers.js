@@ -1,8 +1,8 @@
-import { logTransaction } from '../../../../../utils/schemas/transactionLogger.js';
-import User from '../../../../../utils/schemas/mongoUserSchema.js';
-import discordApp from '../../../../../apps/discord.js';
+import { logTransaction } from '../../../../utils/schemas/transactionLogger.js';
+import User from '../../../../utils/schemas/mongoUserSchema.js';
 import { DiscordAPI } from '../services/discordApi.js';
-import { ws } from '../../../../../utils/webhook.js';
+import discordApp from '../../../../apps/discord.js';
+import { ws } from '../../../../utils/webhook.js';
 
 export class CommandHandlers {
   #discordApi;

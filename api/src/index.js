@@ -113,9 +113,8 @@ app.post(
       const { username, password, referralId } = req.body;
 
       const existingUser = await User.findOne({ username });
-      if (existingUser) {
+      if (existingUser)
         return res.status(400).json({ error: 'اسم المستخدم مستخدم بالفعل' });
-      }
 
       const hashedPassword = await argon2.hash(password); // Hash password
       const user = await createUser(username, hashedPassword, referralId);

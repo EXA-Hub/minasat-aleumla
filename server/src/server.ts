@@ -15,11 +15,21 @@ interface AuthRequest extends Request {
 
 const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
-  if (!token || token !== process.env.WEBHOOK_TOKEN) return;
+  if (!token || token !== process.env.WEBHOOK_TOKEN) {
+    res.status(401).send('Unauthorized');
+    return;
+  }
   next();
 };
 
-app.get('/isOnline/:username', auth, (req: AuthRequest, res: Response) => {
+app.options('/isOnline/:username', (req: AuthRequest, res: Response) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.sendStatus(200);
+});
+
+app.get('/isOnline/:username', (req: AuthRequest, res: Response) => {
+  res.header('Access-Control-Allow-Origin', '*');
   if (ws.clients.has(req.params.username)) res.sendStatus(200);
   else res.sendStatus(404);
 });

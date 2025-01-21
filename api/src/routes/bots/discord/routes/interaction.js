@@ -1,15 +1,14 @@
 // api/src/routes/websockets/bots/discord/commands/interaction.js
 import { Router } from 'express';
 import {
-  InteractionType,
   InteractionResponseType,
   verifyKeyMiddleware,
 } from 'discord-interactions';
 import { waitUntil } from '@vercel/functions';
-import User from '../../../../../utils/schemas/mongoUserSchema.js';
+import User from '../../../../utils/schemas/mongoUserSchema.js';
 import { CommandHandlers } from '../handlers/commandHandlers.js';
 import { DiscordAPI } from '../services/discordApi.js';
-import config from '../../../../../config.js';
+import config from '../../../../config.js';
 import { CONFIG } from '../config/config.js';
 
 const { subscriptions } = config;

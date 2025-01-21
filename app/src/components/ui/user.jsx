@@ -139,9 +139,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
       return;
     }
 
-    if (wsRef.current) {
-      wsRef.current.close();
-    }
+    if (wsRef.current) wsRef.current.close();
 
     const delay = RECONNECT_BASE_DELAY * Math.pow(2, reconnectAttempts.current);
     reconnectTimeout.current = setTimeout(() => {
@@ -159,9 +157,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
         reconnectWebSocket();
       };
 
-      ws.onerror = () => {
-        ws.close();
-      };
+      ws.onerror = () => ws.close();
     }, delay);
   }, [updateNotifications]);
 

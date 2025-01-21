@@ -29,9 +29,8 @@ router.post(
     body('currentPassword').notEmpty(),
     body('newPassword').isStrongPassword(),
     body('confirmPassword').custom((value, { req }) => {
-      if (value !== req.body.newPassword) {
+      if (value !== req.body.newPassword)
         throw new Error('كلمات المرور غير متطابقة');
-      }
       return true;
     }),
     validateRequest,
@@ -44,9 +43,8 @@ router.post(
         req.body.currentPassword
       );
 
-      if (!isValid) {
+      if (!isValid)
         return res.status(401).json({ error: 'كلمة المرور الحالية غير صحيحة' });
-      }
 
       const hashedPassword = await argon2.hash(req.body.newPassword);
       user.password = hashedPassword;
@@ -81,16 +79,14 @@ router.post(
       const user = await User.findById(req.user.id);
       const isValid = await argon2.verify(user.password, req.body.password);
 
-      if (!isValid) {
+      if (!isValid)
         return res.status(401).json({ error: 'كلمة المرور غير صحيحة' });
-      }
 
-      const existingUser = await User.findOne({
+      const existingUser = await User.exists({
         username: req.body.newUsername,
       });
-      if (existingUser) {
+      if (existingUser)
         return res.status(400).json({ error: 'اسم المستخدم مستخدم بالفعل' });
-      }
 
       user.username = req.body.newUsername;
 

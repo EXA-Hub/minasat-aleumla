@@ -30,8 +30,6 @@ function generateToken(username, uid, password) {
   const data = `${username}\n${uid}\n${password}`;
   const { iv, secretKey } = secretKeyF();
 
-  console.log(secretKey);
-
   // Hash the secret key to ensure it's 32 bytes for AES-256-CBC
   const key = crypto.createHash('sha256').update(secretKey).digest();
 

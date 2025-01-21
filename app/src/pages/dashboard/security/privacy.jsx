@@ -9,7 +9,13 @@ import { Button } from '../../../components/ui/button';
 import { Card } from '../../../components/ui/card';
 import api from '../../../utils/api';
 
-const PrivacyToggle = ({ label, description, isEnabled = false, onClick }) => {
+const PrivacyToggle = ({
+  label,
+  description,
+  isEnabled = false,
+  onClick,
+  disabled,
+}) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -42,6 +48,7 @@ const PrivacyToggle = ({ label, description, isEnabled = false, onClick }) => {
 
           <button
             onClick={onClick}
+            disabled={disabled}
             className={`relative w-14 h-7 rounded-full transition-all duration-300 focus:outline-none ${
               isEnabled ? 'bg-blue-500' : 'bg-gray-200'
             }`}>
@@ -74,6 +81,7 @@ PrivacyToggle.propTypes = {
   description: PropTypes.string.isRequired,
   isEnabled: PropTypes.bool,
   onClick: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };
 
 const PrivacyPage = () => {
@@ -188,6 +196,7 @@ const PrivacyPage = () => {
                 label={setting.label}
                 description={setting.description}
                 isEnabled={!setting.enabled}
+                disabled={disabled}
                 onClick={() => {
                   setPrivacy((prev) =>
                     prev.map((prevSetting) =>

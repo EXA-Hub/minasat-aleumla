@@ -33,24 +33,8 @@ export const ws = {
     },
   },
   clients: {
-    has: async (username) => {
-      try {
-        const res = await fetch(
-          process.env.WEBHOOK_URL + '/isOnline/' + username,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              authorization: 'Bearer ' + process.env.WEBHOOK_TOKEN,
-            },
-          }
-        );
-        if (res.ok) return true; // Success case
-        return false;
-      } catch (error) {
-        console.log(error);
-        return false; // Error case
-      }
+    has: (username) => {
+      return process.env.WEBHOOK_URL + '/isOnline/' + username;
     },
   },
 };

@@ -1,4 +1,4 @@
-import User from '../../../../utils/schemas/mongoUserSchema.js';
+import User from '../../../utils/schemas/mongoUserSchema.js';
 import { sendMessage } from './funcs.js';
 import { CONFIG } from './config.js';
 
