@@ -21,6 +21,7 @@ import {
 } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { toast } from 'react-hot-toast';
 import { useTheme } from '../../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 
 // Define constants
 const EMOJI_STYLES = {
@@ -55,6 +56,7 @@ const MarkdownDisplay = ({
   loading = false,
   className = '',
 }) => {
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const [copied, setCopied] = React.useState(false);
@@ -69,7 +71,7 @@ const MarkdownDisplay = ({
           href={href}
           onClick={(e) => {
             // if link is inside the app, open it in the same tab
-            if (href.startsWith('/')) return true;
+            if (href.startsWith('/')) return navigate(href);
             // alert user of outgoing link
             e.preventDefault();
             const confirmed = window.confirm(
@@ -300,7 +302,7 @@ const MarkdownDisplay = ({
         </td>
       ),
     }),
-    [copied, isDark] // Add any dependencies affecting component behavior
+    [copied.children, copied.className, isDark, navigate] // Add any dependencies affecting component behavior
   );
 
   if (loading)

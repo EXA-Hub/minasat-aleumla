@@ -226,7 +226,21 @@ const api = {
       return axiosInstance.post('/signup', credentials);
     },
     getMe: async () => {
-      return axiosInstance.get('/@me');
+      if (localStorage.getItem('meData')) {
+        if (import.meta.env.DEV) console.log('meData from localStorage cache');
+        const { meData, timestamp } = JSON.parse(
+          localStorage.getItem('meData')
+        );
+        if (Date.now() - timestamp < 60 * 60 * 1000) return meData;
+        localStorage.removeItem('meData');
+        return meData;
+      }
+      const meData = await axiosInstance.get('/@me');
+      localStorage.setItem(
+        'meData',
+        JSON.stringify({ meData, timestamp: Date.now() })
+      );
+      return meData;
     },
   },
   wallet: {

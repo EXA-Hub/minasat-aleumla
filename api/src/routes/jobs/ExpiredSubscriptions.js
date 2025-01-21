@@ -93,7 +93,6 @@ const checkExpiredSubscriptions = async () => {
 
 // Export the function as a serverless endpoint
 export default async function handler(req, res) {
-  console.log(req.headers.authorization);
   // Authorization check (optional but recommended)
   if (req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`)
     return res.status(401).json({ message: 'Unauthorized' });
