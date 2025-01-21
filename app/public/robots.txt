@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /$
+Allow: /privacy-policy
+Allow: /terms
+Allow: /explore/
+
+Disallow: /
+
+# Sitemap
+Sitemap: /sitemap.xml
