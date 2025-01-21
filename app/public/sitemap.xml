@@ -1,21 +1,200 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- Static Pages -->
     <url>
-        <loc>/</loc>
+        <loc>https://minasat-aleumla.vercel.app/</loc>
         <lastmod>2025-01-21</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
-        <loc>/privacy-policy</loc>
+        <loc>https://minasat-aleumla.vercel.app/privacy-policy</loc>
         <lastmod>2025-01-21</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     <url>
-        <loc>/terms</loc>
+        <loc>https://minasat-aleumla.vercel.app/terms</loc>
         <lastmod>2025-01-21</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/secret</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Dynamic Pages (autoRouting) -->
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/connect/telegram</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/connect/:app</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/error/not-found</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore/kings/richest</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore/overview</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore/settings/colors</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore/support/codes</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore/support/donators</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore/support/plans</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore/transfers/cheques</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/explore/transfers/gifts</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Dashboard Pages -->
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/overview</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/finance/affiliate</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/finance/airdrop</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/finance/donations</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/finance/products</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/finance/tasks</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/security/account</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/security/help</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/security/privacy</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/social/apps</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/social/engagement</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/social/profile</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/social/stats</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/transactions</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://minasat-aleumla.vercel.app/dashboard/wallet</loc>
+        <lastmod>2025-01-21</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
     </url>
 </urlset>

@@ -7,4 +7,4 @@ Allow: /explore/
 Disallow: /
 
 # Sitemap
-Sitemap: /sitemap.xml
+Sitemap: https://minasat-aleumla.vercel.app/sitemap.xml
