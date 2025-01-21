@@ -1,10 +1,10 @@
 // api/src/jobs/ExpiredSubscriptions.js
 import moment from 'moment-timezone';
-import { connectToMongoDB } from '../utils/libs/mongoose.js';
-import User from '../utils/schemas/mongoUserSchema.js';
-import CronJob from '../utils/schemas/CronJob.js';
-import { ws } from '../utils/webhook.js';
-import config from '../config.js';
+import { connectToMongoDB } from '../../utils/libs/mongoose.js';
+import User from '../../utils/schemas/mongoUserSchema.js';
+import CronJob from '../../utils/schemas/CronJob.js';
+import { ws } from '../../utils/webhook.js';
+import config from '../../config.js';
 
 const { jobName, days } = config.cron.checkExpiredSubscriptions;
 

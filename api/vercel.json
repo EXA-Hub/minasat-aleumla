@@ -17,7 +17,7 @@
   },
   "crons": [
     {
-      "path": "/src/jobs/ExpiredSubscriptions",
+      "path": "/src/routes/jobs/ExpiredSubscriptions.js",
       "schedule": "0 10 * * *"
     }
   ]

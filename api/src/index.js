@@ -55,7 +55,13 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  if (['/webhooks/bots/discord/routes/interactions'].includes(req.path)) next();
+  if (
+    [
+      '/webhooks/bots/discord/routes/interactions',
+      '/src/routes/jobs/ExpiredSubscriptions.js',
+    ].includes(req.path)
+  )
+    next();
   else bodyParser.json()(req, res, next);
 });
 
@@ -63,6 +69,7 @@ app.use((req, res, next) => {
   cachingMiddleware(req, res, next, listRoutes(app, true), [
     '/webhooks/bots/discord/routes/interactions',
     '/webhooks/bots/telegram/endpoint',
+    '/src/routes/jobs/ExpiredSubscriptions.js',
   ]);
 });
 

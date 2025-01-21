@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { ws } from './utils/webhook.js';
+import handler from './routes/jobs/ExpiredSubscriptions.js';
 
 export const loadRoutes = async (app, { authenticateToken }) => {
   const loadRoutesFromDir = async (dir, basePath = '', requireAuth = false) => {
@@ -44,4 +45,7 @@ export const loadRoutes = async (app, { authenticateToken }) => {
     path.join(baseDir, 'routes', 'websockets'),
     '/webhooks'
   );
+
+  // cron job
+  app.get('/src/routes/jobs/ExpiredSubscriptions.js', handler);
 };
