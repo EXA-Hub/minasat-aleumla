@@ -103,7 +103,6 @@ router.get(
       } else await DailyIp.create({ ip: clientIp, lastClaimed: new Date() });
       const code = generateCode();
       const shortUrl = await generateShortURL(`${host}?dailyCode=${code}`);
-      console.log(shortUrl, code);
       const redisClient = await getRedisClient();
       await redisClient.set(
         `tempCode:${clientIp}`,
