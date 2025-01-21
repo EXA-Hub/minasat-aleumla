@@ -26,13 +26,15 @@ async function saveCommands(commands: Command[]): Promise<void> {
 }
 
 async function main() {
-  if (!process.env.TOKEN || !process.env.CLIENT_ID) {
+  if (!process.env.DISCORD_BOT_TOKEN || !process.env.DISCORD_CLIENT_ID) {
     console.error('\x1b[31m❌ Missing TOKEN or CLIENT_ID in .env\x1b[0m');
     process.exit(1);
   }
 
   const commands = await loadCommands();
-  const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
+  const rest = new REST({ version: '10' }).setToken(
+    process.env.DISCORD_BOT_TOKEN
+  );
 
   const { action } = await inquirer.prompt([
     {
@@ -52,9 +54,12 @@ async function main() {
     case 'Deploy Commands': {
       try {
         console.log('\x1b[34m🔄 Deploying commands...\x1b[0m');
-        await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), {
-          body: commands,
-        });
+        await rest.put(
+          Routes.applicationCommands(process.env.DISCORD_CLIENT_ID),
+          {
+            body: commands,
+          }
+        );
         console.log('\x1b[32m✅ Commands deployed!\x1b[0m');
       } catch (error) {
         console.error(

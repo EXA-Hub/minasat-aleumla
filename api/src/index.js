@@ -31,16 +31,9 @@ app.set('x-powered-by', false);
 app.disable('x-powered-by');
 
 app.use(morgan('dev'));
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'خطآ في الخادم' });
-});
 app.use(requestIp.mw());
 // app.use(blockVpnProxy);
-app.use((req, res, next) => {
-  if (req.path.includes('bots')) next();
-  else limiter(req, res, next);
-});
+app.use(limiter);
 app.use(
   cors({
     origin: [
@@ -62,14 +55,14 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  if (req.path.includes('bots')) next();
+  if (['/webhooks/bots/discord/routes/interactions'].includes(req.path)) next();
   else bodyParser.json()(req, res, next);
 });
 
 app.use((req, res, next) => {
   cachingMiddleware(req, res, next, listRoutes(app, true), [
     '/webhooks/bots/discord/routes/interactions',
-    '/api/public/telegram',
+    '/webhooks/bots/telegram/endpoint',
   ]);
 });
 
@@ -151,9 +144,7 @@ app.post(
       }
 
       if (user.twoFactorEnabled) {
-        if (!tfaCode) {
-          return res.status(202).json({ requiresMFA: true });
-        }
+        if (!tfaCode) return res.status(202).json({ requiresMFA: true });
 
         const isValid = authenticator.verify({
           token: tfaCode,
@@ -168,7 +159,7 @@ app.post(
       res.status(200).json({ token: user.token });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: 'An error occurred during login.' });
+      res.status(500).json({ error: 'حدث خطأ أثناء تسجيل الدخول.' });
     }
   }
 );
@@ -197,6 +188,11 @@ app.all('/', (req, res) => {
 
 // Use the 404 handler
 app.use(notFoundHandler(app, config.isProduction));
+
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'خطأ في الخادم' }); // Corrected typo
+});
 
 app.listen(port, host, () => {
   if (!config.isProduction)
