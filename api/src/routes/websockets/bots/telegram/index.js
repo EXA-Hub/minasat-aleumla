@@ -29,11 +29,11 @@ router.post(
         (entity) => entity.type === 'bot_command'
       );
       if (!command) return res.status(200).send('OK');
-      const commandObj = commands.find(
-        (cmd) =>
-          messageText
-            .slice(command.offset, command.offset + command.length)
-            .toLowerCase() === cmd.command
+      const commandObj = commands.find((cmd) =>
+        messageText
+          .slice(command.offset, command.offset + command.length)
+          .toLowerCase()
+          .startsWith(cmd.command)
       );
       if (commandObj) await commandObj.handler({ chat_id, messageText, req });
       else
