@@ -39,9 +39,7 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
       max: parseInt(formData.max),
     };
 
-    if (!formData.url.trim()) {
-      delete payload.url;
-    }
+    if (!formData.url.trim()) delete payload.url;
 
     try {
       const data = await api.airdrop.createGift(payload);
