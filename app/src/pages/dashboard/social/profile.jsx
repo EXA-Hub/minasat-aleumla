@@ -24,6 +24,7 @@ const ImageSelector = ({ type, close }) => {
   }, []);
 
   const handleImageSelect = async (appId, accountId) => {
+    setLoading(true);
     try {
       await api.apps.image({
         action: 'set',
@@ -34,11 +35,12 @@ const ImageSelector = ({ type, close }) => {
     } catch (error) {
       console.error('Error setting image:', error);
     } finally {
-      setTimeout(window.location.reload(), 3000);
+      setLoading(false);
+      toast.success('تم تغيير الصورة بنجاح');
+      toast.loading('سنحتاج ساعة لتحديث الصورة');
+      close();
     }
   };
-
-  if (loading) return <div className="p-4 text-center">جارٍ التحميل...</div>;
 
   const getImagesForApp = (app) => {
     const imageArray = [];
@@ -66,56 +68,65 @@ const ImageSelector = ({ type, close }) => {
 
   return (
     <Dialog>
-      <DialogContent>
-        <button
-          onClick={close}
-          aria-label="close"
-          className="absolute top-2 left-2 bg-transparent border-none cursor-pointer rounded-full hover:bg-gray-600/60">
-          <XCircleIcon size={24} />
-        </button>
-        <DialogHeader>
-          <DialogTitle>اختر صورة من حساباتك</DialogTitle>
-        </DialogHeader>
-
-        {loading ? (
-          <div className="p-4 text-center">جارٍ التحميل...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {apps.map((app) => {
-              const images = getImagesForApp(app);
-              if (images.length === 0) return null;
-
-              return (
-                <div key={app.id} className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className="w-8 h-8 flex items-center justify-center"
-                      style={{ backgroundColor: app.bgColor }}>
-                      <img src={app.svg} alt={app.name} className="w-6 h-6" />
-                    </div>
-                    <span className="font-medium">{app.name}</span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2">
-                    {images.map((img) => (
-                      <button
-                        key={img.id}
-                        onClick={() => handleImageSelect(app.id, img.id)}
-                        className="relative aspect-square overflow-hidden rounded-lg hover:opacity-90 transition-opacity">
-                        <img
-                          src={img.url}
-                          alt={`${app.name} ${img.id}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+      {loading ? (
+        <div className="p-4 flex text-center bg-card rounded-lg border border-border">
+          جارٍ التحميل...
+          <div className="flex items-center justify-center pr-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
           </div>
-        )}
-      </DialogContent>
+        </div>
+      ) : (
+        <DialogContent>
+          <button
+            onClick={close}
+            aria-label="close"
+            className="absolute top-2 left-2 bg-transparent border-none cursor-pointer rounded-full hover:bg-gray-600/60">
+            <XCircleIcon size={24} />
+          </button>
+          <DialogHeader>
+            <DialogTitle>اختر صورة من حساباتك</DialogTitle>
+          </DialogHeader>
+
+          {loading ? (
+            <div className="p-4 text-center">جارٍ التحميل...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {apps.map((app) => {
+                const images = getImagesForApp(app);
+                if (images.length === 0) return null;
+
+                return (
+                  <div key={app.id} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-8 h-8 flex items-center justify-center"
+                        style={{ backgroundColor: app.bgColor }}>
+                        <img src={app.svg} alt={app.name} className="w-6 h-6" />
+                      </div>
+                      <span className="font-medium">{app.name}</span>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {images.map((img) => (
+                        <button
+                          key={img.id}
+                          onClick={() => handleImageSelect(app.id, img.id)}
+                          className="relative aspect-square overflow-hidden rounded-lg hover:opacity-90 transition-opacity">
+                          <img
+                            src={img.url}
+                            alt={`${app.name} ${img.id}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </DialogContent>
+      )}
     </Dialog>
   );
 };
@@ -177,7 +188,12 @@ const ProfilePage = () => {
   return (
     <div className="space-y-6 rtl text-right">
       <h2 className="text-3xl font-bold">ملفي الشخصي</h2>
-
+      {showImageSelector && (
+        <ImageSelector
+          type={imageType}
+          close={() => setShowImageSelector(false)}
+        />
+      )}
       <div className="relative mb-20">
         <div className="relative h-48 md:h-64 rounded-lg overflow-hidden bg-gray-100">
           <img
@@ -326,13 +342,6 @@ const ProfilePage = () => {
           )}
         </Card>
       </div>
-      {/* Add at the bottom of your JSX */}
-      {showImageSelector && (
-        <ImageSelector
-          type={imageType}
-          close={() => setShowImageSelector(false)}
-        />
-      )}
     </div>
   );
 };
