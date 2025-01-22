@@ -92,6 +92,11 @@ export class CommandHandlers {
     EMOJIS,
     subscriptions,
   }) {
+    await this.#discordApi.sendFollowUpMessage(interaction, {
+      content: `⚠️ **هذا الأمر معطل حاليا** ⚠️`,
+    });
+    return;
+
     const { target, amount, payfee } = interaction.data.options?.reduce(
       (acc, option) => {
         acc[option.name] = option.value;
@@ -135,6 +140,13 @@ export class CommandHandlers {
       return;
     }
 
+    if (target === discordUserData.id) {
+      await this.#discordApi.sendFollowUpMessage(interaction, {
+        content: `🚫 **لا يمكنك إرسال رصيد لنفسك!** 😅`,
+      });
+      return;
+    }
+
     const recipientUser = await User.findOne({
       'apps.Discord': { $elemMatch: { id: target } },
     });
@@ -171,8 +183,6 @@ export class CommandHandlers {
     recipientUser.balance += giving; // Recipient gets the original amount
     recipientUser.transactionStats.totalReceived += giving;
     recipientUser.transactionStats.totalTransactions += 1;
-    if (recipientUser.referralId)
-      recipientUser.tax += Math.floor(feeAmount / 2);
     await recipientUser.save();
 
     await this.#discordApi.sendDM(target, {

@@ -1,4 +1,6 @@
 // api/src/routes/websockets/bots/telegram/funcs.js
+import { CONFIG } from './config.js';
+const { TELEGRAM_API } = CONFIG;
 
 export async function sendMessage({
   chat_id,
@@ -31,7 +33,7 @@ export async function sendMessage({
       body.reply_markup = reply_markup;
 
     const response = await fetch(
-      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+      `${TELEGRAM_API}${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
         method: 'POST',
         headers: {

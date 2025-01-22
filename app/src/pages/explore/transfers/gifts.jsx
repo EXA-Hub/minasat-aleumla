@@ -38,7 +38,11 @@ const GiftsPage = () => {
     hasMore: false,
   });
 
+  const [creating, setCreating] = useState(false);
+  const [trying, setTrying] = useState(false);
+
   const createGift = async (e) => {
+    setCreating(true);
     e.preventDefault();
     try {
       const newGift = {
@@ -61,10 +65,13 @@ const GiftsPage = () => {
       toast.success('تمت بنجاح');
     } catch (err) {
       setError(err.data?.error || 'Error occurred');
+    } finally {
+      setCreating(false);
     }
   };
 
   const tryGift = async (e) => {
+    setTrying(true);
     e.preventDefault();
     try {
       await api.mysteryGifts.try({ code: tryCode });
@@ -72,6 +79,8 @@ const GiftsPage = () => {
       toast.success('تمت بنجاح');
     } catch (err) {
       setError(err.data?.error || 'Error occurred');
+    } finally {
+      setTrying(false);
     }
   };
 
@@ -155,7 +164,7 @@ const GiftsPage = () => {
                 min={1}
                 onChange={(e) => setWinnersCount(e.target.value)}
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={creating}>
                 إنشاء هدية
               </Button>
             </form>
@@ -174,7 +183,7 @@ const GiftsPage = () => {
                 value={tryCode}
                 onChange={(e) => setTryCode(e.target.value)}
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={trying}>
                 تجربة الرمز
               </Button>
             </form>

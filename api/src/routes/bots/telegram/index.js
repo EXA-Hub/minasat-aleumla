@@ -8,6 +8,14 @@ const router = Router();
 
 router.post(
   '/endpoint',
+  (req, res, next) => {
+    if (
+      req.headers['x-telegram-bot-api-secret-token'] !==
+      process.env.TELEGRAM_SECRET_TOKEN
+    )
+      return res.sendStatus(401);
+    next();
+  },
   async (req, res, next) => {
     try {
       console.log(JSON.stringify(req.body, null, 2));
@@ -29,19 +37,30 @@ router.post(
         (entity) => entity.type === 'bot_command'
       );
       if (!command) return res.status(200).send('OK');
-      const commandObj = commands.find((cmd) =>
-        messageText
-          .slice(command.offset, command.offset + command.length)
-          .toLowerCase()
-          .startsWith(cmd.command)
-      );
-      if (commandObj) await commandObj.handler({ chat_id, messageText, req });
-      else
-        await sendMessage({
-          chat_id,
-          text: generateHelpMessage(),
-        });
-      res.status(200).send('OK');
+      const commandRes = await commands
+        .find((cmd) =>
+          messageText
+            .slice(command.offset, command.offset + command.length)
+            .toLowerCase()
+            .startsWith(cmd.command)
+        )
+        ?.handler({ chat_id, messageText, req, res });
+      if (!res.headersSent)
+        res.status(200).json(
+          commandRes
+            ? typeof commandRes === 'string'
+              ? {
+                  method: 'sendMessage',
+                  chat_id,
+                  text: commandRes,
+                }
+              : commandRes
+            : {
+                method: 'sendMessage',
+                chat_id,
+                text: generateHelpMessage(),
+              }
+        );
     } catch (error) {
       console.error('Error processing webhook:', error);
       res.status(500).json({ error: 'Internal server error' });

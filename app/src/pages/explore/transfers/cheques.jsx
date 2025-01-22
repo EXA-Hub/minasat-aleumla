@@ -33,7 +33,11 @@ const ChequesPage = () => {
     hasMore: false,
   });
 
+  const [creating, setCreating] = useState(false);
+  const [claiming, setClaiming] = useState(false);
+
   const createCheque = async (e) => {
+    setCreating(true);
     e.preventDefault();
     try {
       const newCheque = {
@@ -52,10 +56,13 @@ const ChequesPage = () => {
     } catch (err) {
       console.error(err);
       setError(err.data?.error || 'Error occurred');
+    } finally {
+      setCreating(false);
     }
   };
 
   const claimCheque = async (e) => {
+    setClaiming(true);
     e.preventDefault();
     try {
       await api.cheques.claim({ code: claimCode });
@@ -64,6 +71,8 @@ const ChequesPage = () => {
     } catch (err) {
       console.error(err);
       setError(err.data?.error || 'Error occurred');
+    } finally {
+      setClaiming(false);
     }
   };
 
@@ -140,7 +149,7 @@ const ChequesPage = () => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={creating}>
                 إنشاء شيك
               </Button>
             </form>
@@ -159,7 +168,7 @@ const ChequesPage = () => {
                 value={claimCode}
                 onChange={(e) => setClaimCode(e.target.value)}
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" disabled={claiming}>
                 صرف الشيك
               </Button>
             </form>

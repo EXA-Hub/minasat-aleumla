@@ -50,19 +50,18 @@ function requireAppWs(_app, ws) {
 
       const { slots, maxCoins } = subscriptions[creator.tier].features.cheque;
 
-      if (amount > maxCoins) {
+      if (amount > maxCoins)
         return res.status(400).json({
           error: `الحد الأقصى للمبلغ هو ${
             subscriptions[creator.tier].features.wallet.minAmount
           }`,
         });
-      }
+
       const chequesCount = await Cheque.find({
         creator: req.user._id,
       }).countDocuments();
-      if (slots <= chequesCount) {
+      if (slots <= chequesCount)
         return res.status(400).json({ error: 'تم تجاوز حد الشيكات' });
-      }
 
       try {
         const feeAmount = Math.ceil(
@@ -70,9 +69,8 @@ function requireAppWs(_app, ws) {
         );
         const totalAmount = amount + feeAmount;
 
-        if (creator.balance < totalAmount) {
+        if (creator.balance < totalAmount)
           return res.status(400).json({ error: 'رصيد غير كافٍ' });
-        }
 
         // Generate unique code
         const code = Math.random().toString(36).substring(2, 15);
@@ -115,7 +113,14 @@ function requireAppWs(_app, ws) {
   // Claim cheque
   router.post(
     '/cheque/claim',
-    [body('code').isString().isLength({ min: 6, max: 13 }), validateRequest],
+    [
+      body('code')
+        .isString()
+        .withMessage('الرجاء إدخال كود')
+        .isLength({ min: 6, max: 13 })
+        .withMessage('كود الشيك غير صالح'),
+      validateRequest,
+    ],
     async (req, res) => {
       const { code } = req.body;
       const recipient = req.user;
@@ -132,13 +137,11 @@ function requireAppWs(_app, ws) {
             }); // 1 hour TTL
         }
 
-        if (!cheque || cheque.status !== 'active') {
+        if (!cheque || cheque.status !== 'active')
           return res.status(404).json({ error: 'الشيك غير صالح أو مستخدم' });
-        }
 
-        if (cheque.creator.equals(recipient._id)) {
+        if (cheque.creator.equals(recipient._id))
           return res.status(400).json({ error: 'لا يمكن صرف الشيك الخاص بك' });
-        }
 
         // Update recipient's balance
         recipient.balance += cheque.amount;

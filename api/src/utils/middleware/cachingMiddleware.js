@@ -15,14 +15,15 @@ function generateCacheKey(req) {
 }
 
 function matchRoute(path, pattern) {
+  // Remove trailing slashes from both path and pattern
+  path = path.replace(/\/+$/, '');
+  pattern = pattern.replace(/\/+$/, '');
   // Convert pattern to regex, replacing :param with regex group
   return new RegExp(
-    `^${
-      pattern
-        .replace(/:[a-zA-Z]+/g, '([^/]+)') // Convert :param to capture group
-        .replace(/\//g, '\\/') // Escape forward slashes
-        .replace(/\*/g, '.*') // Handle wildcards if present
-    }$`
+    `^${pattern
+      .replace(/:[a-zA-Z]+/g, '([^/]+)')
+      .replace(/\//g, '\\/')
+      .replace(/\*/g, '.*')}$`
   ).test(path);
 }
 

@@ -1,4 +1,5 @@
 export const CONFIG = {
+  TELEGRAM_API: 'https://api.telegram.org/bot',
   EMOJIS_PACKS: [
     {
       name: 'minasatAleumla',

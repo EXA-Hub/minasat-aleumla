@@ -1,5 +1,5 @@
+import config from '../../../config.js';
 import User from '../../../utils/schemas/mongoUserSchema.js';
-import { sendMessage } from './funcs.js';
 import { CONFIG } from './config.js';
 
 const CoinIcon = `<tg-emoji emoji-id="${CONFIG.EMOJIS_PACKS[0].stickers[0].custom_emoji_id}">${CONFIG.EMOJIS_PACKS[0].stickers[0].emoji}</tg-emoji>`;
@@ -9,25 +9,17 @@ export const commands = [
   {
     command: '/start',
     description: 'بدء المحادثة',
-    handler: async ({ chat_id }) => {
-      return await sendMessage({
-        chat_id,
-        text: '!مرحباً بك! أنا الروبوت الخاص بك. استخدم أي أمر غير معروف لرؤية الأوامر المتاحة',
-      });
+    handler: () => {
+      return '!مرحباً بك! أنا الروبوت الخاص بك. استخدم أي أمر غير معروف لرؤية الأوامر المتاحة';
     },
   },
   {
     command: '/ping',
     description: 'تحقق من سرعة الاتصال',
-    handler: async ({ chat_id, req }) => {
-      // Extract the message timestamp from Telegram's request
-      const messageTimestamp = req.body.message.date * 1000; // Convert seconds to milliseconds
-      const ping = Date.now() - messageTimestamp; // Calculate latency
-      // Send the response message
-      return await sendMessage({
-        chat_id,
-        text: `⚡ سرعة الإتصال والرد الصحيح: ${ping}ms ⏳📡`,
-      });
+    handler: ({ req }) => {
+      return `⚡ سرعة الإتصال والرد الصحيح: ${
+        Date.now() - req.body.message.date * 1000
+      }ms ⏳📡`;
     },
   },
   {
@@ -37,11 +29,7 @@ export const commands = [
       const mention = req.body.message.entities.find(
         (entity) => entity.type === 'mention'
       );
-      if (!mention)
-        return await sendMessage({
-          chat_id,
-          text: 'يجب أن يكون هناك منشن 📝👤✨',
-        });
+      if (!mention) return 'يجب أن يكون هناك منشن 📝👤✨';
       const target = await User.findOne({
         'apps.Telegram': {
           $elemMatch: {
@@ -53,143 +41,67 @@ export const commands = [
         },
       });
       if (target && target.privacy.showWallet)
-        return await sendMessage({
+        return {
+          method: 'sendMessage',
           chat_id,
-          text: `محفظة ${target.username}:\n${target.balance}${CoinIcon}`,
-        });
-      return await sendMessage({
+          text: `محفظة ${target.username}:\n${
+            target.balance
+          }${CoinIcon}\nالرسوم: ${
+            config.subscriptions[target.tier].features.wallet.fee
+          }%`,
+          parse_mode: 'HTML',
+        };
+      return {
+        method: 'sendMessage',
         chat_id,
         text: `${CoinIcon} المحفظة فارغة 💸 أو لا يمكن عرضها ❌`,
-      });
+        parse_mode: 'HTML',
+      };
     },
   },
   {
     command: '/sendcoins',
     description: 'تحويل أموال لمحفظة شخص ما',
     handler: async ({ chat_id, messageText, req }) => {
+      return 'هذا الأمر معطل حاليا 🤖';
+      const amount = parseInt(messageText.split(' ')[1]);
+      if (!amount)
+        return '⛔ يجب كتابة عدد العملات المراد تحويلها 🪙\nمثلاً: /sendcoins 1000 @username';
       const mention = req.body.message.entities.find(
         (entity) => entity.type === 'mention'
       );
-      if (!mention)
-        return await sendMessage({
-          chat_id,
-          text: 'يجب أن يكون هناك منشن 📝👤✨',
-        });
-      const target = await User.findOne({
-        'apps.Telegram': {
-          $elemMatch: {
-            username: messageText.slice(
-              mention.offset + 1,
-              mention.offset + mention.length
-            ),
-          },
-        },
-      });
-      if (target) {
-        const amount = messageText.split(' ')[1];
-        if (amount)
-          return await sendMessage({
-            chat_id,
-            text: `تم تحويل ${amount}${CoinIcon} لمحفظة ${target.username}\n(الأمر تجريبي فقط ولا يحصل تحويل.)`,
-          });
-      } else
-        return await sendMessage({
-          chat_id,
-          text: 'المستخدم غير موجود 🚫 أو الحساب غير متصل بالمحفظة 🔒',
-        });
-    },
-  },
-  {
-    command: '/test',
-    description: 'تستخدم الروبوت',
-    hidden: true,
-    handler: async ({ chat_id }) => {
-      await sendMessage({
+      if (!mention) return 'يجب أن يكون هناك منشن 📝👤✨';
+      const targetUsername = messageText.slice(
+        mention.offset + 1,
+        mention.offset + mention.length
+      );
+      if (req.body.from.username === targetUsername)
+        return 'لا يمكن تحويل أموال لنفسك 🤦‍♂️';
+      const [sender, target] = await Promise.all([
+        User.findOne({ 'apps.Telegram.username': req.body.from.username }),
+        User.findOne({ 'apps.Telegram.username': targetUsername }),
+      ]);
+      if (!sender) return 'ليس لديك محفظة 🔒';
+      if (!target) return 'المستخدم غير موجود 🚫 أو الحساب غير متصل بمحفظة 🔒';
+      if (sender._id.equals(target._id)) return 'لا يمكن تحويل أموال لنفسك 🤦‍♂️';
+      const feeAmount = Math.ceil((amount * fee) / 100);
+      let taking = payFee ? amount + feeAmount : amount;
+      let giving = payFee ? amount : amount - feeAmount;
+      if (sender.balance < taking) return `⚠️ لا يوجد رصيد كافي في حسابك.`;
+      sender.balance -= taking;
+      sender.transactionStats.totalSpent += taking;
+      sender.transactionStats.totalTransactions += 1;
+      if (sender.referralId) sender.tax += Math.floor(feeAmount / 2);
+      target.balance += giving;
+      target.transactionStats.totalReceived += giving;
+      target.transactionStats.totalTransactions += 1;
+      await Promise.all([sender.save(), target.save()]);
+      return {
+        method: 'sendMessage',
         chat_id,
-        text: 'Hello, world!',
-      });
-
-      const inlineKeyboard = {
-        inline_keyboard: [
-          [{ text: 'Button 1', callback_data: 'action1' }],
-          [{ text: 'Button 2', callback_data: 'action2' }],
-        ],
-      };
-      await sendMessage({
-        chat_id,
-        text: 'Choose an option:',
-        reply_markup: inlineKeyboard,
-      });
-
-      const replyKeyboard = {
-        keyboard: [
-          ['Option 1', 'Option 2'],
-          ['Option 3', 'Option 4'],
-        ],
-        resize_keyboard: true,
-        one_time_keyboard: true,
-      };
-      await sendMessage({
-        chat_id,
-        text: 'Please select an option:',
-        reply_markup: replyKeyboard,
-      });
-
-      await sendMessage({
-        chat_id,
-        text: 'Please type your response:',
-        reply_markup: { force_reply: true },
-      });
-
-      await sendMessage({
-        chat_id,
-        text: `Your balance: 100 ${CoinIcon}`,
+        text: `تم تحويل ${amount}${CoinIcon} لمحفظة ${target.username}\n(الأمر تجريبي فقط ولا يحصل تحويل.)`,
         parse_mode: 'HTML',
-      });
-
-      await sendMessage({
-        chat_id,
-        text: 'Check out this link: https://example.com',
-        disable_web_page_preview: true,
-      });
-
-      await sendMessage({
-        chat_id,
-        text: 'This is a silent message.',
-        disable_notification: true,
-      });
-
-      await sendMessage({
-        chat_id,
-        text: 'This message cannot be forwarded or saved.',
-        protect_content: true,
-      });
-
-      await sendMessage({
-        chat_id,
-        text: 'This is a reply.',
-        reply_to_message_id: 1, // ID of the message to reply to
-      });
-
-      const entities = [
-        {
-          type: 'bold',
-          offset: 0,
-          length: 5,
-        },
-        {
-          type: 'italic',
-          offset: 6,
-          length: 6,
-        },
-      ];
-      await sendMessage({
-        chat_id,
-        text: 'Hello, world!',
-        entities,
-      });
-
-      return 1;
+      };
     },
   },
 ];
