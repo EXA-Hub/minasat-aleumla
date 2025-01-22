@@ -1,8 +1,10 @@
 // api/src/routes/auth/trade.js
+import mongoose from 'mongoose';
 import { Router } from 'express';
 import { body, param } from 'express-validator';
 import { validateRequest } from '../../utils/middleware/validateRequest.js';
 import { Product, Trade } from '../../utils/schemas/traderSchema.js';
+import User from '../../utils/schemas/mongoUserSchema.js';
 import config from '../../config.js';
 
 const { subscriptions } = config;
@@ -13,6 +15,14 @@ const validateMessages = {
   price: 'السعر يجب ان يكون اقل من او يساوي 0',
   id: 'معرف المنتج غير صالح',
   lock: 'يجب ادخال قيمة صحيحة',
+};
+
+const errorMessages = {
+  productNotFound: 'المنتج غير موجود.',
+  productsNotFound: 'لا يوجد منتجات.',
+  tradeNotFound: 'الصفقة غير موجودة.',
+  tradesNotFound: 'لا يوجد صفقات.',
+  productLocked: 'المنتج مقفل.',
 };
 
 function requireAppWs(app, ws) {
@@ -42,7 +52,7 @@ function requireAppWs(app, ws) {
           userId: req.user._id,
         });
         if (!product)
-          return res.status(404).json({ error: 'المنتج غير موجود.' });
+          return res.status(404).json({ error: errorMessages.productNotFound });
         res.json(product);
       } catch (error) {
         console.error(error);
@@ -112,9 +122,11 @@ function requireAppWs(app, ws) {
           req.body.price >
           subscriptions[req.user.tier].features.products.maxCoins
         )
-          return res
-            .status(400)
-            .json({ error: 'السعر يجب ان يكون اقل من او يساوي ' + maxCoins });
+          return res.status(400).json({
+            error:
+              'السعر يجب ان يكون اقل من او يساوي ' +
+              subscriptions[req.user.tier].features.products.maxCoins,
+          });
         const product = await Product.findOneAndUpdate(
           {
             _id: req.params.id,
@@ -172,7 +184,7 @@ function requireAppWs(app, ws) {
     '/products/:id/lock',
     [
       param('id').isMongoId().withMessage(validateMessages.id),
-      param('lock').isBoolean().withMessage(validateMessages.lock),
+      body('lock').isBoolean().withMessage(validateMessages.lock),
       validateRequest,
     ],
     async (req, res) => {
@@ -183,14 +195,14 @@ function requireAppWs(app, ws) {
             userId: req.user._id,
             openTrades: 0,
           },
-          { isLocked: req.params.lock },
+          { isLocked: req.body.lock },
           { new: true }
         );
         if (!product)
           return res
             .status(404)
             .json({ error: 'المنتج غير موجود أو لديه صفقات مفتوحة.' });
-        res.status(200).send(req.params.lock);
+        res.status(200).send(req.body.lock);
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'فشل في قفل المنتج.' });
@@ -209,33 +221,47 @@ function requireAppWs(app, ws) {
     ],
     async (req, res) => {
       try {
-        const product = await Product.findOneAndUpdate(
-          {
-            _id: req.body.productId,
-            isLocked: false,
-          },
-          { $inc: { openTrades: 1 } },
-          { new: true }
-        );
-        if (!product)
-          return res.status(404).json({ error: 'المنتج غير موجود. او مقفل' });
-        if (
-          req.user.balance <
-          Math.ceil(
-            (product.price *
-              req.body.quantity *
-              subscriptions[req.user.tier].features.wallet.fee) /
-              100
-          ) +
-            product.price * req.body.quantity
-        )
-          return res.status(400).json({ error: 'رصيد غير كافٍ' });
-        const trade = await Trade.create({
-          productId: req.body.productId,
-          quantity: req.body.quantity,
-          buyerId: req.user._id,
-        });
-        res.status(201).json(trade);
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        try {
+          const product = await Product.findOneAndUpdate(
+            { _id: req.body.productId, isLocked: false },
+            { $inc: { openTrades: 1 } },
+            { new: true, session }
+          );
+          if (!product) throw new Error('المنتج غير موجود. او مقفل');
+
+          if (
+            req.user.balance <
+            Math.ceil(
+              (product.price *
+                req.body.quantity *
+                subscriptions[req.user.tier].features.wallet.fee) /
+                100
+            ) +
+              product.price * req.body.quantity
+          )
+            return res.status(400).json({ error: 'رصيد غير كافٍ' });
+
+          const trade = await Trade.create(
+            [
+              {
+                productId: req.body.productId,
+                quantity: req.body.quantity,
+                buyerId: req.user._id,
+              },
+            ],
+            { session }
+          );
+
+          await session.commitTransaction();
+          res.status(201).json(trade[0]);
+        } catch (error) {
+          await session.abortTransaction();
+          res.status(500).json({ error: error.message });
+        } finally {
+          session.endSession();
+        }
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'فشل في انشاء الصفقة.' });
@@ -261,6 +287,10 @@ function requireAppWs(app, ws) {
         });
         if (!product)
           return res.status(404).json({ error: 'المنتج غير موجود.' });
+        await Product.updateOne(
+          { _id: trade.productId },
+          { $inc: { openTrades: -1 } }
+        );
         await trade.deleteOne();
         res.status(200).json(trade);
       } catch (error) {
@@ -276,10 +306,14 @@ function requireAppWs(app, ws) {
     [param('id').isMongoId().withMessage(validateMessages.id), validateRequest],
     async (req, res) => {
       try {
-        const trade = await Trade.findOne({
-          _id: req.params.id,
-          stage: 'buyer_offered',
-        });
+        const trade = await Trade.findOneAndUpdate(
+          {
+            _id: req.params.id,
+            stage: 'buyer_offered',
+          },
+          { stage: 'seller_accepted' },
+          { new: true }
+        );
         if (!trade)
           return res.status(404).json({ error: 'الصفقة غير موجودة.' });
         const product = await Product.exists({
@@ -288,8 +322,6 @@ function requireAppWs(app, ws) {
         });
         if (!product)
           return res.status(404).json({ error: 'المنتج غير موجود.' });
-        trade.stage = 'seller_accepted';
-        await trade.save();
         res.status(200).json(trade);
       } catch (error) {
         console.error(error);
@@ -320,16 +352,33 @@ function requireAppWs(app, ws) {
         const sellerFee = subscriptions[seller.tier].features.wallet.fee;
         const buyerFee = subscriptions[req.user.tier].features.wallet.fee;
         const totalPrice = product.price * trade.quantity;
-        const taking = totalPrice + Math.ceil((totalPrice * buyerFee) / 100);
-        const giving = totalPrice - Math.ceil((totalPrice * sellerFee) / 100);
-        if (req.user.balance < taking)
+        const totalCost = totalPrice + Math.ceil((totalPrice * buyerFee) / 100);
+        const sellerPayout =
+          totalPrice - Math.ceil((totalPrice * sellerFee) / 100);
+        if (req.user.balance < totalCost)
           return res.status(400).json({ error: 'رصيد غير كافٍ' });
-        req.user.balance -= taking;
-        trade.stage = 'buyer_confirmed';
-        seller.balance += giving;
-        await req.user.save();
-        await trade.save();
-        await seller.save();
+        const session = await mongoose.startSession();
+        session.startTransaction();
+        try {
+          req.user.balance -= totalCost;
+          if (req.user.referralId) req.user.tax += totalCost / 2;
+          req.user.transactionStats.totalReceived += sellerPayout;
+          req.user.transactionStats.totalTransactions += 1;
+          trade.stage = 'buyer_confirmed';
+          seller.balance += sellerPayout;
+          if (seller.referralId) seller.tax += sellerPayout / 2;
+          seller.transactionStats.totalReceived += sellerPayout;
+          seller.transactionStats.totalTransactions += 1;
+          await req.user.save({ session });
+          await trade.save({ session });
+          await seller.save({ session });
+          await session.commitTransaction();
+        } catch (error) {
+          await session.abortTransaction();
+          throw error;
+        } finally {
+          session.endSession();
+        }
         await ws.wss.sendNotification(
           'قام المشتري بتأكيد الإستلام 🛒',
           Date.now(),
@@ -349,7 +398,12 @@ function requireAppWs(app, ws) {
     [param('id').isMongoId().withMessage(validateMessages.id), validateRequest],
     async (req, res) => {
       try {
-        const trades = await Trade.find({ productId: req.params.id });
+        const product = await Product.findOne({
+          _id: req.params.id,
+          userId: req.user._id,
+        });
+        if (!product) return res.status(403).json({ error: 'غير مصرح به' });
+        const trades = await Trade.find({ productId: product._id });
         res.status(200).json(trades);
       } catch (error) {
         console.error(error);
@@ -373,17 +427,13 @@ function requireAppWs(app, ws) {
   router.get('/@me/products/trades', async (req, res) => {
     try {
       const products = await Product.find({ userId: req.user._id });
-      const trades = await Trade.find({
-        productId: { $in: products.map((p) => p._id) },
-      });
-      const tradesByProductId = trades.reduce((acc, trade) => {
-        if (!acc[trade.productId]) acc[trade.productId] = [];
-        acc[trade.productId].push(trade);
-        return acc;
-      }, {});
+      const trades = await Trade.aggregate([
+        { $match: { productId: { $in: products.map((p) => p._id) } } },
+        { $group: { _id: '$productId', trades: { $push: '$$ROOT' } } },
+      ]);
       const data = products.map((product) => ({
         product,
-        trades: tradesByProductId[product._id] || [],
+        trades: trades[product._id] || [],
       }));
       res.status(200).json(data);
     } catch (error) {

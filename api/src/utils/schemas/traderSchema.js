@@ -38,6 +38,11 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes for Product
+productSchema.index({ userId: 1 });
+productSchema.index({ isLocked: 1 });
+productSchema.index({ openTrades: 1 });
+
 const Product = mongoose.model('Product', productSchema);
 
 const tradeSchema = new mongoose.Schema(
@@ -70,19 +75,21 @@ const tradeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Set confirmedAt when stage is updated to 'buyer_confirmed'
+// Pre-save hook for Trade
 tradeSchema.pre('save', function (next) {
-  if (this.isModified('stage') && this.stage === 'buyer_confirmed') {
+  if (this.isModified('stage') && this.stage === 'buyer_confirmed')
     this.confirmedAt = new Date();
-  }
   next();
 });
 
-// Create TTL index on confirmedAt (30 days)
+// Indexes for Trade
 tradeSchema.index(
   { confirmedAt: 1 },
   { expireAfterSeconds: 30 * 24 * 60 * 60 }
 );
+tradeSchema.index({ productId: 1 });
+tradeSchema.index({ buyerId: 1 });
+tradeSchema.index({ stage: 1 });
 
 const Trade = mongoose.model('Trade', tradeSchema);
 
