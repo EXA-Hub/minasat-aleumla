@@ -200,7 +200,7 @@ function requireAppWs(_app, ws) {
           amount: g.amount,
           status: g.status,
           winners: g.winners.map((winner) => winner.username), // Include usernames of winners
-          attempts: g.attempts.length, // Include number of attempts
+          attempts: g.winnersCount, // Include number of attempts
           createdAt: g.createdAt, // Include creation date
         })),
         pagination: {
