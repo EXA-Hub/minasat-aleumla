@@ -3,35 +3,31 @@ env();
 
 import cors from 'cors';
 import argon2 from 'argon2';
-import helmet from 'helmet';
 import morgan from 'morgan';
 import express from 'express';
-import requestIp from 'request-ip';
 import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import { join, dirname } from 'path';
 import { authenticator } from 'otplib';
 import hcaptcha from 'express-hcaptcha';
 import { body } from 'express-validator';
+import { configureSecurityMiddleware } from './utils/middleware/security.js';
 import cachingMiddleware from './utils/middleware/cachingMiddleware.js';
 import { authenticateToken } from './utils/authenticateToken.js';
 import { connectToMongoDB } from './utils/libs/mongoose.js';
 import notFoundHandler, { listRoutes } from './404.js';
 import User from './utils/schemas/mongoUserSchema.js';
 import { limiter } from './utils/libs/redisClient.js';
-import blockVpnProxy from './utils/blockVpnProxy.js';
+// import blockVpnProxy from './utils/blockVpnProxy.js';
 import createUser from './utils/createUser.js';
 import config from './config.js';
 
 const CAPTCHA_SECRET_KEY = process.env.CAPTCHA_SECRET_KEY;
 const app = express();
 
-app.set('trust proxy', 1);
-app.set('x-powered-by', false);
-app.disable('x-powered-by');
-
 app.use(morgan('dev'));
-app.use(requestIp.mw());
+configureSecurityMiddleware(app);
+
 // app.use(blockVpnProxy);
 app.use(limiter);
 app.use(
@@ -42,7 +38,7 @@ app.use(
     ],
   })
 );
-app.use(helmet());
+
 // Serve static files from the public folder
 app.use(
   express.static(

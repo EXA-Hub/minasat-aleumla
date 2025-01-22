@@ -1,4 +1,4 @@
-// my-api/src/utils/schemas/traderSchema.js
+// api/src/utils/schemas/traderSchema.js
 import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema(
@@ -7,11 +7,13 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      maxLength: 255,
     },
     description: {
       type: String,
       required: true,
       trim: true,
+      maxLength: 10000,
     },
     price: {
       type: Number,
@@ -50,42 +52,37 @@ const tradeSchema = new mongoose.Schema(
       required: true,
       ref: 'User',
     },
-    sellerId: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: true,
-      ref: 'User',
-    },
     quantity: {
       type: Number,
       required: true,
       min: 1,
     },
-    totalPrice: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    status: {
+    stage: {
       type: String,
-      enum: ['pending', 'accepted', 'rejected'],
-      default: 'pending',
+      enum: ['buyer_offered', 'seller_accepted', 'buyer_confirmed'],
+      default: 'buyer_offered',
+    },
+    confirmedAt: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true }
 );
 
-// Middleware to lock/unlock products based on trade status
-tradeSchema.post('save', async function (doc) {
-  const product = await Product.findById(doc.productId);
-  if (doc.isNew && doc.status === 'pending') {
-    product.openTrades += 1;
-    product.isLocked = true;
-  } else if (doc.status === 'accepted' || doc.status === 'rejected') {
-    product.openTrades = Math.max(product.openTrades - 1, 0);
-    product.isLocked = product.openTrades > 0;
+// Set confirmedAt when stage is updated to 'buyer_confirmed'
+tradeSchema.pre('save', function (next) {
+  if (this.isModified('stage') && this.stage === 'buyer_confirmed') {
+    this.confirmedAt = new Date();
   }
-  await product.save();
+  next();
 });
+
+// Create TTL index on confirmedAt (30 days)
+tradeSchema.index(
+  { confirmedAt: 1 },
+  { expireAfterSeconds: 30 * 24 * 60 * 60 }
+);
 
 const Trade = mongoose.model('Trade', tradeSchema);
 

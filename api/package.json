@@ -12,6 +12,7 @@
   "author": "zampx",
   "license": "ISC",
   "dependencies": {
+    "@apollo/server": "^4.11.3",
     "@vercel/functions": "^1.5.2",
     "argon2": "^0.41.1",
     "body-parser": "^1.20.3",
@@ -20,8 +21,10 @@
     "dotenv-safe": "^9.1.0",
     "express": "^4.21.2",
     "express-hcaptcha": "^0.0.3",
+    "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^7.5.0",
     "express-validator": "^7.2.0",
+    "graphql": "^16.10.0",
     "helmet": "^8.0.0",
     "ip": "^2.0.1",
     "moment-timezone": "^0.5.46",
@@ -36,7 +39,8 @@
     "redis": "^4.7.0",
     "request-ip": "^3.3.0",
     "sqlite3": "^5.1.7",
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "xss": "^1.0.15"
   },
   "devDependencies": {
     "@types/node-cron": "^3.0.11",
