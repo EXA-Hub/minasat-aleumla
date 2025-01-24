@@ -210,7 +210,6 @@ export function SearchPanel({ onSearch }) {
           <label className="text-sm mb-1 block">السعر الأدنى</label>
           <Input
             type="number"
-            step="0.01"
             min="0"
             placeholder="السعر الأدنى..."
             value={searchParams.minPrice}
@@ -226,7 +225,6 @@ export function SearchPanel({ onSearch }) {
           <label className="text-sm mb-1 block">السعر الأقصى</label>
           <Input
             type="number"
-            step="0.01"
             min="0"
             placeholder="السعر الأقصى..."
             value={searchParams.maxPrice}

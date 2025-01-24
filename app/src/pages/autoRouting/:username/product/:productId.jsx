@@ -70,8 +70,6 @@ const ProductPage = ({
 
   const { product, user } = data;
 
-  console.log(data);
-
   return (
     <div className="p-4">
       <Card className="bg-white/20 backdrop-blur-lg border-0 shadow-xl">
