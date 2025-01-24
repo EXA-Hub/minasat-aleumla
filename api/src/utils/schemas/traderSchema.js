@@ -39,9 +39,11 @@ const productSchema = new mongoose.Schema(
 );
 
 // Indexes for Product
-productSchema.index({ userId: 1 });
-productSchema.index({ isLocked: 1 });
-productSchema.index({ openTrades: 1 });
+productSchema.index({
+  price: 1,
+  createdAt: 1,
+  updatedAt: 1,
+});
 
 const Product = mongoose.model('Product', productSchema);
 

@@ -11,6 +11,7 @@ import {
   CreditCard,
   Code,
   Crown,
+  Store,
 } from 'lucide-react';
 
 const menuItems = [
@@ -74,6 +75,14 @@ const menuItems = [
         path: '/explore/transfers/gifts',
         component: React.lazy(
           () => import('../../pages/explore/transfers/gifts.jsx')
+        ),
+      },
+      {
+        name: 'السوق',
+        icon: Store,
+        path: '/explore/transfers/market',
+        component: React.lazy(
+          () => import('../../pages/explore/transfers/market.jsx')
         ),
       },
     ],

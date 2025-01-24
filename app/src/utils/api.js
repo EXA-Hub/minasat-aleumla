@@ -84,6 +84,16 @@ const handleApiError = async (error) => {
 };
 
 const api = {
+  market: {
+    getUsers: async (ids) =>
+      axiosInstance.post('/api/public/market/users', {
+        ids,
+      }),
+    exploreProducts: async () =>
+      axiosInstance.post('/api/public/market/products/explore'),
+    searchProducts: async (searchParams) =>
+      axiosInstance.post('/api/public/market/products/search', searchParams),
+  },
   donate: {
     create: async (data) => axiosInstance.post('/api/auth/@me/donate/' + data),
     donators: async () => axiosInstance.get('/api/public/donators'),
@@ -142,6 +152,8 @@ const api = {
     update: async (id, data) =>
       axiosInstance.put(`/api/auth/products/${id}`, data),
     delete: async (id) => axiosInstance.delete(`/api/auth/products/${id}`),
+    toggleLock: async (id, lock) =>
+      axiosInstance.put(`/api/auth/products/${id}/lock`, { lock }),
   },
   apps: {
     verifyConnection: async (data) => {

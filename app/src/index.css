@@ -16,6 +16,7 @@
     --muted-foreground: #64748b; /* Gray text for muted elements */
     --border: #cbd5e1; /* Light gray for borders */
     --card: #ffffff; /* White for card backgrounds */
+    --card-foreground: #1e293b; /* Dark text on card */
     --muted-light: #94a3b8; /* Medium gray for subtle elements */
   }
 
@@ -32,6 +33,7 @@
     --muted-foreground: #94a3b8; /* Light gray for muted text */
     --border: #334155; /* Darker gray for borders */
     --card: #1e293b; /* Dark gray for card backgrounds */
+    --card-foreground: #f8fafc; /* Light text on card */
     --muted-light: #475569; /* Medium gray for subtle elements */
   }
 }

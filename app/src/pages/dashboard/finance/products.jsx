@@ -9,6 +9,7 @@ import {
   Plus,
   ShoppingBag,
   ArrowUpDown,
+  Unlock,
 } from 'lucide-react';
 import PropTypes from 'prop-types';
 import CoinIcon from '../../../components/ui/CoinIcon';
@@ -104,7 +105,6 @@ const ProductsPage = () => {
       field === sortField && sortDirection === 'asc' ? 'desc' : 'asc';
     setSortField(field);
     setSortDirection(newDirection);
-
     const sortedProducts = [...products].sort((a, b) => {
       const compareValue =
         newDirection === 'asc' ? a[field] - b[field] : b[field] - a[field];
@@ -114,24 +114,25 @@ const ProductsPage = () => {
   };
 
   const handleSubmit = async (e, product) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const productData = {
-      name: formData.get('name'),
-      description: formData.get('description'),
-      price: Number(formData.get('price')),
-    };
-
-    if (productData.price > plan.maxCoins) {
-      toast.error('السعر يجب ان يكون اقل من او يساوي ' + plan.maxCoins);
-      return;
-    }
-
+    setLoading(true);
     try {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const productData = {
+        name: formData.get('name'),
+        description: formData.get('description'),
+        price: Number(formData.get('price')),
+      };
+
+      if (productData.price > plan.maxCoins) {
+        toast.error('السعر يجب ان يكون اقل من او يساوي ' + plan.maxCoins);
+        return;
+      }
+
       if (product.isNew) {
-        if (plan.slots <= products.length) {
+        if (plan.slots <= products.length)
           toast.error('تم تخطي الحد الاقصي للمنتجات');
-        } else {
+        else {
           await api.products.create(productData);
           toast.success('تم إضافة المنتج بنجاح');
         }
@@ -143,19 +144,50 @@ const ProductsPage = () => {
       loadProducts();
       setEditingProduct(null);
       setSelectedProduct(null);
+
+      toast('تستغرق التحديثات 10 دقيقة', {
+        icon: '⏳',
+        duration: 10000,
+      });
     } catch (error) {
       toast.error(error.data?.error || 'فشل في حفظ المنتج');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDelete = async (product) => {
+    setLoading(true);
     try {
       await api.products.delete(product._id);
       toast.success('تم حذف المنتج بنجاح');
       loadProducts();
       setSelectedProduct(null);
+      toast('تستغرق التحديثات 10 دقيقة', {
+        icon: '⏳',
+        duration: 10000,
+      });
     } catch (error) {
       toast.error(error.data?.error || 'فشل في حذف المنتج');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggleLock = async (product) => {
+    setLoading(true);
+    try {
+      await api.products.toggleLock(product._id, !product.isLocked);
+      toast.success('تم تغيير حالة المنتج بنجاح');
+      loadProducts();
+      toast('تستغرق التحديثات 10 دقيقة', {
+        icon: '⏳',
+        duration: 10000,
+      });
+    } catch (error) {
+      toast.error(error.data?.error || 'فشل في تغيير حالة المنتج');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -177,13 +209,12 @@ const ProductsPage = () => {
     children: PropTypes.node.isRequired,
   };
 
-  if (loading) {
+  if (loading)
     return (
       <div className="h-[50vh] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </div>
     );
-  }
 
   return (
     <div dir="rtl" className="space-y-6">
@@ -219,7 +250,16 @@ const ProductsPage = () => {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold">{product.name}</h3>
-                  {product.isLocked && <Lock className="h-4 w-4" />}
+                  <button
+                    disabled={product.openTrades > 0}
+                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                    onClick={() => handleToggleLock(product)}>
+                    {product.isLocked ? (
+                      <Lock className="h-4 w-4" />
+                    ) : (
+                      <Unlock className="h-4 w-4" />
+                    )}
+                  </button>
                 </div>
               </div>
               <div className="flex items-center gap-8">
@@ -236,7 +276,7 @@ const ProductsPage = () => {
                       e.stopPropagation();
                       setEditingProduct(product._id);
                     }}
-                    disabled={product.isLocked}
+                    disabled={!product.isLocked}
                     className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50">
                     <Edit className="h-5 w-5" />
                   </button>
@@ -245,7 +285,7 @@ const ProductsPage = () => {
                       e.stopPropagation();
                       handleDelete(product);
                     }}
-                    disabled={product.isLocked}
+                    disabled={!product.isLocked}
                     className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50">
                     <Trash2 className="h-5 w-5" />
                   </button>

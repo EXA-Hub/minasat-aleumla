@@ -1,159 +1,194 @@
-// api/src/routes/public/trades.js
+// api/src/routes/public/market.js
 import express from 'express';
-import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
+import { body } from 'express-validator';
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
 import { Product } from '../../utils/schemas/traderSchema.js';
 import User from '../../utils/schemas/mongoUserSchema.js';
-import config from '../../config.js';
 
-const defaults = {
-  introspection: true,
-  formatError: (error) => {
-    const { message, extensions } = error;
-    return {
-      message,
-      extensions: {
-        code: extensions?.code || 'INTERNAL_SERVER_ERROR',
-        ...(config.isProduction ? {} : { stacktrace: extensions?.stacktrace }), // Only include stacktrace in non-production environments
-      },
-    };
-  },
-};
+const router = express.Router();
 
-const typeDefs_products = `
-  type Product {
-    _id: ID!
-    name: String!
-    price: Float!
-    openTrades: Int!
-    createdAt: String!
-    updatedAt: String!
-    userId: ID!
-  }
+// بحث المنتجات
+router.post(
+  '/market/products/search',
+  [
+    body('searchTerm')
+      .optional()
+      .isString()
+      .withMessage('يجب أن يكون مصطلح البحث نصًا')
+      .trim(),
+    body('minPrice')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('يجب أن يكون السعر الأدنى رقمًا موجبًا')
+      .toFloat(),
+    body('maxPrice')
+      .optional()
+      .isFloat({ min: 0 })
+      .withMessage('يجب أن يكون السعر الأقصى رقمًا موجبًا')
+      .toFloat(),
+    body('minCreatedAt')
+      .optional()
+      .isISO8601()
+      .withMessage('يجب أن يكون تاريخ الإنشاء الأدنى تاريخًا صالحًا')
+      .toDate(),
+    body('maxCreatedAt')
+      .optional()
+      .isISO8601()
+      .withMessage('يجب أن يكون تاريخ الإنشاء الأقصى تاريخًا صالحًا')
+      .toDate(),
+    body('minUpdatedAt')
+      .optional()
+      .isISO8601()
+      .withMessage('يجب أن يكون تاريخ التحديث الأدنى تاريخًا صالحًا')
+      .toDate(),
+    body('maxUpdatedAt')
+      .optional()
+      .isISO8601()
+      .withMessage('يجب أن يكون تاريخ التحديث الأقصى تاريخًا صالحًا')
+      .toDate(),
+    body('sortBy')
+      .optional()
+      .isIn(['price', 'createdAt', 'updatedAt', 'openTrades'])
+      .withMessage('مجال الفرز غير صالح'),
+    body('sortOrder')
+      .optional()
+      .isIn(['asc', 'desc'])
+      .withMessage('يجب أن يكون ترتيب الفرز تصاعديًا أو تنازليًا'),
+    body('limit')
+      .optional()
+      .isInt({ min: 1, max: 25 })
+      .withMessage('يجب أن يكون الحد بين 1 و25')
+      .toInt(),
+    body('offset')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('يجب أن يكون الإزاحة رقمًا غير سالب')
+      .toInt(),
+    validateRequest,
+  ],
+  async (req, res) => {
+    try {
+      const {
+        searchTerm,
+        minPrice,
+        maxPrice,
+        minCreatedAt,
+        maxCreatedAt,
+        minUpdatedAt,
+        maxUpdatedAt,
+        sortBy = 'updatedAt',
+        sortOrder = 'desc',
+        limit = 10,
+        offset = 0,
+      } = req.body;
 
-  input ProductSort {
-    price: SortOrder
-    createdAt: SortOrder
-    openTrades: SortOrder
-  }
-
-  enum SortOrder {
-    ASC
-    DESC
-  }
-
-  type Query {
-    searchProducts(
-      searchTerm: String
-      sort: ProductSort
-      limit: Int = 10
-      offset: Int = 0
-    ): [Product!]!
-    
-    exploreProducts(
-      limit: Int = 10
-      offset: Int = 0
-    ): [Product!]!
-  }
-`;
-
-const resolvers_products = {
-  Query: {
-    searchProducts: async (_, { searchTerm, sort, limit = 10, offset = 0 }) => {
       const query = {
         isLocked: false,
         ...(searchTerm && { name: { $regex: searchTerm, $options: 'i' } }),
+        ...(minPrice || maxPrice
+          ? {
+              price: {
+                ...(minPrice && { $gte: minPrice }),
+                ...(maxPrice && { $lte: maxPrice }),
+              },
+            }
+          : {}),
+        ...(minCreatedAt || maxCreatedAt
+          ? {
+              createdAt: {
+                ...(minCreatedAt && { $gte: minCreatedAt }),
+                ...(maxCreatedAt && { $lte: maxCreatedAt }),
+              },
+            }
+          : {}),
+        ...(minUpdatedAt || maxUpdatedAt
+          ? {
+              updatedAt: {
+                ...(minUpdatedAt && { $gte: minUpdatedAt }),
+                ...(maxUpdatedAt && { $lte: maxUpdatedAt }),
+              },
+            }
+          : {}),
       };
 
-      const sortOptions = {};
-      if (sort)
-        Object.entries(sort).forEach(([field, order]) => {
-          sortOptions[field] = order === 'ASC' ? 1 : -1;
-        });
+      const sortOptions = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 
-      return Product.find(query)
+      const products = await Product.find(query)
         .sort(sortOptions)
-        .limit(Math.min(limit, 25))
+        .limit(limit)
         .skip(offset)
         .lean();
-    },
 
-    exploreProducts: async (_, { limit = 10, offset = 0 }) => {
-      // Simple exploration algorithm:
-      // Return products with most open trades first
-      return Product.find({ isLocked: false })
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ error: 'خطأ في الخادم أثناء البحث عن المنتجات' });
+    }
+  }
+);
+
+// استكشاف المنتجات
+router.post(
+  '/market/products/explore',
+  [
+    body('limit')
+      .optional()
+      .isInt({ min: 1, max: 25 })
+      .withMessage('يجب أن يكون الحد بين 1 و25')
+      .toInt(),
+    body('offset')
+      .optional()
+      .isInt({ min: 0 })
+      .withMessage('يجب أن يكون الإزاحة رقمًا غير سالب')
+      .toInt(),
+    validateRequest,
+  ],
+  async (req, res) => {
+    try {
+      const { limit = 10, offset = 0 } = req.body;
+
+      const products = await Product.find({ isLocked: false })
         .sort({ openTrades: -1, updatedAt: -1 })
-        .limit(Math.min(limit, 25))
+        .limit(limit)
         .skip(offset)
         .lean();
-    },
-  },
-};
 
-const typeDefs_users = `
-  type User {
-    _id: ID!
-    username: String!
-    profile: Profile
+      res.json(products);
+    } catch (error) {
+      res.status(500).json({ error: 'خطأ في الخادم أثناء استكشاف المنتجات' });
+    }
   }
+);
 
-  type Profile {
-    profilePicture: String
-  }
+// الحصول على المستخدمين
+router.post(
+  '/market/users',
+  [
+    body('ids')
+      .isArray({ min: 1, max: 25 })
+      .withMessage(
+        'يجب أن تكون معرفات المستخدمين مصفوفة تحتوي على 1-25 عنصرًا'
+      ),
+    body('ids.*')
+      .isMongoId()
+      .withMessage('يجب أن يكون كل معرف مستخدم معرفًا صالحًا'),
+    validateRequest,
+  ],
+  async (req, res) => {
+    try {
+      const { ids } = req.body;
 
-  type Query {
-    getUsers(ids: [ID!]!): [User!]!
-  }
-`;
-
-const resolvers_users = {
-  Query: {
-    getUsers: async (_, { ids }) => {
-      return User.find(
+      const users = await User.find(
         { _id: { $in: ids } },
         '_id username profile.profilePicture'
       )
         .limit(25)
         .lean();
-    },
-  },
-};
 
-const server_products = new ApolloServer({
-  typeDefs: typeDefs_products,
-  resolvers: resolvers_products,
-  ...defaults,
-});
+      res.json(users);
+    } catch (error) {
+      res.status(500).json({ error: 'خطأ في الخادم أثناء جلب المستخدمين' });
+    }
+  }
+);
 
-await server_products.start();
-
-const server_users = new ApolloServer({
-  typeDefs: typeDefs_users,
-  resolvers: resolvers_users,
-  ...defaults,
-});
-
-await server_users.start();
-
-const route = express.Router();
-
-route.post('/market/products', expressMiddleware(server_products));
-route.post('/market/users', expressMiddleware(server_users));
-
-// Global error handler
-route.use((err, req, res, next) => {
-  console.error(err); // Log the error for debugging purposes
-
-  res.status(500).json({
-    errors: [
-      {
-        message: 'An unexpected error occurred.',
-        extensions: {
-          code: 'INTERNAL_SERVER_ERROR',
-        },
-      },
-    ],
-  });
-});
-
-export default route;
+export default router;

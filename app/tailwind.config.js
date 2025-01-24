@@ -19,6 +19,7 @@ export default {
           muted: 'var(--muted)',
           border: 'var(--border)',
           card: 'var(--card)',
+          'card-foreground': 'var(--card-foreground)',
           'muted-light': 'var(--muted-light)',
         }),
       },

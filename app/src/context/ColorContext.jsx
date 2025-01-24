@@ -19,6 +19,7 @@ export const ColorProvider = ({ children }) => {
       mutedForeground: '#64748b',
       border: '#cbd5e1',
       card: '#ffffff',
+      cardForeground: '#1e293b',
       mutedLight: '#94a3b8',
     },
     dark: {
@@ -34,6 +35,7 @@ export const ColorProvider = ({ children }) => {
       mutedForeground: '#94a3b8',
       border: '#334155',
       card: '#1e293b',
+      cardForeground: '#f8fafc',
       mutedLight: '#475569',
     },
   };

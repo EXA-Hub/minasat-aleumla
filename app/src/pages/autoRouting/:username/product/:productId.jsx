@@ -57,13 +57,11 @@ const ProductPage = ({
 
     return (
       <div
-        className={`flex justify-center items-center h-screen bg-gradient-to-br ${bgClass} dark:from-gray-900 dark:to-gray-800`}
-      >
+        className={`flex justify-center items-center h-screen bg-gradient-to-br ${bgClass} dark:from-gray-900 dark:to-gray-800`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`text-xl ${textClass} ${err ? 'p-6 rounded-lg bg-white/30 backdrop-blur-lg' : ''}`}
-        >
+          className={`text-xl ${textClass} ${err ? 'p-6 rounded-lg bg-white/30 backdrop-blur-lg' : ''}`}>
           {content}
         </motion.div>
       </div>
@@ -71,6 +69,8 @@ const ProductPage = ({
   }
 
   const { product, user } = data;
+
+  console.log(data);
 
   return (
     <div className="p-4">
@@ -80,6 +80,21 @@ const ProductPage = ({
             <Button variant="ghost" size="icon" onClick={handleBack}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
+            {!product.isLocked && (
+              <div className="flex items-center gap-4">
+                <Button
+                  onClick={() =>
+                    window.open(
+                      `/trade/${product._id}`,
+                      '_blank',
+                      'noopener,noreferrer'
+                    )
+                  }
+                  className="opacity-60 hover:opacity-100 transition-opacity duration-300 ease-in-out">
+                  فتح صفقة
+                </Button>
+              </div>
+            )}
           </div>
           <CardTitle className="flex items-center gap-4">
             <Avatar className="h-16 w-16 ring-2 ring-purple-500/30">
