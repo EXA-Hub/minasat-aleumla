@@ -1,7 +1,6 @@
 import { env } from './utils/env.js';
 env();
 
-import cors from 'cors';
 import argon2 from 'argon2';
 import morgan from 'morgan';
 import express from 'express';
@@ -17,8 +16,6 @@ import { authenticateToken } from './utils/authenticateToken.js';
 import { connectToMongoDB } from './utils/libs/mongoose.js';
 import notFoundHandler, { listRoutes } from './404.js';
 import User from './utils/schemas/mongoUserSchema.js';
-import { limiter } from './utils/libs/redisClient.js';
-// import blockVpnProxy from './utils/blockVpnProxy.js';
 import createUser from './utils/createUser.js';
 import config from './config.js';
 
@@ -27,17 +24,6 @@ const app = express();
 
 app.use(morgan('dev'));
 configureSecurityMiddleware(app);
-
-// app.use(blockVpnProxy);
-app.use(limiter);
-app.use(
-  cors({
-    origin: [
-      'http://192.168.100.45:5173',
-      'https://minasat-aleumla.vercel.app',
-    ],
-  })
-);
 
 // Serve static files from the public folder
 app.use(

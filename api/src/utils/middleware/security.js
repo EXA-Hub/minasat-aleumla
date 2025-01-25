@@ -1,8 +1,11 @@
 // api/src/utils/middleware/security.js
 import xss from 'xss';
+import cors from 'cors';
 import helmet from 'helmet';
 import requestIp from 'request-ip';
 import mongoSanitize from 'express-mongo-sanitize';
+// import blockVpnProxy from './utils/blockVpnProxy.js';
+import { limiter } from '../libs/redisClient.js';
 
 const sanitizeData = (data) => {
   if (typeof data === 'string') return xss(data);
@@ -17,18 +20,27 @@ const sanitizeData = (data) => {
 };
 
 export const configureSecurityMiddleware = (app) => {
+  // Trust proxy for correct IP handling
   app.set('trust proxy', 1);
+
+  // Disable unnecessary headers
   app.set('x-powered-by', false);
   app.disable('x-powered-by');
 
-  app.use(requestIp.mw());
-  app.use(mongoSanitize());
+  // Handle preflight requests first
+  app.options('*', cors());
+
+  // Security middleware
+  app.use(requestIp.mw()); // Get client IP
+  app.use(mongoSanitize()); // Sanitize MongoDB queries
+
+  // Helmet for HTTP headers
   app.use(
     helmet({
       contentSecurityPolicy: true,
-      crossOriginEmbedderPolicy: true,
-      crossOriginOpenerPolicy: true,
-      crossOriginResourcePolicy: true,
+      crossOriginEmbedderPolicy: false, // Disable for CORS compatibility
+      crossOriginOpenerPolicy: false,
+      crossOriginResourcePolicy: false,
       dnsPrefetchControl: true,
       frameguard: true,
       hidePoweredBy: true,
@@ -41,6 +53,24 @@ export const configureSecurityMiddleware = (app) => {
     })
   );
 
+  // Rate limiting
+  app.use(limiter);
+
+  // CORS configuration
+  app.use(
+    cors({
+      origin: [
+        'http://192.168.100.45:5173',
+        'https://minasat-aleumla.vercel.app',
+      ],
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      credentials: true, // Allow cookies/auth headers
+      optionsSuccessStatus: 200, // Legacy browser support
+    })
+  );
+
+  // Data sanitization
   app.use((req, res, next) => {
     req.body = sanitizeData(req.body);
     req.query = sanitizeData(req.query);

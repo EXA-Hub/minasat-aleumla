@@ -187,7 +187,7 @@ const TradePage = () => {
 
                 <DialogTrigger
                   variant="default"
-                  className="min-w-[120px]"
+                  className="min-w-[120px] bg-primary text-white shadow-lg hover:bg-60primary transition duration-200 ease-in rounded-lg"
                   disabled={
                     quantity * product.price +
                       Math.ceil((quantity * product.price * buyer.fee) / 100) >
