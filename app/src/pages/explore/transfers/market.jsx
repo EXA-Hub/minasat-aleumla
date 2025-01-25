@@ -76,11 +76,7 @@ export function ProductCard({ product, user }) {
             </div>
             <Button
               onClick={() =>
-                window.open(
-                  `/trade/${product._id}`,
-                  '_blank',
-                  'noopener,noreferrer'
-                )
+                (window.location.pathname = `/product/${product._id}`)
               }
               size="sm"
               className="opacity-60 hover:opacity-100 transition-opacity duration-300 ease-in-out">

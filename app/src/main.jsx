@@ -64,6 +64,7 @@ import dashboardMenuItems from './components/dashboard/DashboardRoutes';
 import exploreMenuItems from './components/explore/ExploreRoutes';
 import { Toaster } from 'react-hot-toast';
 import { ReferralRedirect } from './context/ReferralRedirect';
+import LoadingPage from './pages/autoRouting/loading.jsx';
 import { ColorProvider } from './context/ColorContext';
 import { ModalProvider } from './context/ModalManager';
 import { errorRoutes } from './errorConfig.jsx';
@@ -131,8 +132,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                           key={path}
                           path={path}
                           element={
-                            <React.Suspense
-                              fallback={<div>جار التحميل...</div>}>
+                            <React.Suspense fallback={<LoadingPage />}>
                               {React.createElement(component)}
                             </React.Suspense>
                           }
@@ -152,8 +152,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                           key={path}
                           path={path}
                           element={
-                            <React.Suspense
-                              fallback={<div>جار التحميل...</div>}>
+                            <React.Suspense fallback={<LoadingPage />}>
                               {React.createElement(component)}
                             </React.Suspense>
                           }
@@ -169,7 +168,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   key={path}
                   path={path}
                   element={
-                    <React.Suspense fallback={<div>جار التحميل...</div>}>
+                    <React.Suspense fallback={<LoadingPage />}>
                       <Component />
                     </React.Suspense>
                   }

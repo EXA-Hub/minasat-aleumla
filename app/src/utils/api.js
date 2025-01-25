@@ -84,7 +84,12 @@ const handleApiError = async (error) => {
 };
 
 const api = {
+  trade: {
+    create: async (data) => axiosInstance.post('/api/auth/trades/create', data),
+  },
   market: {
+    getProduct: async (id) =>
+      axiosInstance.get('/api/public/market/product/' + id),
     getUsers: async (ids) =>
       axiosInstance.post('/api/public/market/users', {
         ids,

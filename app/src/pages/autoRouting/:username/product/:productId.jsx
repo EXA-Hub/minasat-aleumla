@@ -82,11 +82,7 @@ const ProductPage = ({
               <div className="flex items-center gap-4">
                 <Button
                   onClick={() =>
-                    window.open(
-                      `/trade/${product._id}`,
-                      '_blank',
-                      'noopener,noreferrer'
-                    )
+                    (window.location.pathname = `/product/${product._id}`)
                   }
                   className="opacity-60 hover:opacity-100 transition-opacity duration-300 ease-in-out">
                   فتح صفقة

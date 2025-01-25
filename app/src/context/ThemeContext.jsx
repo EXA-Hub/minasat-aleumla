@@ -62,7 +62,7 @@ export function ThemeProvider({ children }) {
       // Generate opacity variants for the color
       for (let opacity = 5; opacity <= 100; opacity += 5)
         root.style.setProperty(
-          `--${opacity}${key}`,
+          `--${opacity}${key.toLocaleLowerCase()}`,
           hexToRgba(value, opacity / 100)
         ); // Set opacity variant
     });

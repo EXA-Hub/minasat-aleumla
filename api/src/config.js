@@ -1,8 +1,23 @@
 // my-api/src/config.js
+
+// total amount of coins in the wallets
+// total amount of usds in the wallets
+if (!process.env.coinsAmount || !process.env.usdsAmount)
+  throw new Error('Missing environment variables: coinsAmount, usdsAmount');
+else if (isNaN(process.env.coinsAmount) || isNaN(process.env.usdsAmount))
+  throw new Error('Invalid environment variables: coinsAmount, usdsAmount');
+
+const { coinsAmount, usdsAmount } = process.env; // Use defaults if missing
+
+// Exchange rates usd to other currencies
+const EXCHANGE_Rates = {
+  oneUsdToEgpRate: 50,
+};
+
 // Conversion rates object for multiple currencies
 const conversionRates = {
-  coinToEgpRate: 1 / 1000, // MAIN
-  coinToUsdRate: 1 / (50 * 1000), // BASED ON EGP TO USD
+  coinToUsdRate: usdsAmount / coinsAmount, // MAIN usd/coin rate
+  coinToEgpRate: (EXCHANGE_Rates.oneUsdToEgpRate * usdsAmount) / coinsAmount,
 };
 
 const coins = [
@@ -30,12 +45,18 @@ const convertCoins = (coins) => {
 // Generate the array of objects with the conversions
 const convertedCoins = convertCoins(coins);
 
+// how much usd i gain for 1000 daily task the user do
+const UsdtoDaily = 6 / 1000;
+const CoinstoDaily = UsdtoDaily * (1 / conversionRates.coinToUsdRate);
+const dailyBonus = Math.floor(CoinstoDaily / 10 - CoinstoDaily / 40);
+const dailyQuarter = Math.floor(CoinstoDaily / 4 - dailyBonus);
+
 const plans = {
   free: {
     coins: 0,
     features: {
       wallet: { maxSend: 2000, fee: 2, maxCoins: 200000 },
-      tasks: { daily: { limit: 200, bonus: 20 } },
+      tasks: { daily: { limit: dailyQuarter, bonus: dailyBonus } },
       products: { slots: 10, maxCoins: 20000 },
       gifts: { slots: 10, maxCoins: 20000, maxUsers: 10 },
       airdrop: { slots: 10, maxCoins: 20000, maxUsers: 10 },
@@ -47,7 +68,7 @@ const plans = {
     coins: 5000,
     features: {
       wallet: { maxSend: 5000, fee: 1, maxCoins: 500000 },
-      tasks: { daily: { limit: 300, bonus: 30 } },
+      tasks: { daily: { limit: dailyQuarter * 2, bonus: dailyBonus * 2 } },
       products: { slots: 15, maxCoins: 30000 },
       gifts: { slots: 15, maxCoins: 30000, maxUsers: 15 },
       airdrop: { slots: 15, maxCoins: 30000, maxUsers: 15 },
@@ -59,7 +80,7 @@ const plans = {
     coins: 25000,
     features: {
       wallet: { maxSend: 100000, fee: 0.5, maxCoins: 1000000 },
-      tasks: { daily: { limit: 400, bonus: 40 } },
+      tasks: { daily: { limit: dailyQuarter * 3, bonus: dailyBonus * 3 } },
       products: { slots: 25, maxCoins: 50000 },
       gifts: { slots: 25, maxCoins: 50000, maxUsers: 25 },
       airdrop: { slots: 25, maxCoins: 50000, maxUsers: 25 },
@@ -71,7 +92,7 @@ const plans = {
     coins: 50000,
     features: {
       wallet: { maxSend: 500000, fee: 0, maxCoins: 5000000 },
-      tasks: { daily: { limit: 600, bonus: 60 } },
+      tasks: { daily: { limit: dailyQuarter * 4, bonus: dailyBonus * 4 } },
       products: { slots: 50, maxCoins: 100000 },
       gifts: { slots: 50, maxCoins: 100000, maxUsers: 50 },
       airdrop: { slots: 50, maxCoins: 100000, maxUsers: 50 },

@@ -9,7 +9,6 @@ export default {
         ...generateOpacityVariants({
           background: 'var(--background)',
           foreground: 'var(--foreground)',
-          'muted-foreground': 'var(--muted-foreground)',
           'accent-foreground': 'var(--accent-foreground)',
           accent: 'var(--accent)',
           primary: 'var(--primary)',
@@ -17,6 +16,7 @@ export default {
           secondary: 'var(--secondary)',
           'secondary-foreground': 'var(--secondary-foreground)',
           muted: 'var(--muted)',
+          'muted-foreground': 'var(--muted-foreground)',
           border: 'var(--border)',
           card: 'var(--card)',
           'card-foreground': 'var(--card-foreground)',
@@ -36,7 +36,8 @@ function generateOpacityVariants(colors) {
     variants[colorName] = colorValue;
     // Generate opacity variants (5% to 95% in steps of 5)
     for (let opacity = 5; opacity <= 95; opacity += 5)
-      variants[`${opacity}${colorName}`] = `var(--${opacity}${colorName})`;
+      variants[`${opacity}${colorName.replace(/-/g, '')}`] =
+        `var(--${opacity}${colorName.replace(/-/g, '')})`;
   });
   return variants;
 }

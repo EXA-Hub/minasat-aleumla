@@ -1,6 +1,6 @@
 // api/src/routes/public/market.js
 import express from 'express';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 import { validateRequest } from '../../utils/middleware/validateRequest.js';
 import { Product } from '../../utils/schemas/traderSchema.js';
 import User from '../../utils/schemas/mongoUserSchema.js';
@@ -187,6 +187,24 @@ router.post(
       res.json(users);
     } catch (error) {
       res.status(500).json({ error: 'خطأ في الخادم أثناء جلب المستخدمين' });
+    }
+  }
+);
+
+// الحصول على المنتج
+router.get(
+  '/market/product/:id',
+  [
+    param('id').isMongoId().withMessage('الرجاء إدخال معرف صالح'),
+    validateRequest,
+  ],
+  async (req, res) => {
+    try {
+      const product = await Product.findById(req.params.id);
+      if (!product) return res.status(404).json({ error: 'المنتج غير موجود' });
+      res.json(product);
+    } catch (error) {
+      res.status(500).json({ error: 'خطأ في الخادم' });
     }
   }
 );
