@@ -17,6 +17,7 @@ import {
   Notebook,
   Link2Icon,
   LinkIcon,
+  Briefcase,
 } from 'lucide-react';
 
 const menuItems = [
@@ -82,12 +83,26 @@ const menuItems = [
           () => import('../../pages/dashboard/finance/donations')
         ),
       },
+    ],
+  },
+  {
+    id: 'business',
+    title: 'التجارة',
+    items: [
       {
         name: 'المنتجات',
         icon: Package,
         path: '/dashboard/social/products',
         component: React.lazy(
           () => import('../../pages/dashboard/finance/products')
+        ),
+      },
+      {
+        name: 'الصفقات',
+        icon: Briefcase,
+        path: '/dashboard/social/trades',
+        component: React.lazy(
+          () => import('../../pages/dashboard/finance/trades')
         ),
       },
     ],

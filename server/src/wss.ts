@@ -10,6 +10,14 @@ import { WebSocketServer, WebSocket } from 'ws';
 interface Notification {
   text: string;
   date: number;
+  type: 'notify' | 'broadcast';
+}
+
+interface Msg {
+  text: string;
+  tradeId: string;
+  type: 'msg';
+  sender: string;
 }
 
 interface CustomWebSocketServer extends WebSocketServer {
@@ -19,6 +27,12 @@ interface CustomWebSocketServer extends WebSocketServer {
     username: string
   ) => Promise<void>;
   broadcast: (notification: string, time?: number) => void;
+  sendMsg: (
+    msg: string,
+    tradeId: string,
+    recipient: string,
+    sender: string
+  ) => void;
 }
 
 const notificationsFilePath = path.join(__dirname, 'notifications.json');
@@ -96,6 +110,12 @@ function initializeWebSocket(app: Application) {
       delete notifications[username];
       writeNotifications(notifications);
 
+      ws.on('message', (message) => {
+        const data = JSON.parse(message.toString());
+        if (data.type === 'msg')
+          wss.sendMsg(data.text, data.tradeId, data.target, username);
+      });
+
       ws.on('close', () => {
         clients.delete(username);
       });
@@ -112,16 +132,14 @@ function initializeWebSocket(app: Application) {
   ) => {
     try {
       const client = clients.get(username);
-      const notify: Notification = { text: notification, date };
+      const notify: Notification = { text: notification, date, type: 'notify' };
 
-      if (client?.readyState === WebSocket.OPEN) {
+      if (client?.readyState === WebSocket.OPEN)
         client.send(JSON.stringify(notify));
-      } else {
+      else {
         // Store the notification in the file if the user is offline
         const notifications = readNotifications();
-        if (!notifications[username]) {
-          notifications[username] = [];
-        }
+        if (!notifications[username]) notifications[username] = [];
         notifications[username].push(notify);
         writeNotifications(notifications);
       }
@@ -131,10 +149,30 @@ function initializeWebSocket(app: Application) {
   };
 
   wss.broadcast = (notification: string, time = Date.now()) => {
-    const message = JSON.stringify({ text: notification, time });
+    const message = JSON.stringify({
+      text: notification,
+      time,
+      type: 'broadcast',
+    });
     clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) client.send(message);
     });
+  };
+
+  wss.sendMsg = (
+    msg: string,
+    tradeId: string,
+    recipient: string,
+    sender: string
+  ) => {
+    try {
+      const client = clients.get(recipient);
+      const message: Msg = { text: msg, tradeId, type: 'msg', sender };
+      if (client?.readyState === WebSocket.OPEN)
+        client.send(JSON.stringify(message));
+    } catch (error) {
+      console.error('Error sending msg:', error);
+    }
   };
 
   return { wss, clients, server };

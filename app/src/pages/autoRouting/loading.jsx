@@ -1,4 +1,6 @@
-function LoadingPage() {
+import PropTypes from 'prop-types';
+
+function LoadingPage({ text = 'جاري تحميل الصفحة' }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background">
       {/* Loader Container */}
@@ -15,11 +17,15 @@ function LoadingPage() {
 
         {/* Loading Text */}
         <div className="animate-pulse text-xl font-semibold text-muted-foreground">
-          جاري تحميل الصفحة
+          {text}
         </div>
       </div>
     </div>
   );
 }
+
+LoadingPage.propTypes = {
+  text: PropTypes.string,
+};
 
 export default LoadingPage;

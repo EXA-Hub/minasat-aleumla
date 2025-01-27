@@ -84,8 +84,21 @@ const handleApiError = async (error) => {
 };
 
 const api = {
+  chat: {
+    getMsgs: async (tradeid) => axiosInstance.get('/api/auth/chat/' + tradeid),
+    sendMsg: async (tradeid, message) =>
+      axiosInstance.put(`/api/auth/chat/${tradeid}/send`, { message }),
+  },
   trade: {
     create: async (data) => axiosInstance.post('/api/auth/trades/create', data),
+    getMyTrades: async () => axiosInstance.get('/api/auth/@me/trades'),
+    getProductsTrades: async () =>
+      axiosInstance.get('/api/auth/@me/products/trades'),
+    sellerAccept: async (id) => axiosInstance.put('/api/auth/trades/' + id),
+    sellerCancel: async (id) =>
+      axiosInstance.delete(`/api/auth/trades/${id}/cancel`),
+    buyerConfirmed: async (id) =>
+      axiosInstance.put(`/api/auth/trades/${id}/confirm`),
   },
   market: {
     getProduct: async (id) =>

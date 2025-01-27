@@ -6,9 +6,8 @@ const DashboardPage = () => {
   const location = useLocation();
 
   // Redirect to overview if accessing /dashboard directly
-  if (['/dashboard', '/dashboard/'].includes(location.pathname)) {
+  if (['/dashboard', '/dashboard/'].includes(location.pathname))
     return <Navigate to="/dashboard/overview" replace />;
-  }
 
   return <DashboardLayout />;
 };

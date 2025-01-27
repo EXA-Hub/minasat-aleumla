@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { ar } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
 import { Loader2, CalendarIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   Select,
   SelectContent,
@@ -26,6 +27,7 @@ import {
 } from '@/components/ui/popover';
 
 export function ProductCard({ product, user }) {
+  const navigate = useNavigate();
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-4">
@@ -75,9 +77,7 @@ export function ProductCard({ product, user }) {
               <UserName username={user.username} />
             </div>
             <Button
-              onClick={() =>
-                (window.location.pathname = `/product/${product._id}`)
-              }
+              onClick={() => navigate(`/product/${product._id}`)}
               size="sm"
               className="opacity-60 hover:opacity-100 transition-opacity duration-300 ease-in-out">
               فتح صفقة

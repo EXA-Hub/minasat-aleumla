@@ -11,6 +11,7 @@ import {
   ArrowRightCircleIcon,
   Globe2,
 } from 'lucide-react';
+import wss from '../../services/wss';
 import { Button } from './button';
 
 const notificationItemStyles = {
@@ -40,15 +41,6 @@ NotificationItem.propTypes = {
   formatTimeDiff: PropTypes.func.isRequired,
 };
 
-function wss() {
-  return new WebSocket(
-    import.meta.env.VITE_WS + '/?token=' + localStorage.getItem('token')
-  );
-}
-
-const RECONNECT_MAX_ATTEMPTS = 5;
-const RECONNECT_BASE_DELAY = 1000;
-
 export const User = ({ ThemeToggle, user, handleLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('main');
@@ -61,8 +53,6 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
     }
   });
   const dropdownRef = useRef(null);
-  const reconnectAttempts = useRef(0);
-  const reconnectTimeout = useRef(null);
 
   const updateNotifications = useCallback((updater) => {
     setNotifications((current) => {
@@ -79,9 +69,8 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target))
         setIsOpen(false);
-      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
@@ -128,52 +117,31 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
     const hours = Math.floor(diffInSeconds / 3600);
     const minutes = Math.floor((diffInSeconds % 3600) / 60);
     const seconds = diffInSeconds % 60;
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }, []);
 
-  const wsRef = useRef(null);
-
-  const reconnectWebSocket = useCallback(() => {
-    if (reconnectAttempts.current >= RECONNECT_MAX_ATTEMPTS) {
-      toast.error('فشل الاتصال بخدمات الإشعارات.');
-      return;
-    }
-
-    if (wsRef.current) wsRef.current.close();
-
-    const delay = RECONNECT_BASE_DELAY * Math.pow(2, reconnectAttempts.current);
-    reconnectTimeout.current = setTimeout(() => {
-      const ws = wss();
-      wsRef.current = ws;
-
-      ws.onmessage = (event) => {
-        toast('لديك إشعار جديد', { icon: '🔔' });
-        const newNotification = JSON.parse(event.data);
-        updateNotifications((prev) => [newNotification, ...prev]);
-      };
-
-      ws.onclose = () => {
-        reconnectAttempts.current++;
-        reconnectWebSocket();
-      };
-
-      ws.onerror = () => ws.close();
-    }, delay);
-  }, [updateNotifications]);
-
   useEffect(() => {
-    reconnectWebSocket();
+    const wsListener = (event, data) => {
+      if (event === 'message') {
+        const newNotification = JSON.parse(data);
+        if (!['notify', 'broadcast'].includes(newNotification.type)) return;
+
+        toast('لديك إشعار جديد', { icon: '🔔' });
+        updateNotifications((prev) => [newNotification, ...prev]);
+      } else if (event === 'max_reconnect_attempts') {
+        toast.error('فشل الاتصال بخدمات الإشعارات.');
+      }
+    };
+
+    const unsubscribe = wss.addListener(wsListener);
+    wss.connect();
 
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
-      if (reconnectTimeout.current) {
-        clearTimeout(reconnectTimeout.current);
-      }
-      reconnectAttempts.current = 0;
+      unsubscribe();
     };
-  }, [reconnectWebSocket]);
+  }, [updateNotifications]);
 
   return (
     <div dir="rtl" className="flex items-center gap-4">
@@ -195,12 +163,18 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           )}
           <span className="text-sm font-medium">{user.username}</span>
           <ChevronDown
-            className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            className={`h-4 w-4 transition-transform duration-200 ${
+              isOpen ? 'rotate-180' : ''
+            }`}
           />
         </Button>
 
         <div
-          className={`absolute right-0 mt-2 w-48 bg-background rounded-lg shadow-lg border border-border overflow-hidden transition-all duration-200 z-50 ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}>
+          className={`absolute right-0 mt-2 w-48 bg-background rounded-lg shadow-lg border border-border overflow-hidden transition-all duration-200 z-50 ${
+            isOpen
+              ? 'opacity-100 scale-100'
+              : 'opacity-0 scale-95 pointer-events-none'
+          }`}>
           {(() => {
             switch (activeSection) {
               case 'notifications':

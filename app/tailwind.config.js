@@ -36,8 +36,9 @@ function generateOpacityVariants(colors) {
     variants[colorName] = colorValue;
     // Generate opacity variants (5% to 95% in steps of 5)
     for (let opacity = 5; opacity <= 95; opacity += 5)
-      variants[`${opacity}${colorName.replace(/-/g, '')}`] =
-        `var(--${opacity}${colorName.replace(/-/g, '')})`;
+      variants[
+        `${opacity}${colorName.replace(/-/g, '')}`
+      ] = `var(--${opacity}${colorName.replace(/-/g, '')})`;
   });
   return variants;
 }

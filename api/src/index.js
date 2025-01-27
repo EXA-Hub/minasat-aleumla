@@ -22,7 +22,7 @@ import config from './config.js';
 const CAPTCHA_SECRET_KEY = process.env.CAPTCHA_SECRET_KEY;
 const app = express();
 
-app.use(morgan('dev'));
+if (!config.isProduction) app.use(morgan('dev'));
 configureSecurityMiddleware(app);
 
 // Serve static files from the public folder
@@ -52,6 +52,7 @@ app.use((req, res, next) => {
     '/webhooks/bots/discord/routes/interactions',
     '/webhooks/bots/telegram/endpoint',
     '/src/routes/jobs/ExpiredSubscriptions.js',
+    '/api/auth/chat/:tradeid',
   ]);
 });
 

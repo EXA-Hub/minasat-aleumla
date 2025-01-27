@@ -1,6 +1,7 @@
 // api/src/utils/middleware/cachingMiddleware.js
 import { createHash } from 'crypto';
 import getRedisClient from '../libs/redisClient.js';
+import config from '../../config.js';
 
 function generateCacheKey(req) {
   const keyData = {
@@ -72,9 +73,10 @@ async function cachingMiddleware(
     const cachedResponse = await redisClient.get(key);
 
     if (cachedResponse) {
-      console.log(
-        '\x1b[33m🔄 Using cached response for: \x1b[36m' + key + '\x1b[0m'
-      );
+      if (!config.isProduction)
+        console.log(
+          '\x1b[33m🔄 Using cached response for: \x1b[36m' + key + '\x1b[0m'
+        );
       if (!res.headersSent) {
         const data = JSON.parse(cachedResponse);
         res.writeHead(data.statusCode, data.headers);
@@ -98,9 +100,10 @@ async function cachingMiddleware(
       if (!res.headersSent) {
         const statusCode = res.statusCode;
         originalEnd.call(this, chunk);
-        console.log(
-          '\x1b[32m🌟 Caching response for: \x1b[34m' + key + '\x1b[0m'
-        );
+        if (!config.isProduction)
+          console.log(
+            '\x1b[32m🌟 Caching response for: \x1b[34m' + key + '\x1b[0m'
+          );
         await redisClient.set(
           key,
           JSON.stringify({

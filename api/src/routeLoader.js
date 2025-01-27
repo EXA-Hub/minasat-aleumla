@@ -45,6 +45,7 @@ export const loadRoutes = async (app, { authenticateToken }) => {
     path.join(baseDir, 'routes', 'bots'),
     '/webhooks/bots'
   );
+  // await loadRoutesFromDir(path.join(baseDir, 'routes', 'graphql'), '/graphql');
 
   // cron job
   app.get('/src/routes/jobs/ExpiredSubscriptions.js', handler);
