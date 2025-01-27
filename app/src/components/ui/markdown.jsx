@@ -230,7 +230,7 @@ const MarkdownDisplay = ({
         return (
           <div
             className={cn(
-              'relative my-4 rounded-lg overflow-hidden group',
+              'relative my-4 rounded-lg overflow-hidden group border border-slate-200 dark:border-slate-700',
               isDark ? 'bg-slate-900' : 'bg-white border border-slate-200'
             )}>
             <div

@@ -5,10 +5,14 @@ import { ar } from 'date-fns/locale';
 import { toast } from 'react-hot-toast';
 import { useOutletContext } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
+import { Lock, Unlock, XCircle } from 'lucide-react';
 import Username from '../../../components/explore/widgets/Username';
+import { ScrollArea } from '../../../components/ui/scroll-area';
 import { Skeleton } from '../../../components/ui/skeleton';
 import LoadingPage from '../../autoRouting/loading.jsx';
+import CoinIcon from '../../../components/ui/CoinIcon';
 import { Button } from '../../../components/ui/button';
+import { Badge } from '../../../components/ui/badge';
 import wss from '../../../services/wss.js';
 import { cn } from '../../../lib/utils';
 import api from '../../../utils/api';
@@ -17,6 +21,19 @@ import {
   AvatarImage,
   AvatarFallback,
 } from '../../../components/ui/avatar';
+import {
+  Select,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from '../../../components/ui/select';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '../../../components/ui/card';
 
 const translateStage = {
   buyer_offered: 'صفقة جديدة',
@@ -62,10 +79,45 @@ const RenderTradeChat = ({
   const ourParty = isSeller ? 'البائع' : 'المشتري';
   const otherUser = selectedTrade.seller || selectedTrade.buyer;
 
+  function mergeMessages(messages) {
+    const merged = [];
+    let lastSender = '';
+    let lastMessage = '';
+
+    for (const msg of messages) {
+      const [sender, ...textParts] = msg.split(':');
+      const text = textParts.join(':').trim();
+
+      if (text.startsWith('[') || text.endsWith(']')) {
+        if (lastMessage) merged.push(`${lastSender}:${lastMessage}`);
+        merged.push(msg);
+        lastSender = '';
+        lastMessage = '';
+        continue;
+      }
+
+      if (sender === lastSender) {
+        lastMessage += `\n${text}`;
+      } else {
+        if (lastMessage) merged.push(`${lastSender}:${lastMessage}`);
+        lastSender = sender;
+        lastMessage = text;
+      }
+    }
+    if (lastMessage) merged.push(`${lastSender}:${lastMessage}`);
+
+    return merged;
+  }
+
   return (
-    <div className="flex-1 p-4 rtl overflow-hidden">
+    <div className="flex-1 md:p-4 md:pt-0 pt-4 rtl overflow-hidden relative min-h-[500px]">
+      <div className="absolute left-0 top-0 h-full w-1 cursor-ew-resize hover:bg-primary/50 transition-colors" />
       <div className="bg-card shadow-md rounded-lg h-full flex flex-col">
         {/* Header */}
+        {/* selectedTrade.quantity */}
+        <p className="text-foreground text-sm font-semibold bg-40foreground w-8 h-8 flex items-center justify-center rounded-full rounded-tr-lg absolute md:right-4">
+          {selectedTrade.quantity}
+        </p>
         <header className="flex items-center justify-between p-4 border-b border-border">
           {/* Left Section: Avatar & Username */}
           <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-200">
@@ -86,23 +138,12 @@ const RenderTradeChat = ({
             )}
           </div>
 
-          {/* selectedTrade.quantity */}
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-200">
-            {/* <CoinIcon amount={selectedTrade.quantity} /> */}
-            <p className="text-muted-foreground text-sm">
-              الكمية: {selectedTrade.quantity}
-            </p>
-          </div>
-
           {/* Close Button */}
-          <Button
-            variant="danger"
+          <XCircle
             onClick={() => setSelectedTrade(null)}
             aria-label="Close Trade"
-            dir="rtl" // Ensures Arabic text aligns correctly
-            className="px-3 py-1 text-white bg-red-600 hover:bg-red-700 focus:ring-2 focus:ring-red-400">
-            إغلاق
-          </Button>
+            className="text-muted-foreground hover:text-red-500 transition-colors duration-200 cursor-pointer"
+          />
         </header>
 
         {/* Chat Messages */}
@@ -110,7 +151,7 @@ const RenderTradeChat = ({
           ref={chatContainerRef}
           className="flex-grow overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-primary scrollbar-track-background">
           <div className="flex flex-col gap-6 py-4 px-2">
-            {chats[selectedTrade._id]?.map((msg, index) => {
+            {mergeMessages([...chats[selectedTrade._id]]).map((msg, index) => {
               const msgAuthor = msg.startsWith('النظام:')
                 ? {
                     profile: {
@@ -185,10 +226,11 @@ const RenderTradeChat = ({
                         </div>
                       ))}
 
-                    <div
+                    <p
                       className={cn(
                         'rounded-2xl px-4 py-2.5 text-sm',
                         'shadow-sm transition-colors duration-200',
+                        'whitespace-pre-line', // 👈 This ensures newlines are respected
                         isSystem &&
                           !isError &&
                           'bg-yellow-500/10 text-yellow-600',
@@ -203,7 +245,7 @@ const RenderTradeChat = ({
                           )
                       )}>
                       {messageContent}
-                    </div>
+                    </p>
 
                     {msg.split(':')[1] === '[تم إرسال المنتج]' && (
                       <div className="mt-2">
@@ -313,7 +355,6 @@ const RenderTradeChat = ({
               </span>
             </div>
           ))}
-        {console.log(sendingMsg)}
         {selectedTrade.stage !== 'buyer_offered' && (
           <div className="p-4 border-t border-border flex flex-col sm:flex-row gap-2">
             {sendingMsg ? (
@@ -394,6 +435,164 @@ RenderTradeChat.propTypes = {
   chats: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)).isRequired,
 };
 
+const RenderSellTradesSidebar = ({
+  activeTab,
+  sellTrades,
+  selectedTrade,
+  handleTradeSelect,
+  translateStage,
+}) => {
+  const [sortBy, setSortBy] = useState('name');
+  const [order, setOrder] = useState('asc');
+
+  const sortedTrades = [...sellTrades].sort((a, b) => {
+    if (sortBy === 'name') {
+      return order === 'asc'
+        ? a.product.name.localeCompare(b.product.name)
+        : b.product.name.localeCompare(a.product.name);
+    } else if (sortBy === 'price') {
+      return order === 'asc'
+        ? a.product.price - b.product.price
+        : b.product.price - a.product.price;
+    } else if (sortBy === 'trades') {
+      return order === 'asc'
+        ? a.trades.length - b.trades.length
+        : b.trades.length - a.trades.length;
+    }
+    return 0;
+  });
+
+  return (
+    <Card
+      className={`
+      ${activeTab === 'sell' ? 'block' : 'hidden'}
+      w-full md:w-80 flex-shrink-0
+      border-0 rounded-none
+    `}>
+      <CardHeader className="space-y-1.5 p-4">
+        <CardTitle className="text-xl font-bold">صفقات منتجاتي</CardTitle>
+
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <span className="text-sm font-medium">الترتيب بحسب:</span>
+
+          <div className="flex flex-wrap gap-2">
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="h-8 w-[110px]">
+                <SelectValue placeholder="اختر الترتيب" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name">الاسم</SelectItem>
+                <SelectItem value="price">السعر</SelectItem>
+                <SelectItem value="trades">عدد الصفقات</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={order} onValueChange={setOrder}>
+              <SelectTrigger className="h-8 w-[110px]">
+                <SelectValue placeholder="اختر الاتجاه" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="asc">تصاعدي</SelectItem>
+                <SelectItem value="desc">تنازلي</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      </CardHeader>
+
+      <ScrollArea>
+        <CardContent className="p-4">
+          {sortedTrades.map((productTrade) => (
+            <Card
+              key={productTrade.product._id}
+              className="mb-4 overflow-hidden">
+              <CardHeader className="p-3 space-y-0">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="font-medium truncate">
+                    {productTrade.product.name}
+                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <CoinIcon amount={productTrade.product.price} />
+                    {productTrade.product.isLocked ? (
+                      <Lock className="h-4 w-4" />
+                    ) : (
+                      <Unlock className="h-4 w-4" />
+                    )}
+                    <Badge variant="secondary" className="h-6">
+                      {productTrade.trades.length}
+                    </Badge>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-0">
+                {productTrade.trades.map((trade) => (
+                  <div
+                    key={trade._id}
+                    onClick={() => handleTradeSelect(trade, true)}
+                    className={`
+                      p-3 cursor-pointer
+                      hover:bg-primary hover:text-primary-foreground
+                      transition-colors
+                      ${
+                        selectedTrade?._id === trade._id &&
+                        selectedTrade?.isSellTrade
+                          ? 'bg-primary/10 text-primary'
+                          : ''
+                      }
+                    `}>
+                    <div className="flex flex-col gap-1 text-sm">
+                      <p className="flex items-center gap-2">
+                        <span className="text-muted-foreground">المشتري:</span>
+                        <span className="font-medium">
+                          {trade.buyer?.username}
+                        </span>
+                      </p>
+                      <p className="flex items-center gap-2">
+                        <span className="text-muted-foreground">الحالة:</span>
+                        <span>{translateStage[trade.stage]}</span>
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ))}
+        </CardContent>
+      </ScrollArea>
+    </Card>
+  );
+};
+
+RenderSellTradesSidebar.propTypes = {
+  activeTab: PropTypes.string.isRequired,
+  sellTrades: PropTypes.arrayOf(
+    PropTypes.shape({
+      product: PropTypes.shape({
+        _id: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        isLocked: PropTypes.bool.isRequired,
+      }).isRequired,
+      trades: PropTypes.arrayOf(
+        PropTypes.shape({
+          _id: PropTypes.string.isRequired,
+          buyer: PropTypes.shape({
+            username: PropTypes.string,
+          }),
+          stage: PropTypes.string.isRequired,
+        })
+      ).isRequired,
+    })
+  ).isRequired,
+  selectedTrade: PropTypes.shape({
+    _id: PropTypes.string,
+    isSellTrade: PropTypes.bool,
+  }),
+  handleTradeSelect: PropTypes.func.isRequired,
+  translateStage: PropTypes.object.isRequired,
+};
+
 const TradesPage = () => {
   const { user } = useOutletContext();
   const [buyTrades, setBuyTrades] = useState([]);
@@ -456,7 +655,6 @@ const TradesPage = () => {
     const wsListener = (event, data) => {
       if (event === 'message') {
         const message = JSON.parse(data);
-        console.log(buyTrades, sellTrades);
         if (message.type === 'msg' && message.tradeId) {
           if (
             ![...buyTrades].some((trade) => trade._id === message.tradeId) &
@@ -577,98 +775,74 @@ const TradesPage = () => {
     }
   };
 
-  // Updated sidebar components with new styling
   const renderBuyTradesSidebar = () => (
     <div
-      className={`${activeTab === 'buy' ? 'block' : 'hidden'} md:block md:w-1/2 bg-card p-4 overflow-y-auto rtl md:border-l border-border`}>
-      <h2 className="text-xl font-bold mb-4 text-card-foreground">
-        الصفقات التي أشتريها
-      </h2>
-      {buyTrades.map((trade) => (
-        <div
-          key={trade._id}
-          onClick={() => handleTradeSelect(trade, false)}
-          className={`cursor-pointer p-2 hover:bg-primary hover:text-primary-foreground rounded-lg mb-2 transition-colors ${
-            selectedTrade?._id === trade._id && !selectedTrade?.isSellTrade
-              ? ' bg-20primary text-20foreground'
-              : ''
-          }`}>
-          <h3 className="text-card-foreground">{trade.product?.name}</h3>
-          <p className="text-muted-foreground text-sm">
-            البائع: {trade.seller?.username}
-          </p>
-          <p className="text-muted-foreground text-sm">
-            الحالة: {translateStage[trade.stage]}
-          </p>
-        </div>
-      ))}
-    </div>
-  );
-
-  const renderSellTradesSidebar = () => (
-    <div
-      className={`${activeTab === 'sell' ? 'block' : 'hidden'} md:block md:w-1/2 bg-card p-4 overflow-y-auto rtl border-border`}>
-      <h2 className="text-xl font-bold mb-4 text-card-foreground">
-        صفقات منتجاتي
-      </h2>
-      {sellTrades.map((productTrade) => (
-        <div key={productTrade.product._id} className="mb-4">
-          <h3 className="font-semibold text-card-foreground">
-            {productTrade.product.name}
-          </h3>
-          {productTrade.trades.map((trade) => (
-            <div
-              key={trade._id}
-              onClick={() => handleTradeSelect(trade, true)}
-              className={`cursor-pointer p-2 hover:bg-primary hover:text-primary-foreground rounded-lg mb-2 transition-colors ${
-                selectedTrade?._id === trade._id && selectedTrade?.isSellTrade
-                  ? ' bg-20primary text-20foreground'
-                  : ''
-              }`}>
-              <p className="text-muted-foreground text-sm">
-                المشتري: {trade.buyer?.username}
-              </p>
-              <p className="text-muted-foreground text-sm">
-                الحالة: {translateStage[trade.stage]}
-              </p>
-            </div>
-          ))}
-        </div>
-      ))}
+      className={`${activeTab === 'buy' ? 'block' : 'hidden'} bg-card overflow-y-auto rtl md:w-80 flex-shrink-0`}>
+      <div className="p-4">
+        <h2 className="text-xl font-bold mb-4 text-card-foreground">
+          الصفقات التي أشتريها
+        </h2>
+        {buyTrades.map((trade) => (
+          <div
+            key={trade._id}
+            onClick={() => handleTradeSelect(trade, false)}
+            className={`cursor-pointer p-3 hover:bg-primary hover:text-primary-foreground rounded-none border border-border mb-2 transition-colors ${
+              selectedTrade?._id === trade._id && !selectedTrade?.isSellTrade
+                ? 'bg-primary text-primary-foreground'
+                : ''
+            }`}>
+            <h3 className="text-card-foreground">{trade.product?.name}</h3>
+            <p className="text-muted-foreground text-sm">
+              البائع: {trade.seller?.username}
+            </p>
+            <p className="text-muted-foreground text-sm">
+              الحالة: {translateStage[trade.stage]}
+            </p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 
   // Mobile navigation tabs
   const renderMobileTabs = () => (
-    <div className="md:hidden flex border-b border-border mb-4">
-      <button
-        className={`flex-1 py-2 px-4 ${
-          activeTab === 'buy'
-            ? 'border-b-2 border-primary text-primary'
-            : 'text-muted-foreground'
-        }`}
-        onClick={() => setActiveTab('buy')}>
-        المشتريات
-      </button>
-      <button
-        className={`flex-1 py-2 px-4 ${
-          activeTab === 'sell'
-            ? 'border-b-2 border-primary text-primary'
-            : 'text-muted-foreground'
-        }`}
-        onClick={() => setActiveTab('sell')}>
-        المبيعات
-      </button>
-    </div>
+    <header className="sticky top-0 z-10 bg-background border-b border-border w-full">
+      <nav className="flex justify-between items-center">
+        <button
+          className={`flex-1 py-2 px-4 transition-colors ${
+            activeTab === 'buy'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+          }`}
+          onClick={() => setActiveTab('buy')}>
+          المشتريات
+        </button>
+        <button
+          className={`flex-1 py-2 px-4 transition-colors ${
+            activeTab === 'sell'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+          }`}
+          onClick={() => setActiveTab('sell')}>
+          المبيعات
+        </button>
+      </nav>
+    </header>
   );
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-background rtl overflow-hidden">
-      {renderMobileTabs()}
-      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
-        <div className="md:flex border border-border rounded-lg overflow-y-auto max-h-[50vh] md:max-h-full">
+    <div className="flex flex-col md:flex-row h-screen bg-background rtl overflow-hidden min-h-[50rem]">
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden md:h-full md:w-1/2 md:min-h-[50rem]">
+        <div className="md:flex flex-col overflow-y-auto">
+          {renderMobileTabs()}
           {renderBuyTradesSidebar()}
-          {renderSellTradesSidebar()}
+          <RenderSellTradesSidebar
+            activeTab={activeTab}
+            sellTrades={sellTrades}
+            selectedTrade={selectedTrade}
+            handleTradeSelect={handleTradeSelect}
+            translateStage={translateStage}
+          />
         </div>
         <RenderTradeChat
           selectedTrade={selectedTrade}

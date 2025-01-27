@@ -1,6 +1,8 @@
+// app/src/pages/dashboard/finance/products.jsx
+import PropTypes from 'prop-types';
+import { toast } from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Card } from '@/components/ui/card';
-import MarkdownDisplay from '@/components/ui/markdown';
 import {
   Loader2,
   Lock,
@@ -11,9 +13,9 @@ import {
   ArrowUpDown,
   Unlock,
 } from 'lucide-react';
-import PropTypes from 'prop-types';
+import MarkdownDisplay from '@/components/ui/markdown';
 import CoinIcon from '../../../components/ui/CoinIcon';
-import { toast } from 'react-hot-toast';
+import { Card } from '@/components/ui/card';
 import api from '../../../utils/api.js';
 
 const ProductForm = ({ product, onSubmit, onCancel }) => (
@@ -29,7 +31,12 @@ const ProductForm = ({ product, onSubmit, onCancel }) => (
       />
     </div>
     <div>
-      <label className="block text-sm font-medium mb-2">الوصف (Markdown)</label>
+      <label className="block text-sm font-medium mb-2">
+        الوصف{' '}
+        <Link to="/markdown" className="text-blue-500 hover:underline">
+          (Markdown)
+        </Link>
+      </label>
       <textarea
         name="description"
         defaultValue={product?.description}
