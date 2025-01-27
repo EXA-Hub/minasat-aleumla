@@ -248,7 +248,7 @@ const ProductsPage = () => {
           {products.map((product) => (
             <div
               key={product._id}
-              className={`p-4 flex items-center gap-4 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
+              className={`p-4 flex flex-col sm:flex-row sm:items-center gap-4 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
                 selectedProduct?._id === product._id
                   ? 'bg-blue-50 dark:bg-blue-900'
                   : ''
@@ -256,11 +256,14 @@ const ProductsPage = () => {
               onClick={() => setSelectedProduct(product)}>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold">{product.name}</h3>
+                  <h3 className="font-semibold truncate">{product.name}</h3>
                   <button
                     disabled={product.openTrades > 0}
                     className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
-                    onClick={() => handleToggleLock(product)}>
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggleLock(product);
+                    }}>
                     {product.isLocked ? (
                       <Lock className="h-4 w-4" />
                     ) : (
@@ -269,7 +272,7 @@ const ProductsPage = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex items-center gap-8">
+              <div className="flex flex-row justify-between sm:justify-end items-center gap-4 sm:gap-8">
                 <div className="flex items-center gap-2">
                   <ShoppingBag className="h-5 w-5" />
                   <span>{product.openTrades}</span>
