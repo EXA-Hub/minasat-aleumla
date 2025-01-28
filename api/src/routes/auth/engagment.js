@@ -44,9 +44,6 @@ router.get('/@me/engagement', async (req, res) => {
       .filter((viewerId) => viewerId) // Filter out null or undefined viewer IDs
       .map((viewerId) => viewerId.toString()); // Convert ObjectId to string for comparison
 
-    // Remove duplicates
-    const uniqueViewerIds = [...new Set(viewerIds)];
-
     // Cache the data
     await redisClient.set(cacheKey, JSON.stringify({ viewsData, viewerIds }), {
       EX: 86400,
@@ -56,7 +53,7 @@ router.get('/@me/engagement', async (req, res) => {
     res.json({
       viewsData: formattedViewsData,
       viewerIds: (
-        await User.find({ _id: { $in: uniqueViewerIds } })
+        await User.find({ _id: { $in: [...new Set(viewerIds)] } })
           .select('username')
           .lean()
       ).map((user) => user.username),

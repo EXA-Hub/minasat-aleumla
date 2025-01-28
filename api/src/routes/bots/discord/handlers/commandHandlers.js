@@ -95,11 +95,6 @@ export class CommandHandlers {
     EMOJIS,
     subscriptions,
   }) {
-    await this.#discordApi.sendFollowUpMessage(interaction, {
-      content: `⚠️ **هذا الأمر معطل حاليا** ⚠️`,
-    });
-    return;
-
     const { target, amount, payfee } = interaction.data.options?.reduce(
       (acc, option) => {
         acc[option.name] = option.value;
@@ -125,7 +120,7 @@ export class CommandHandlers {
     }
 
     const { maxSend, fee } = subscriptions[user.tier].features.wallet;
-    if (isNaN(amount) || amount <= 0 || !maxSend > amount) {
+    if (isNaN(amount) || amount <= 0 || !(maxSend > amount)) {
       await this.#discordApi.sendFollowUpMessage(interaction, {
         content: `⚠️ **المبلغ غير صحيح.**\n الحد الأعلى للإرسال هو ${maxSend}${EMOJIS.icon}`,
       });
