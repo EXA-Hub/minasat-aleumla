@@ -12,11 +12,16 @@ router.get('/richest', async (req, res) => {
     const redisClient = await getRedisClient();
     const cachedData = await redisClient.get('richest_users');
     if (cachedData) return res.json(JSON.parse(cachedData));
-    const richestUsers = await User.find({})
-      .sort({ balance: -1 })
-      .limit(100)
-      .select('username balance profile.profilePicture');
-    const response = { users: richestUsers };
+
+    const response = {
+      users: await User.find({
+        'privacy.showProfile': true,
+        'privacy.showWallet': true,
+      })
+        .sort({ balance: -1 })
+        .limit(100)
+        .select('username balance profile.profilePicture'),
+    };
 
     await redisClient.set('richest_users', JSON.stringify(response), {
       EX: 3600,

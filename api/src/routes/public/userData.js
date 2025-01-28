@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { validationResult, param } from 'express-validator';
+import { param } from 'express-validator';
 import { validateRequest } from '../../utils/middleware/validateRequest.js';
 import { Product } from '../../utils/schemas/traderSchema.js';
 import Engagement from '../../utils/schemas/engagements.js';
@@ -12,11 +12,7 @@ function requireAppWs(_app, ws) {
   const router = Router();
 
   // Middleware to validate user input and fetch user
-  const validateAndFetchUser = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty())
-      return res.status(400).json({ errors: errors.array() });
-
+  const fetchUser = async (req, res, next) => {
     try {
       const user = await User.findOne({ username: req.params.user });
       if (!user) return res.status(404).json({ error: 'المستخدم غير موجود' });
@@ -31,17 +27,17 @@ function requireAppWs(_app, ws) {
 
   // Middleware to check profile privacy
   const checkProfilePrivacy = (req, res, next) => {
-    if (!req.user.privacy.showProfile) {
+    if (!req.user.privacy.showProfile)
       return res.status(403).json({ error: 'الملف الشخصي خاص' });
-    }
+
     next();
   };
 
   // Middleware to check wallet privacy
   const checkWalletPrivacy = (req, res, next) => {
-    if (!req.user.privacy.showWallet) {
+    if (!req.user.privacy.showWallet)
       return res.status(403).json({ error: 'المحفظة خاصة' });
-    }
+
     next();
   };
 
@@ -51,13 +47,14 @@ function requireAppWs(_app, ws) {
       .isString()
       .isLength({ min: 3, max: 20 })
       .matches(/^[a-zA-Z0-9_]+$/),
+    validateRequest,
   ];
 
   // Get user products
   router.get(
     '/@:user/products',
     userValidation,
-    validateAndFetchUser,
+    fetchUser,
     checkProfilePrivacy,
     async (req, res) => {
       try {
@@ -92,7 +89,7 @@ function requireAppWs(_app, ws) {
   router.get(
     '/@:user/profile',
     userValidation,
-    validateAndFetchUser,
+    fetchUser,
     checkProfilePrivacy,
     logProfileView, // Add this middleware
     async (req, res) => {
@@ -117,7 +114,7 @@ function requireAppWs(_app, ws) {
   router.get(
     '/@:user/products/:productId',
     userValidation,
-    validateAndFetchUser,
+    fetchUser,
     checkProfilePrivacy,
     [
       param('productId').isMongoId().withMessage('معرف المنتج غير صالح.'),
@@ -148,7 +145,7 @@ function requireAppWs(_app, ws) {
   router.get(
     '/@:user/wallet',
     userValidation,
-    validateAndFetchUser,
+    fetchUser,
     checkWalletPrivacy,
     async (req, res) => {
       try {

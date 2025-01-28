@@ -175,16 +175,17 @@ router.post(
   ],
   async (req, res) => {
     try {
-      const { ids } = req.body;
-
-      const users = await User.find(
-        { _id: { $in: ids } },
-        '_id username profile.profilePicture'
-      )
-        .limit(25)
-        .lean();
-
-      res.json(users);
+      res.json(
+        await User.find(
+          {
+            _id: { $in: req.body.ids },
+            'privacy.showProfile': true, // Ensure privacy.showProfile is true
+          },
+          '_id username profile.profilePicture' // Select only necessary fields
+        )
+          .limit(25) // Limit results to 25
+          .lean() // Return plain JavaScript objects
+      );
     } catch (error) {
       res.status(500).json({ error: 'خطأ في الخادم أثناء جلب المستخدمين' });
     }

@@ -53,9 +53,8 @@ router.get(
         'username donationPage'
       );
 
-      if (!user || !user.donationPage.enabled) {
+      if (!user || !user.donationPage?.enabled)
         return res.status(404).json({ error: 'صفحة التبرعات غير متوفرة' });
-      }
 
       res.json({
         username: user.username,

@@ -40,7 +40,7 @@ export const commands = [
           },
         },
       });
-      if (target && target.privacy.showWallet)
+      if (target && target.privacy?.showWallet)
         return {
           method: 'sendMessage',
           chat_id,

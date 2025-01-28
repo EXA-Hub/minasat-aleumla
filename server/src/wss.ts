@@ -3,7 +3,6 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import crypto from 'crypto';
-import fetch from 'node-fetch';
 import { Application } from 'express';
 import { WebSocketServer, WebSocket } from 'ws';
 

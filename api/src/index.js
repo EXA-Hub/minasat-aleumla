@@ -95,14 +95,16 @@ app.post(
     try {
       const { username, password, referralId } = req.body;
 
-      const existingUser = await User.findOne({ username });
-      if (existingUser)
+      if (await User.exists({ username }))
         return res.status(400).json({ error: 'اسم المستخدم مستخدم بالفعل' });
 
-      const hashedPassword = await argon2.hash(password); // Hash password
-      const user = await createUser(username, hashedPassword, referralId);
-
-      res.status(201).json({ token: user.token });
+      res
+        .status(201)
+        .json({
+          token: (
+            await createUser(username, await argon2.hash(password), referralId)
+          ).token,
+        });
     } catch (error) {
       console.error('Signup error:', error);
       res.status(500).json({ error: 'An error occurred during signup.' });

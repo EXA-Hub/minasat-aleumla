@@ -82,10 +82,11 @@ router.post(
       if (!isValid)
         return res.status(401).json({ error: 'كلمة المرور غير صحيحة' });
 
-      const existingUser = await User.exists({
-        username: req.body.newUsername,
-      });
-      if (existingUser)
+      if (
+        await User.exists({
+          username: req.body.newUsername,
+        })
+      )
         return res.status(400).json({ error: 'اسم المستخدم مستخدم بالفعل' });
 
       user.username = req.body.newUsername;

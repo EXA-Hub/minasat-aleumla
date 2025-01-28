@@ -427,11 +427,20 @@ function requireAppWs(app, ws) {
         if (p.userId) sellerIds.add(p.userId);
       }
 
-      // Fetch seller details
-      const sellers = await User.find({ _id: { $in: [...sellerIds] } }).select(
-        'username profile.profilePicture'
+      const sellerMap = new Map(
+        (
+          await User.find({
+            _id: { $in: [...sellerIds] },
+          }).select('username profile.profilePicture privacy.showProfile')
+        )
+          .map((seller) => ({
+            username: seller.username,
+            profilePicture: seller.privacy?.showProfile
+              ? seller.profile?.profilePicture
+              : null,
+          }))
+          .map((s) => [s._id.toString(), s])
       );
-      const sellerMap = new Map(sellers.map((s) => [s._id.toString(), s]));
 
       // Map trades to response format
       const data = trades.map((t) => ({
@@ -471,11 +480,20 @@ function requireAppWs(app, ws) {
         }
       }
 
-      // Fetch buyers
-      const buyers = await User.find({ _id: { $in: [...buyerIds] } }).select(
-        'username profile.profilePicture'
+      const buyerMap = new Map(
+        (
+          await User.find({
+            _id: { $in: [...buyerIds] },
+          }).select('username profile.profilePicture privacy.showProfile')
+        )
+          .map((buyer) => ({
+            username: buyer.username,
+            profilePicture: buyer.privacy?.showProfile
+              ? buyer.profile?.profilePicture
+              : null,
+          }))
+          .map((b) => [b._id.toString(), b])
       );
-      const buyerMap = new Map(buyers.map((b) => [b._id.toString(), b]));
 
       // Map trades by productId
       const tradesMap = new Map(

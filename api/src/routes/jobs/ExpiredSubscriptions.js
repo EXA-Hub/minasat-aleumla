@@ -28,17 +28,13 @@ const checkExpiredSubscriptions = async () => {
       return;
     }
 
-    // Calculate expiration date using moment for better date handling
-    const expirationDate = moment().subtract(days, 'days').toDate();
-
-    // Find users whose subscription has expired
-    const expiredUsers = await User.find({
-      tier: { $ne: 'free' },
-      subscribedAt: { $lte: expirationDate },
-    });
-
     // Process expired users
-    const updatePromises = expiredUsers.map(async (user) => {
+    const updatePromises = (
+      await User.find({
+        tier: { $ne: 'free' },
+        subscribedAt: { $lte: moment().subtract(days, 'days').toDate() },
+      })
+    ).map(async (user) => {
       try {
         await User.findByIdAndUpdate(user._id, {
           tier: 'free',
@@ -60,10 +56,6 @@ const checkExpiredSubscriptions = async () => {
     });
 
     await Promise.all(updatePromises);
-
-    console.log(
-      `Checked for expired subscriptions. ${expiredUsers.length} users downgraded.`
-    );
 
     // Update the main job's last run time
     await CronJob.findOneAndUpdate(

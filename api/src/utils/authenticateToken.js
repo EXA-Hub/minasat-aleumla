@@ -19,8 +19,7 @@ const authenticateTokenMiddleware = async (req, res, next, handleError) => {
     // Find the user from the database using the extracted username
     const user = await User.findOne({ username, _id: uid });
 
-    if (!user)
-      return handleError('ربما المستخدم غير موجود!؟ جرب تسجيل الدخول مجددا.');
+    if (!user) return handleError('ربما المستخدم غير موجود!؟');
     if (!(user.password === password))
       return handleError('يرجى إعادة تسجيل الدخول.');
 

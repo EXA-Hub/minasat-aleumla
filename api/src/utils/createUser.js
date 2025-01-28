@@ -13,17 +13,34 @@ import User from './schemas/mongoUserSchema.js'; // Import the User model
  */
 const createUser = async (username, password, referralId) => {
   try {
-    // Step 1: Create and save the user without the token
-    const newUser = await User.create({ username, password, referralId });
+    const session = await User.startSession();
+    session.startTransaction();
 
-    // Step 2: Generate the token
-    const token = generateToken(username, newUser._id.toString(), password);
+    try {
+      // Step 1: Create user (in transaction)
+      const newUser = await User.create([{ username, password, referralId }], {
+        session,
+      });
 
-    // Step 3: Update the user document with the token
-    newUser.token = token;
-    await newUser.save();
+      // Step 2: Generate token
+      const token = generateToken(
+        username,
+        newUser[0]._id.toString(),
+        password
+      );
 
-    return newUser;
+      // Step 3: Update with token (in transaction)
+      newUser[0].token = token;
+      await newUser[0].save({ session });
+
+      await session.commitTransaction();
+      return newUser[0];
+    } catch (error) {
+      await session.abortTransaction();
+      throw new Error('User creation failed: Transaction rolled back');
+    } finally {
+      session.endSession();
+    }
   } catch (err) {
     console.error('Error creating user:', err);
     throw new Error('User creation failed');

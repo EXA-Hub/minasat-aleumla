@@ -1,21 +1,24 @@
 // my-api/src/routes/auth/wallet.js
+import mongoose from 'mongoose';
 import { Router } from 'express';
+import { body, param } from 'express-validator';
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+import User from '../../utils/schemas/mongoUserSchema.js';
+import config from '../../config.js';
 import {
   getUserTransactions,
   logTransaction,
 } from '../../utils/schemas/transactionLogger.js';
-import { body, param } from 'express-validator';
-import User from '../../utils/schemas/mongoUserSchema.js'; // Path to your MongoDB user model
-import config from '../../config.js';
-import { validateRequest } from '../../utils/middleware/validateRequest.js';
+
 const { subscriptions } = config;
 
 function requireAppWs(_app, ws) {
   const router = Router();
-  const findUser = async (user) => {
-    return user.match(/^[0-9a-fA-F]{24}$/)
-      ? await User.findById(user)
-      : await User.findOne({ username: user });
+  const findUser = async (identifier) => {
+    const isId = mongoose.isValidObjectId(identifier); // More reliable than regex
+    return User.findOne(
+      isId ? { _id: identifier } : { username: identifier }
+    ).select('-__v'); // Exclude version key
   };
 
   // Example route inside /auth

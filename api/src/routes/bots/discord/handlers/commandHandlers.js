@@ -32,9 +32,12 @@ export class CommandHandlers {
     subscriptions,
   }) {
     const targetId = interaction.data.options?.[0]?.value;
-    const target = targetId
-      ? await User.findOne({ 'apps.Discord': { $elemMatch: { id: targetId } } })
-      : user;
+    const target =
+      targetId & (discordUserData.id !== targetId)
+        ? await User.findOne({
+            'apps.Discord': { $elemMatch: { id: targetId } },
+          })
+        : user;
 
     if (!target) {
       await this.#discordApi.sendFollowUpMessage(interaction, {
