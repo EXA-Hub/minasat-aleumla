@@ -1,5 +1,7 @@
 // my-react-app/src/components/explore/widgets/ProfileModal.jsx
-import ProfilePage from '../../../pages/autoRouting/:username';
+import { lazy, Suspense } from 'react';
+
+const ProfilePage = lazy(() => import('../../../pages/autoRouting/:username'));
 
 const ProfileModal = ({ username, onClose }) => {
   return (
@@ -17,7 +19,14 @@ const ProfileModal = ({ username, onClose }) => {
           scrollbarWidth: 'none', // Hide scrollbar for Firefox
           msOverflowStyle: 'none', // Hide scrollbar for IE/Edge
         }}>
-        <ProfilePage username={username} closeWidget={onClose} />
+        <Suspense
+          fallback={
+            <div className="flex justify-center items-center h-screen bg-background">
+              <div className="text-xl text-blue-600">جارٍ التحميل...</div>
+            </div>
+          }>
+          <ProfilePage username={username} closeWidget={onClose} />
+        </Suspense>
       </div>
     </div>
   );

@@ -3,15 +3,8 @@ import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import { ar } from 'date-fns/locale';
 import { useState, useEffect } from 'react';
-import { Loader2, CalendarIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Loader2, CalendarIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import UserName from '../../../components/explore/widgets/Username';
 import { Card, CardContent } from '@/components/ui/card';
@@ -20,6 +13,13 @@ import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import api from '../../../utils/api';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Popover,
   PopoverContent,

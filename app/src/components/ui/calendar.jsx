@@ -35,13 +35,15 @@ const customStyles = `
 function Calendar({ selected, onSelect, mode = 'single' }) {
   return (
     <>
-      {' '}
       <style>{customStyles}</style>
       <DayPicker
-        locale={ar}
+        // dynamic props
         mode={mode}
         selected={selected}
         onSelect={onSelect}
+        // static props
+        disabled={{ after: new Date() }}
+        locale={ar}
         modifiers={{
           clickable: true,
         }}

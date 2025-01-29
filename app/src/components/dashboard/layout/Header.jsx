@@ -1,9 +1,9 @@
 // src/components/dashboard/layout/Header.jsx
-import { useNavigate, useLocation } from 'react-router-dom';
-import ThemeToggle from '../../ThemeToggle';
-import menuItems from '../../../components/dashboard/DashboardRoutes';
-import { User } from '../../ui/user';
 import PropTypes from 'prop-types';
+import { useNavigate, useLocation } from 'react-router-dom';
+import menuItems from '../../../components/dashboard/DashboardRoutes';
+import ThemeToggle from '../../ThemeToggle';
+import { User } from '../../ui/user';
 
 const Header = ({ user }) => {
   const navigate = useNavigate();

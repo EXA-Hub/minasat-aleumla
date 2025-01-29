@@ -1,7 +1,7 @@
 // app/vite.config.js
+import { resolve } from 'path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
 
 export default defineConfig({
   plugins: [react()],
@@ -14,5 +14,16 @@ export default defineConfig({
   server: {
     // This helps with local development
     historyApiFallback: true,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          recharts: ['recharts'],
+          markdown: ['react-markdown'],
+          vendor: ['react', 'react-dom'],
+        },
+      },
+    },
   },
 });

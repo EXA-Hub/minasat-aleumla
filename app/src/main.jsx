@@ -47,44 +47,54 @@ console.log(
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { Toaster } from 'react-hot-toast';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from 'react-router-dom';
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import RecoveryPage from './pages/RecoveryPage';
-import DashboardPage from './pages/dashboard';
-import ExplorePage from './pages/explore';
-import { ThemeProvider } from './context/ThemeContext';
-import './index.css';
 import dashboardMenuItems from './components/dashboard/DashboardRoutes';
 import exploreMenuItems from './components/explore/ExploreRoutes';
-import { Toaster } from 'react-hot-toast';
 import { ReferralRedirect } from './context/ReferralRedirect';
 import LoadingPage from './pages/autoRouting/loading.jsx';
 import { ColorProvider } from './context/ColorContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { ModalProvider } from './context/ModalManager';
 import { errorRoutes } from './errorConfig.jsx';
+import RecoveryPage from './pages/RecoveryPage';
+import DashboardPage from './pages/dashboard';
+import LandingPage from './pages/LandingPage';
+import ExplorePage from './pages/explore';
+import LoginPage from './pages/LoginPage';
+
+import './index.css';
 
 // Import all .jsx files from autoRouting directory
 const autoRouting = import.meta.glob('./pages/autoRouting/**/*.jsx');
 
-// Convert file paths to route paths and components
-const dynamicRoutes = Object.entries(autoRouting).map(([path, component]) => {
-  // Extract the route path from the file path
-  let routePath = path
-    .replace('./pages/autoRouting/', '') // Remove the base path
-    .replace(/\.jsx$/, '') // Remove file extension
-    .toLowerCase(); // Convert to lowercase
+// Blacklist of pages to exclude from dynamic imports
+const blacklist = ['loading.jsx', ':productId.jsx'];
 
-  return {
-    path: `/${routePath}`,
-    component: React.lazy(component),
-  };
-});
+// Convert file paths to route paths and components
+const dynamicRoutes = Object.entries(autoRouting)
+  .filter(([path]) => {
+    // Extract filename from the path
+    const fileName = path.split('/').pop();
+    return !blacklist.includes(fileName);
+  })
+  .map(([path, component]) => {
+    // Extract the route path from the file path
+    let routePath = path
+      .replace('./pages/autoRouting/', '') // Remove the base path
+      .replace(/\.jsx$/, '') // Remove file extension
+      .toLowerCase(); // Convert to lowercase
+
+    return {
+      path: `/${routePath}`,
+      component: React.lazy(component),
+    };
+  });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

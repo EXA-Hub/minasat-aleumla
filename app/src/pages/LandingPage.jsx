@@ -1,4 +1,8 @@
+// app/src/pages/LandingPage.jsx
+import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
+import { motion, useAnimation } from 'framer-motion';
+import { useState, useEffect, Suspense } from 'react';
 import {
   ArrowLeftCircle,
   Wallet,
@@ -11,16 +15,12 @@ import {
   DollarSign,
   Globe,
 } from 'lucide-react';
+import { useInView } from 'react-intersection-observer';
+import { useTheme } from '../context/ThemeContext';
 import { Button } from '../components/ui/button';
 import { Card } from '../components/ui/card';
-import { useTheme } from '../context/ThemeContext';
-import { useState, useEffect, lazy, Suspense } from 'react';
+import User from '../components/ui/user';
 import api from '../utils/api';
-import { Helmet } from 'react-helmet';
-import { motion, useAnimation } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-
-const User = lazy(() => import('../components/ui/user'));
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -30,8 +30,7 @@ const ThemeToggle = () => {
       size="icon"
       onClick={toggleTheme}
       className="w-9 h-9 rounded-full"
-      aria-label="Toggle theme"
-    >
+      aria-label="Toggle theme">
       {theme === 'light' ? (
         <Moon className="h-5 w-5" />
       ) : (
@@ -106,8 +105,7 @@ const LandingPage = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-background transition-colors duration-300"
-    >
+      className="min-h-screen bg-background transition-colors duration-300">
       {/* SEO Meta Tags */}
       <Helmet>
         <title>منصة العملة - نظام متكامل للمحافظ الرقمية والتداول</title>
@@ -182,8 +180,7 @@ const LandingPage = () => {
             visible: { opacity: 1, y: 0 },
             hidden: { opacity: 0, y: 50 },
           }}
-          className="text-center mb-16"
-        >
+          className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-6 text-foreground">
             محفظتك الرقمية الموثوقة
           </h2>
@@ -196,8 +193,7 @@ const LandingPage = () => {
               <Button
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-700"
-                onClick={() => navigate('/login')}
-              >
+                onClick={() => navigate('/login')}>
                 احصل على محفظتك المجانية
                 <Gift className="mr-2 h-5 w-5" />
               </Button>
@@ -206,8 +202,7 @@ const LandingPage = () => {
               <Button
                 size="lg"
                 className="bg-blue-600 hover:bg-blue-700"
-                onClick={() => navigate('/dashboard')}
-              >
+                onClick={() => navigate('/dashboard')}>
                 الذهاب إلى محفظتي
                 <Wallet className="mr-2 h-5 w-5" />
               </Button>
@@ -215,8 +210,7 @@ const LandingPage = () => {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => navigate('/explore')}
-            >
+              onClick={() => navigate('/explore')}>
               اكتشف المزيد
               <Globe className="mr-2 h-5 w-5" />
             </Button>
@@ -232,8 +226,7 @@ const LandingPage = () => {
             visible: { opacity: 1, y: 0 },
             hidden: { opacity: 0, y: 50 },
           }}
-          className="grid md:grid-cols-4 gap-8 mb-16"
-        >
+          className="grid md:grid-cols-4 gap-8 mb-16">
           <Card className="p-6 text-center bg-background">
             <Wallet className="mx-auto h-12 w-12 text-blue-600 mb-4" />
             <h3 className="text-xl font-bold mb-2">محفظة رقمية</h3>
@@ -267,8 +260,7 @@ const LandingPage = () => {
             visible: { opacity: 1, y: 0 },
             hidden: { opacity: 0, y: 50 },
           }}
-          className="mb-16"
-        >
+          className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-8">كيف تبدأ؟</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <Card className="p-6 text-center bg-background">
@@ -299,8 +291,7 @@ const LandingPage = () => {
             visible: { opacity: 1, y: 0 },
             hidden: { opacity: 0, y: 50 },
           }}
-          className="text-center bg-blue-50 dark:bg-blue-950 rounded-lg p-8 mb-16"
-        >
+          className="text-center bg-blue-50 dark:bg-blue-950 rounded-lg p-8 mb-16">
           <Globe className="mx-auto h-16 w-16 text-blue-600 mb-4" />
           <h3 className="text-2xl font-bold mb-4">اكتشف المزيد</h3>
           <p className="mb-6">
@@ -309,8 +300,7 @@ const LandingPage = () => {
           <Button
             size="lg"
             onClick={() => navigate('/explore')}
-            className="hover:bg-blue-700"
-          >
+            className="hover:bg-blue-700">
             اكتشف الآن
             <ArrowLeftCircle className="mr-2 h-5 w-5" />
           </Button>
@@ -325,16 +315,14 @@ const LandingPage = () => {
               visible: { opacity: 1, y: 0 },
               hidden: { opacity: 0, y: 50 },
             }}
-            className="text-center bg-blue-50 dark:bg-blue-950 rounded-lg p-8"
-          >
+            className="text-center bg-blue-50 dark:bg-blue-950 rounded-lg p-8">
             <DollarSign className="mx-auto h-16 w-16 text-blue-600 mb-4" />
             <h3 className="text-2xl font-bold mb-4">ابدأ الآن مجاناً</h3>
             <p className="mb-6">احصل على محفظتك الرقمية وابدأ في كسب العملات</p>
             <Button
               size="lg"
               onClick={() => navigate('/login')}
-              className="hover:bg-blue-700"
-            >
+              className="hover:bg-blue-700">
               إنشاء حساب
               <ArrowLeftCircle className="mr-2 h-5 w-5" />
             </Button>
