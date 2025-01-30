@@ -431,12 +431,15 @@ function requireAppWs(app, ws) {
         (
           await User.find({
             _id: { $in: [...sellerIds] },
-          }).select('username profile.profilePicture privacy.showProfile')
+          })
+            .select('username profile.profilePicture privacy.showProfile _id')
+            .lean()
         )
-          .map((seller) => ({
-            username: seller.username,
-            profilePicture: seller.privacy?.showProfile
-              ? seller.profile?.profilePicture
+          .map(({ _id, username, profile, privacy }) => ({
+            _id,
+            username,
+            profilePicture: privacy?.showProfile
+              ? profile?.profilePicture
               : null,
           }))
           .map((s) => [s._id.toString(), s])
@@ -484,12 +487,15 @@ function requireAppWs(app, ws) {
         (
           await User.find({
             _id: { $in: [...buyerIds] },
-          }).select('username profile.profilePicture privacy.showProfile')
+          })
+            .select('username profile.profilePicture privacy.showProfile _id')
+            .lean()
         )
-          .map((buyer) => ({
-            username: buyer.username,
-            profilePicture: buyer.privacy?.showProfile
-              ? buyer.profile?.profilePicture
+          .map(({ _id, username, privacy, profile }) => ({
+            _id,
+            username,
+            profilePicture: privacy?.showProfile
+              ? profile?.profilePicture
               : null,
           }))
           .map((b) => [b._id.toString(), b])
