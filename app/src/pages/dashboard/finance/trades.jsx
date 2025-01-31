@@ -9,7 +9,7 @@ import { Lock, Unlock, XCircle } from 'lucide-react';
 import Username from '../../../components/explore/widgets/Username';
 import { ScrollArea } from '../../../components/ui/scroll-area';
 import { Skeleton } from '../../../components/ui/skeleton';
-import LoadingPage from '../../autoRouting/loading.jsx';
+import LoadingPage from '../../core/loading.jsx';
 import CoinIcon from '../../../components/ui/CoinIcon';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';

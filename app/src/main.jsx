@@ -57,10 +57,10 @@ import {
 import dashboardMenuItems from './components/dashboard/DashboardRoutes';
 import exploreMenuItems from './components/explore/ExploreRoutes';
 import { ReferralRedirect } from './context/ReferralRedirect';
-import LoadingPage from './pages/autoRouting/loading.jsx';
 import { ColorProvider } from './context/ColorContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { ModalProvider } from './context/ModalManager';
+import LoadingPage from './pages/core/loading.jsx';
 import { errorRoutes } from './errorConfig.jsx';
 import RecoveryPage from './pages/RecoveryPage';
 import DashboardPage from './pages/dashboard';
@@ -69,6 +69,23 @@ import ExplorePage from './pages/explore';
 import LoginPage from './pages/LoginPage';
 
 import './index.css';
+
+// Import all .jsx files from autoRouting directory
+const autoRouting = import.meta.glob('./pages/autoRouting/**/*.jsx');
+
+// Convert file paths to route paths and components
+const dynamicRoutes = Object.entries(autoRouting).map(([path, component]) => {
+  // Extract the route path from the file path
+  let routePath = path
+    .replace('./pages/autoRouting/', '') // Remove the base path
+    .replace(/\.jsx$/, '') // Remove file extension
+    .toLowerCase(); // Convert to lowercase
+
+  return {
+    path: `/${routePath}`,
+    component: React.lazy(component),
+  };
+});
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -147,42 +164,17 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               </Route>
 
               {/* Dynamic routes from autoRouting directory */}
-              {Object.entries(
-                import.meta.glob('./pages/autoRouting/**/*.jsx', {
-                  query: '?url',
-                  import: 'default',
-                  eager: true,
-                })
-              )
-                .filter(
-                  ([path, component]) =>
-                    !['/loading.jsx', '/:username/product/:productId.jsx'].some(
-                      (blacklisted) =>
-                        path.includes(blacklisted) ||
-                        component.includes(blacklisted)
-                    )
-                )
-                .map(([p1, p2]) => {
-                  const LazyComponent = React.lazy(
-                    () => import(/* @vite-ignore */ p1)
-                  );
-
-                  return (
-                    <Route
-                      element={
-                        <React.Suspense fallback={<LoadingPage />}>
-                          <LazyComponent />
-                        </React.Suspense>
-                      }
-                      key={p2}
-                      path={p2
-                        .replace('/src/pages/autoRouting/', '/')
-                        .replace('.jsx', '')
-                        // Add this to handle dynamic routes like :params
-                        .replace(/:(\w+)/g, ':$1')}
-                    />
-                  );
-                })}
+              {dynamicRoutes.map(({ path, component: Component }) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    <React.Suspense fallback={<div>جار التحميل...</div>}>
+                      <Component />
+                    </React.Suspense>
+                  }
+                />
+              ))}
 
               {/* Dynamically generated error routes */}
               {errorRoutes
