@@ -72,6 +72,8 @@ const { subscriptions } = config;
 const generateCode = () =>
   String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
 
+import ProxyCheck from 'proxycheck-ts';
+
 router.get(
   '/@me/daily',
   blockVpnProxy,
@@ -88,6 +90,14 @@ router.get(
     try {
       const { host } = req.query;
       const { clientIp } = req;
+
+      const api = new ProxyCheck({
+        apiKey: process.env.PROXYCHECK_API_KEY,
+        vpn: true,
+        proxy: true,
+      });
+      console.log(await api.checkIP(clientIp));
+
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const ipRecord = await DailyIp.findOne({

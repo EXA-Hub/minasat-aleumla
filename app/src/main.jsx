@@ -149,7 +149,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               {/* Dynamic routes from autoRouting directory */}
               {Object.entries(
                 import.meta.glob('./pages/autoRouting/**/*.jsx', {
-                  as: 'url',
+                  query: '?url',
+                  import: 'default',
                   eager: true,
                 })
               )
