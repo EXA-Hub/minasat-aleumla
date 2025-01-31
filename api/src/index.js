@@ -51,7 +51,6 @@ app.use((req, res, next) => {
   cachingMiddleware(req, res, next, listRoutes(app, true), [
     '/webhooks/bots/discord/routes/interactions',
     '/webhooks/bots/telegram/endpoint',
-    '/src/routes/jobs/ExpiredSubscriptions.js',
     '/api/auth/chat/:tradeid',
   ]);
 });
@@ -98,13 +97,11 @@ app.post(
       if (await User.exists({ username }))
         return res.status(400).json({ error: 'اسم المستخدم مستخدم بالفعل' });
 
-      res
-        .status(201)
-        .json({
-          token: (
-            await createUser(username, await argon2.hash(password), referralId)
-          ).token,
-        });
+      res.status(201).json({
+        token: (
+          await createUser(username, await argon2.hash(password), referralId)
+        ).token,
+      });
     } catch (error) {
       console.error('Signup error:', error);
       res.status(500).json({ error: 'An error occurred during signup.' });

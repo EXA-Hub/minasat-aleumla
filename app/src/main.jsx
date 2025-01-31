@@ -150,7 +150,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               {Object.entries(
                 import.meta.glob('./pages/autoRouting/**/*.jsx', {
                   query: '?url',
-                  import: 'default',
+
                   eager: true,
                 })
               )
@@ -159,11 +159,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                     !['/loading.jsx', '/:username/product/:productId.jsx'].some(
                       (blacklisted) =>
                         path.includes(blacklisted) ||
-                        component.includes(blacklisted)
+                        component.default.includes(blacklisted)
                     )
                 )
                 .map(([p1, p2]) => {
-                  const LazyComponent = React.lazy(() => import(p1));
+                  const LazyComponent = React.lazy(
+                    async () => await import(p1)
+                  );
                   return (
                     <Route
                       element={
@@ -171,8 +173,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                           <LazyComponent />
                         </React.Suspense>
                       }
-                      key={p2}
-                      path={p2
+                      key={p2.default}
+                      path={p2.default
                         .replace('/src/pages/autoRouting/', '/')
                         .replace('.jsx', '')
                         .replace(/:(\w+)/g, ':$1')}
