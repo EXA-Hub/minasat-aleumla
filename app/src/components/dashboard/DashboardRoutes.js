@@ -1,3 +1,4 @@
+// app/src/components/dashboard/DashboardRoutes.js
 import React from 'react';
 import {
   Gift,

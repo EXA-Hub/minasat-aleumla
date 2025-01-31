@@ -1,55 +1,40 @@
+import { Link } from 'react-router-dom';
+import { ArrowRightSquareIcon } from 'lucide-react';
 import MarkdownDisplay from '../../components/ui/markdown';
+import { useEffect, useState } from 'react';
 
 const TermsPage = () => {
   const email = import.meta.env.VITE_EMAIL;
+  const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState('');
 
-  const termsContent = `
-# الشروط والأحكام
-
-## 1. المحفظة الرقمية
-- الحد الأدنى للعمر 13 سنة للتسجيل واستخدام المحفظة
-- يمنح كل مستخدم جديد رصيد ترحيبي عند التسجيل
-- تطبق رسوم على المعاملات حسب معدل الرسوم المحدد لكل حساب
-- يجب الحفاظ على سرية معلومات الحساب وكلمة المرور
-
-## 2. التداول والمعاملات
-- يجب أن تكون جميع المنتجات والخدمات المعروضة قانونية
-- يحق للمنصة تجميد أي حساب عند الاشتباه بنشاط غير قانوني
-- لا يمكن التراجع عن المعاملات المكتملة
-- يحتفظ النظام بسجل المعاملات لمدة محدودة (آخر 40 معاملة)
-
-## 3. المدفوعات والتحويلات
-- يمكن تحويل الأموال إلى عملة حقيقية عند تجاوز الحد الأدنى
-- تطبق رسوم على عمليات التحويل والسحب
-- يجب التحقق من معلومات المستلم قبل إتمام أي تحويل
-- لا تتحمل المنصة مسؤولية التحويلات الخاطئة
-
-## 4. صفحة التبرعات
-- الحد الأدنى للتبرع 5 وحدات
-- يمكن للمستخدمين تخصيص مبالغ التبرع المقترحة
-- يحق للمنصة تعليق صفحات التبرع المخالفة
-
-## 5. النشاط المحظور
-- التلاعب بالأسعار أو المعاملات
-- إنشاء حسابات متعددة للشخص نفسه
-- استخدام المنصة في أي نشاط غير قانوني
-- التحايل على رسوم المعاملات
-
-## 6. الإنهاء والتعليق
-- يحق للمنصة تعليق أو إنهاء أي حساب يخالف الشروط
-- يتم تجميد الرصيد في الحسابات المعلقة حتى التحقق
-- في حالة الإنهاء، يمنح المستخدم مهلة لسحب رصيده
-
-## 7. التعديلات
-نحتفظ بحق تعديل هذه الشروط في أي وقت مع إشعار المستخدمين.
-
-للتواصل: ${email}
-`;
+  useEffect(() => {
+    fetch('/docs/terms.txt')
+      .then((response) => response.text())
+      .then((text) => {
+        setContent(text);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error loading markdown:', error);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen p-8">
-      <div className="max-w-3xl mx-auto p-6 rounded-lg shadow-lg">
-        <MarkdownDisplay title="الشروط والأحكام" content={termsContent} />
+      <Link
+        to="/"
+        className="mb-4 flex items-center gap-2 border-b border-border pb-2 text-primary transition-all duration-500 hover:text-accent">
+        <ArrowRightSquareIcon className="h-6 w-6" />
+        <span className="text-lg font-semibold">الرجوع للصفحة الرئيسية</span>
+      </Link>
+      <div className="mx-auto max-w-3xl rounded-lg p-6 shadow-lg">
+        <MarkdownDisplay
+          title="الشروط والأحكام"
+          content={content.replace('${email}', email)}
+          loading={loading}
+        />
       </div>
     </div>
   );

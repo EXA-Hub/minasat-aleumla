@@ -62,14 +62,14 @@ const RenderTradeChat = ({
 
   if (loading)
     return (
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex flex-1 items-center justify-center">
         <LoadingPage text="جاري التحميل" />
       </div>
     );
 
   if (!selectedTrade)
     return (
-      <div className="hidden md:flex items-center justify-center flex-1 text-card-foreground">
+      <div className="hidden flex-1 items-center justify-center text-card-foreground md:flex">
         اختر صفقة
       </div>
     );
@@ -110,27 +110,27 @@ const RenderTradeChat = ({
   }
 
   return (
-    <div className="flex-1 md:p-4 md:pt-0 pt-4 rtl overflow-hidden relative min-h-[500px]">
-      <div className="absolute left-0 top-0 h-full w-1 cursor-ew-resize hover:bg-primary/50 transition-colors" />
-      <div className="bg-card shadow-md rounded-lg h-full flex flex-col">
+    <div className="rtl relative min-h-[500px] flex-1 overflow-hidden pt-4 md:p-4 md:pt-0">
+      <div className="hover:bg-primary/50 absolute left-0 top-0 h-full w-1 cursor-ew-resize transition-colors" />
+      <div className="flex h-full flex-col rounded-lg bg-card shadow-md">
         {/* Header */}
         {/* selectedTrade.quantity */}
-        <p className="text-foreground text-sm font-semibold bg-40foreground w-8 h-8 flex items-center justify-center rounded-full rounded-tr-lg absolute md:right-4">
+        <p className="absolute flex h-8 w-8 items-center justify-center rounded-full rounded-tr-lg bg-40foreground text-sm font-semibold text-foreground md:right-4">
           {selectedTrade.quantity}
         </p>
-        <header className="flex items-center justify-between p-4 border-b border-border">
+        <header className="flex items-center justify-between border-b border-border p-4">
           {/* Left Section: Avatar & Username */}
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors duration-200">
-            <Avatar className="h-8 w-8 md:h-10 md:w-10 border-2 border-border shadow-sm ring-2 ring-background">
+          <div className="hover:bg-muted/50 flex items-center gap-3 rounded-lg p-2 transition-colors duration-200">
+            <Avatar className="h-8 w-8 border-2 border-border shadow-sm ring-2 ring-background md:h-10 md:w-10">
               <AvatarImage
-                src={otherUser.profile?.profilePicture || '/avatar.jpg'}
+                src={otherUser.profilePicture || '/avatar.jpg'}
                 alt={otherUser.username || 'User Avatar'}
                 className="object-cover"
               />
               <AvatarFallback
                 src="/avatar.jpg"
                 alt="Default Avatar"
-                className="w-full h-full object-cover rounded-full"
+                className="h-full w-full rounded-full object-cover"
               />
             </Avatar>
             {otherUser && otherUser.username && (
@@ -142,15 +142,15 @@ const RenderTradeChat = ({
           <XCircle
             onClick={() => setSelectedTrade(null)}
             aria-label="Close Trade"
-            className="text-muted-foreground hover:text-red-500 transition-colors duration-200 cursor-pointer"
+            className="cursor-pointer text-muted-foreground transition-colors duration-200 hover:text-red-500"
           />
         </header>
 
         {/* Chat Messages */}
         <div
           ref={chatContainerRef}
-          className="flex-grow overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-primary scrollbar-track-background">
-          <div className="flex flex-col gap-6 py-4 px-2">
+          className="scrollbar-thin scrollbar-thumb-primary scrollbar-track-background flex-grow overflow-y-auto p-4">
+          <div className="flex flex-col gap-6 px-2 py-4">
             {mergeMessages([...chats[selectedTrade._id]]).map((msg, index) => {
               const msgAuthor = msg.startsWith('النظام:')
                 ? {
@@ -174,7 +174,8 @@ const RenderTradeChat = ({
               const isError = msg === 'النظام:[حدث خطأ]';
               const isGreen = msg === 'النظام:[تم إرسالها بالفعل]';
               const isSent = msg.startsWith(ourParty + ':');
-              const messageContent = msg.split(':')[1] || msg;
+              const messageContent =
+                msg.split(':').slice(1).join(':').split('\n')[0] || msg;
 
               return (
                 <div
@@ -185,12 +186,16 @@ const RenderTradeChat = ({
                   )}>
                   <Avatar
                     className={cn(
-                      'h-8 w-8 md:h-10 md:w-10 flex-shrink-0 select-none',
+                      'h-8 w-8 flex-shrink-0 select-none md:h-10 md:w-10',
                       'border-2 border-border shadow-sm ring-2 ring-background transition-transform duration-200',
                       'group-hover:scale-105'
                     )}>
                     <AvatarImage
-                      src={msgAuthor.profile?.profilePicture || '/avatar.jpg'}
+                      src={
+                        msgAuthor.profile?.profilePicture ||
+                        msgAuthor.profilePicture ||
+                        '/avatar.jpg'
+                      }
                       alt={msgAuthor.username || 'User Avatar'}
                       className="object-cover"
                     />
@@ -198,14 +203,14 @@ const RenderTradeChat = ({
                       <img
                         src="/avatar.jpg"
                         alt="Default Avatar"
-                        className="w-full h-full object-cover rounded-full"
+                        className="h-full w-full rounded-full object-cover"
                       />
                     </AvatarFallback>
                   </Avatar>
 
                   <div
                     className={cn(
-                      'flex flex-col gap-1 max-w-[80%] md:max-w-[70%]',
+                      'flex max-w-[80%] flex-col gap-1 md:max-w-[70%]',
                       isSent && 'items-end'
                     )}>
                     {msgAuthor &&
@@ -213,24 +218,33 @@ const RenderTradeChat = ({
                       (user.username === msgAuthor.username ? (
                         <div className="flex items-center gap-2 px-1">
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(), 'p', { locale: ar })}
+                            {format(
+                              parseInt(msg.split('\n')[1]) || new Date(),
+                              'p',
+                              { locale: ar }
+                            )}
                           </span>
                           <Username username={msgAuthor.username} />
                         </div>
                       ) : (
                         <div className="flex items-center gap-2 px-1">
                           <Username username={msgAuthor.username} />
+
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(), 'p', { locale: ar })}
+                            {format(
+                              parseInt(msg.split('\n')[1]) || new Date(),
+                              'p',
+                              { locale: ar }
+                            )}
                           </span>
                         </div>
                       ))}
 
                     <p
                       className={cn(
-                        'rounded-2xl px-4 py-2.5 text-sm',
+                        'w-fit rounded-2xl px-4 py-2.5 text-sm',
                         'shadow-sm transition-colors duration-200',
-                        'whitespace-pre-line', // 👈 This ensures newlines are respected
+                        'whitespace-pre-line',
                         isSystem &&
                           !isError &&
                           'bg-yellow-500/10 text-yellow-600',
@@ -298,7 +312,7 @@ const RenderTradeChat = ({
 
         {selectedTrade.stage === 'buyer_offered' &&
           (isSeller ? (
-            <div className="p-4 border-t border-border flex justify-between">
+            <div className="flex justify-between border-t border-border p-4">
               <Button
                 variant="success"
                 onClick={() => {
@@ -349,24 +363,24 @@ const RenderTradeChat = ({
               </Button>
             </div>
           ) : (
-            <div className="p-4 border-t border-border flex justify-between">
+            <div className="flex justify-between border-t border-border p-4">
               <span className="text-muted-foreground">
                 انتظر حتى يتم قبول الصفقة
               </span>
             </div>
           ))}
         {selectedTrade.stage !== 'buyer_offered' && (
-          <div className="p-4 border-t border-border flex flex-col sm:flex-row gap-2">
+          <div className="flex flex-col gap-2 border-t border-border p-4 sm:flex-row">
             {sendingMsg ? (
               <div className="flex items-center justify-center bg-card p-4 opacity-50">
-                <span className="text-card-foreground text-sm">
+                <span className="text-sm text-card-foreground">
                   جاري الارسال...
                 </span>
               </div>
             ) : (
               <input
                 type="text"
-                className="flex-grow border border-border rounded p-2 bg-background text-foreground"
+                className="flex-grow rounded border border-border bg-background p-2 text-foreground"
                 maxLength={100}
                 max={100}
                 placeholder={`اكتب رسالة إلى ${otherParty}`}
@@ -385,7 +399,7 @@ const RenderTradeChat = ({
                 'البائع:[تم إرسال المنتج]'
               ) && (
                 <button
-                  className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
+                  className="hover:bg-primary/90 rounded bg-primary px-4 py-2 text-primary-foreground"
                   onClick={async () => {
                     setSendingMsg(true);
                     await sendMessage('[تم إرسال المنتج]', ourParty);
@@ -464,11 +478,7 @@ const RenderSellTradesSidebar = ({
 
   return (
     <Card
-      className={`
-      ${activeTab === 'sell' ? 'block' : 'hidden'}
-      w-full md:w-80 flex-shrink-0
-      border-0 rounded-none
-    `}>
+      className={` ${activeTab === 'sell' ? 'block' : 'hidden'} w-full flex-shrink-0 rounded-none border-0 md:w-80`}>
       <CardHeader className="space-y-1.5 p-4">
         <CardTitle className="text-xl font-bold">صفقات منتجاتي</CardTitle>
 
@@ -506,12 +516,12 @@ const RenderSellTradesSidebar = ({
             <Card
               key={productTrade.product._id}
               className="mb-4 overflow-hidden">
-              <CardHeader className="p-3 space-y-0">
+              <CardHeader className="space-y-0 p-3">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-medium truncate">
+                  <span className="truncate font-medium">
                     {productTrade.product.name}
                   </span>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex shrink-0 items-center gap-2">
                     <CoinIcon amount={productTrade.product.price} />
                     {productTrade.product.isLocked ? (
                       <Lock className="h-4 w-4" />
@@ -530,17 +540,12 @@ const RenderSellTradesSidebar = ({
                   <div
                     key={trade._id}
                     onClick={() => handleTradeSelect(trade, true)}
-                    className={`
-                      p-3 cursor-pointer
-                      hover:bg-primary hover:text-primary-foreground
-                      transition-colors
-                      ${
-                        selectedTrade?._id === trade._id &&
-                        selectedTrade?.isSellTrade
-                          ? 'bg-primary/10 text-primary'
-                          : ''
-                      }
-                    `}>
+                    className={`cursor-pointer p-3 transition-colors hover:bg-primary hover:text-primary-foreground ${
+                      selectedTrade?._id === trade._id &&
+                      selectedTrade?.isSellTrade
+                        ? 'bg-primary/10 text-primary'
+                        : ''
+                    } `}>
                     <div className="flex flex-col gap-1 text-sm">
                       <p className="flex items-center gap-2">
                         <span className="text-muted-foreground">المشتري:</span>
@@ -665,6 +670,7 @@ const TradesPage = () => {
             )
           )
             return;
+
           setChats((prev) => {
             const updatedChats = { ...prev };
             if (!updatedChats[message.tradeId])
@@ -777,25 +783,25 @@ const TradesPage = () => {
 
   const renderBuyTradesSidebar = () => (
     <div
-      className={`${activeTab === 'buy' ? 'block' : 'hidden'} bg-card overflow-y-auto rtl md:w-80 flex-shrink-0`}>
+      className={`${activeTab === 'buy' ? 'block' : 'hidden'} rtl flex-shrink-0 overflow-y-auto bg-card md:w-80`}>
       <div className="p-4">
-        <h2 className="text-xl font-bold mb-4 text-card-foreground">
+        <h2 className="mb-4 text-xl font-bold text-card-foreground">
           الصفقات التي أشتريها
         </h2>
         {buyTrades.map((trade) => (
           <div
             key={trade._id}
             onClick={() => handleTradeSelect(trade, false)}
-            className={`cursor-pointer p-3 hover:bg-primary hover:text-primary-foreground rounded-none border border-border mb-2 transition-colors ${
+            className={`mb-2 cursor-pointer rounded-none border border-border p-3 transition-colors hover:bg-primary hover:text-primary-foreground ${
               selectedTrade?._id === trade._id && !selectedTrade?.isSellTrade
                 ? 'bg-primary text-primary-foreground'
                 : ''
             }`}>
             <h3 className="text-card-foreground">{trade.product?.name}</h3>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               البائع: {trade.seller?.username}
             </p>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               الحالة: {translateStage[trade.stage]}
             </p>
           </div>
@@ -806,10 +812,10 @@ const TradesPage = () => {
 
   // Mobile navigation tabs
   const renderMobileTabs = () => (
-    <header className="sticky top-0 z-10 bg-background border-b border-border w-full">
-      <nav className="flex justify-between items-center">
+    <header className="sticky top-0 z-10 w-full border-b border-border bg-background">
+      <nav className="flex items-center justify-between">
         <button
-          className={`flex-1 py-2 px-4 transition-colors ${
+          className={`flex-1 px-4 py-2 transition-colors ${
             activeTab === 'buy'
               ? 'bg-primary text-primary-foreground'
               : 'bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground'
@@ -818,7 +824,7 @@ const TradesPage = () => {
           المشتريات
         </button>
         <button
-          className={`flex-1 py-2 px-4 transition-colors ${
+          className={`flex-1 px-4 py-2 transition-colors ${
             activeTab === 'sell'
               ? 'bg-primary text-primary-foreground'
               : 'bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground'
@@ -831,9 +837,9 @@ const TradesPage = () => {
   );
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-background rtl overflow-hidden min-h-[50rem]">
-      <div className="flex flex-col md:flex-row flex-1 overflow-hidden md:h-full md:w-1/2 md:min-h-[50rem]">
-        <div className="md:flex flex-col overflow-y-auto">
+    <div className="rtl flex h-screen min-h-[50rem] flex-col overflow-hidden bg-background md:flex-row">
+      <div className="flex flex-1 flex-col overflow-hidden md:h-full md:min-h-[50rem] md:w-1/2 md:flex-row">
+        <div className="flex-col overflow-y-auto md:flex">
           {renderMobileTabs()}
           {renderBuyTradesSidebar()}
           <RenderSellTradesSidebar

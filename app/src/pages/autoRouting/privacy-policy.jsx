@@ -1,56 +1,39 @@
+import { Link } from 'react-router-dom';
+import { ArrowRightSquareIcon } from 'lucide-react';
 import MarkdownDisplay from '../../components/ui/markdown';
+import { useEffect, useState } from 'react';
 
 const PolicyPage = () => {
   const email = import.meta.env.VITE_EMAIL;
+  const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState('');
 
-  const privacyPolicyContent = `
-# سياسة الخصوصية
-
-## 1. البيانات التي نجمعها
-- معلومات الحساب: اسم المستخدم، كلمة المرور المشفرة
-- معلومات اختيارية: البريد الإلكتروني، رقم الهاتف، العمر، الجنس
-- بيانات المعاملات: السجلات، الأرصدة، التحويلات
-- إحصائيات الاستخدام: عدد المعاملات، المبالغ المستلمة والمدفوعة
-
-## 2. استخدام البيانات
-- إدارة الحساب والمعاملات
-- التحقق من الهوية وحماية الحساب
-- تحسين خدمات المنصة
-- الامتثال للمتطلبات القانونية
-
-## 3. حماية البيانات
-- تشفير كلمات المرور وبيانات المعاملات
-- توثيق ثنائي اختياري
-- رموز استرداد احتياطية
-- مراقبة النشاط المشبوه
-
-## 4. مشاركة البيانات
-لا نشارك بياناتك إلا في الحالات التالية:
-- بموافقتك الصريحة
-- للامتثال للقوانين
-- لحماية أمن المنصة ومستخدميها
-
-## 5. إعدادات الخصوصية
-يمكنك التحكم في:
-- ظهور ملفك الشخصي للآخرين
-- عرض معلومات محفظتك
-- تفعيل التوثيق الثنائي
-- إدارة إشعارات الحساب
-
-## 6. احتفاظ البيانات
-- نحتفظ بآخر 40 معاملة فقط
-- يمكنك طلب حذف حسابك وبياناتك
-- نحتفظ ببعض البيانات للامتثال القانوني
-
-للاستفسارات: ${email}
-`;
+  useEffect(() => {
+    fetch('/docs/privacy.txt')
+      .then((response) => response.text())
+      .then((text) => {
+        setContent(text);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error loading markdown:', error);
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <div className="min-h-screen p-8">
-      <div className="max-w-3xl mx-auto p-6 rounded-lg shadow-lg">
+      <Link
+        to="/"
+        className="mb-4 flex items-center gap-2 border-b border-border pb-2 text-primary transition-all duration-500 hover:text-accent">
+        <ArrowRightSquareIcon className="h-6 w-6" />
+        <span className="text-lg font-semibold">الرجوع للصفحة الرئيسية</span>
+      </Link>
+      <div className="mx-auto max-w-3xl rounded-lg p-6 shadow-lg">
         <MarkdownDisplay
           title="سياسة الخصوصية"
-          content={privacyPolicyContent}
+          content={content.replace('${email}', email)}
+          loading={loading}
         />
       </div>
     </div>

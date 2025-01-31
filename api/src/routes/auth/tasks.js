@@ -1,5 +1,11 @@
 // my-api/src/routes/auth/tasks.js
 import mongoose from 'mongoose';
+import { Router } from 'express';
+import { query } from 'express-validator';
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+import getRedisClient from '../../utils/libs/redisClient.js';
+import blockVpnProxy from '../../utils/blockVpnProxy.js';
+import config from '../../config.js';
 
 const dailyIpSchema = new mongoose.Schema(
   {
@@ -9,14 +15,15 @@ const dailyIpSchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
-    lastClaimed: {
-      type: Date,
+    url: {
+      type: String,
       required: true,
     },
   },
   {
     versionKey: false, // Disable the __v field
     // _id: false, // Disable the _id field
+    timestamps: true,
   }
 );
 
@@ -59,21 +66,15 @@ const generateShortURL = async (url, expirationMinutes = 15) => {
   return data.shortenedUrl; // Assuming the API returns a field called 'shortenedUrl'
 };
 
-import { Router } from 'express';
-import { query } from 'express-validator';
-import getRedisClient from '../../utils/libs/redisClient.js';
-import config from '../../config.js';
-
 const router = Router();
 const { subscriptions } = config;
 
 const generateCode = () =>
   String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
 
-import { validateRequest } from '../../utils/middleware/validateRequest.js';
-
 router.get(
   '/@me/daily',
+  blockVpnProxy,
   [
     query('host')
       .trim()
@@ -89,18 +90,15 @@ router.get(
       const { clientIp } = req;
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const ipRecord = await DailyIp.findOne({ ip: clientIp });
+      const ipRecord = await DailyIp.findOne({
+        ip: clientIp,
+      });
       if (ipRecord) {
-        const lastClaimDate = new Date(ipRecord.lastClaimed);
+        const lastClaimDate = new Date(ipRecord.updatedAt);
         lastClaimDate.setHours(0, 0, 0, 0);
-        if (lastClaimDate.getTime() === today.getTime()) {
-          return res
-            .status(400)
-            .json({ error: 'لقد حصلت على هديتك بالفعل اليوم!' });
-        }
-        ipRecord.lastClaimed = new Date();
-        await ipRecord.save();
-      } else await DailyIp.create({ ip: clientIp, lastClaimed: new Date() });
+        if (lastClaimDate.getTime() === today.getTime())
+          return res.status(200).json({ dailyUrl: ipRecord.url });
+      }
       const code = generateCode();
       const shortUrl = await generateShortURL(`${host}?dailyCode=${code}`);
       const redisClient = await getRedisClient();
@@ -109,6 +107,12 @@ router.get(
         JSON.stringify({ code, expireTime: Date.now() + 15 * 60 * 1000 }),
         { EX: 900 } // 15 minutes
       );
+      if (!ipRecord)
+        await DailyIp.create({
+          ip: clientIp,
+          url: shortUrl,
+        });
+      else await ipRecord.updateOne({ url: shortUrl });
       res.status(200).json({ dailyUrl: shortUrl });
     } catch (error) {
       console.error(error);

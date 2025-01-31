@@ -4,7 +4,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import requestIp from 'request-ip';
 import mongoSanitize from 'express-mongo-sanitize';
-// import blockVpnProxy from './utils/blockVpnProxy.js';
+// import blockVpnProxy from '../blockVpnProxy.js';
 import { limiter } from '../libs/redisClient.js';
 
 const sanitizeData = (data) => {

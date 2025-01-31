@@ -10,10 +10,13 @@ class WebSocketService {
   }
 
   connect() {
-    // If already connected, return existing instance
-    if (this.wsInstance && this.wsInstance.readyState === WebSocket.OPEN) {
+    // If already connected or connecting, return existing instance
+    if (
+      this.wsInstance &&
+      (this.wsInstance.readyState === WebSocket.OPEN ||
+        this.wsInstance.readyState === WebSocket.CONNECTING)
+    )
       return this.wsInstance;
-    }
 
     // Attempt to create a new WebSocket connection
     try {
@@ -22,7 +25,8 @@ class WebSocketService {
       );
 
       this.wsInstance.onopen = () => {
-        console.log('WebSocket connection established');
+        if (import.meta.env.DEV)
+          console.log('WebSocket connection established');
         this.reconnectAttempts = 0;
         this.notifyListeners('connected');
       };
@@ -79,11 +83,9 @@ class WebSocketService {
   }
 
   send(message) {
-    if (this.wsInstance && this.wsInstance.readyState === WebSocket.OPEN) {
+    if (this.wsInstance && this.wsInstance.readyState === WebSocket.OPEN)
       this.wsInstance.send(JSON.stringify(message));
-    } else {
-      console.warn('WebSocket not connected. Cannot send message.');
-    }
+    else console.warn('WebSocket not connected. Cannot send message.');
   }
 
   close() {

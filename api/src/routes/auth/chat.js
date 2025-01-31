@@ -69,7 +69,7 @@ router.put(
         !(req.isSeller && message.startsWith('البائع:'))
       )
         return res.status(400).json({ error: 'الرسالة غير صالحة' });
-      req.chat.messages.push(message);
+      req.chat.messages.push(message + '\n' + Date.now());
       await req.chat.save();
       res.sendStatus(200);
     } catch (error) {
