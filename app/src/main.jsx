@@ -169,7 +169,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   key={path}
                   path={path}
                   element={
-                    <React.Suspense fallback={<div>جار التحميل...</div>}>
+                    <React.Suspense fallback={<LoadingPage />}>
                       <Component />
                     </React.Suspense>
                   }
