@@ -70,32 +70,6 @@ import LoginPage from './pages/LoginPage';
 
 import './index.css';
 
-// Import all .jsx files from autoRouting directory
-const autoRouting = import.meta.glob('./pages/autoRouting/**/*.jsx');
-
-// Blacklist of pages to exclude from dynamic imports
-const blacklist = ['loading.jsx', ':productId.jsx'];
-
-// Convert file paths to route paths and components
-const dynamicRoutes = Object.entries(autoRouting)
-  .filter(([path]) => {
-    // Extract filename from the path
-    const fileName = path.split('/').pop();
-    return !blacklist.includes(fileName);
-  })
-  .map(([path, component]) => {
-    // Extract the route path from the file path
-    let routePath = path
-      .replace('./pages/autoRouting/', '') // Remove the base path
-      .replace(/\.jsx$/, '') // Remove file extension
-      .toLowerCase(); // Convert to lowercase
-
-    return {
-      path: `/${routePath}`,
-      component: React.lazy(component),
-    };
-  });
-
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Toaster
@@ -173,17 +147,37 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               </Route>
 
               {/* Dynamic routes from autoRouting directory */}
-              {dynamicRoutes.map(({ path, component: Component }) => (
-                <Route
-                  key={path}
-                  path={path}
-                  element={
-                    <React.Suspense fallback={<LoadingPage />}>
-                      <Component />
-                    </React.Suspense>
-                  }
-                />
-              ))}
+              {Object.entries(
+                import.meta.glob('./pages/autoRouting/**/*.jsx', {
+                  as: 'url',
+                  eager: true,
+                })
+              )
+                .filter(
+                  ([path, component]) =>
+                    !['/loading.jsx', '/:username/product/:productId.jsx'].some(
+                      (blacklisted) =>
+                        path.includes(blacklisted) ||
+                        component.includes(blacklisted)
+                    )
+                )
+                .map(([p1, p2]) => {
+                  const LazyComponent = React.lazy(() => import(p1));
+                  return (
+                    <Route
+                      element={
+                        <React.Suspense fallback={<LoadingPage />}>
+                          <LazyComponent />
+                        </React.Suspense>
+                      }
+                      key={p2}
+                      path={p2
+                        .replace('/src/pages/autoRouting/', '/')
+                        .replace('.jsx', '')
+                        .replace(/:(\w+)/g, ':$1')}
+                    />
+                  );
+                })}
 
               {/* Dynamically generated error routes */}
               {errorRoutes

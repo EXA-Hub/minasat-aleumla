@@ -57,11 +57,11 @@ const ProductPage = ({
 
     return (
       <div
-        className={`flex justify-center items-center h-screen bg-gradient-to-br ${bgClass} dark:from-gray-900 dark:to-gray-800`}>
+        className={`flex h-screen items-center justify-center bg-gradient-to-br ${bgClass} dark:from-gray-900 dark:to-gray-800`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`text-xl ${textClass} ${err ? 'p-6 rounded-lg bg-white/30 backdrop-blur-lg' : ''}`}>
+          className={`text-xl ${textClass} ${err ? 'rounded-lg bg-white/30 p-6 backdrop-blur-lg' : ''}`}>
           {content}
         </motion.div>
       </div>
@@ -72,9 +72,9 @@ const ProductPage = ({
 
   return (
     <div className="p-4">
-      <Card className="bg-white/20 backdrop-blur-lg border-0 shadow-xl">
+      <Card className="border-0 bg-white/20 shadow-xl backdrop-blur-lg">
         <CardHeader>
-          <div className="flex justify-between items-start mb-4">
+          <div className="mb-4 flex items-start justify-between">
             <Button variant="ghost" size="icon" onClick={handleBack}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -84,7 +84,7 @@ const ProductPage = ({
                   onClick={() =>
                     (window.location.pathname = `/product/${product._id}`)
                   }
-                  className="opacity-60 hover:opacity-100 transition-opacity duration-300 ease-in-out">
+                  className="opacity-60 transition-opacity duration-300 ease-in-out hover:opacity-100">
                   فتح صفقة
                 </Button>
               </div>
@@ -92,11 +92,11 @@ const ProductPage = ({
           </div>
           <CardTitle className="flex items-center gap-4">
             <Avatar className="h-16 w-16 ring-2 ring-purple-500/30">
-              <AvatarImage src={user.profilePicture} />
-              <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
+              <AvatarImage src={user?.profilePicture || '/avatar.jpg'} />
+              <AvatarFallback>{user?.username || 'مستخدم'}</AvatarFallback>
             </Avatar>
             <div className="space-y-1">
-              <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              <h2 className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-2xl font-bold text-transparent">
                 {product.name}
               </h2>
               <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
@@ -115,8 +115,8 @@ const ProductPage = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="bg-white/30 dark:bg-gray-800/30 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2 text-purple-600 dark:text-purple-400">
+          <div className="rounded-lg bg-white/30 p-4 dark:bg-gray-800/30">
+            <div className="mb-2 flex items-center gap-2 text-purple-600 dark:text-purple-400">
               <Info size={18} />
               <span className="font-semibold">الوصف</span>
             </div>
@@ -126,7 +126,7 @@ const ProductPage = ({
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white/30 dark:bg-gray-800/30 p-4 rounded-lg">
+            <div className="rounded-lg bg-white/30 p-4 dark:bg-gray-800/30">
               <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
                 <Tag size={18} />
                 <span className="font-semibold">السعر</span>
@@ -134,7 +134,7 @@ const ProductPage = ({
               <p className="mt-2 text-2xl font-bold">{product.price}</p>
             </div>
 
-            <div className="bg-white/30 dark:bg-gray-800/30 p-4 rounded-lg">
+            <div className="rounded-lg bg-white/30 p-4 dark:bg-gray-800/30">
               <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
                 <Clock size={18} />
                 <span className="font-semibold">الصفقات المفتوحة</span>
@@ -143,7 +143,7 @@ const ProductPage = ({
             </div>
           </div>
 
-          <div className="flex justify-between items-center text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
             <div className="flex items-center gap-2">
               <Calendar size={14} />
               {new Date(product.createdAt).toLocaleDateString('ar-SA')}
