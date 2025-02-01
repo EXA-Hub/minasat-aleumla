@@ -50,19 +50,21 @@ function requireAppWs(app, ws) {
     ],
     async (req, res) => {
       try {
-        const count = await Product.countDocuments({
-          userId: req.user._id,
-        }).select('-commentsAndRatings');
+        if (!req.user.privacy?.showProfile)
+          return res.status(403).json({ error: 'الملف الشخصي خاص' });
         const { slots, maxCoins } =
           subscriptions[req.user.tier].features.products;
-        if (count >= slots)
-          return res
-            .status(400)
-            .json({ error: 'تجاوزت الحد الأقصى للمنتجات.' });
         if (req.body.price > maxCoins)
           return res
             .status(400)
             .json({ error: 'السعر يجب ان يكون اقل من او يساوي ' + maxCoins });
+        const count = await Product.countDocuments({
+          userId: req.user._id,
+        });
+        if (count >= slots)
+          return res
+            .status(400)
+            .json({ error: 'تجاوزت الحد الأقصى للمنتجات.' });
         const product = await Product.create({
           name: req.body.name,
           description: req.body.description,

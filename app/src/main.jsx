@@ -59,6 +59,7 @@ import exploreMenuItems from './components/explore/ExploreRoutes';
 import { ReferralRedirect } from './context/ReferralRedirect';
 import { ColorProvider } from './context/ColorContext';
 import { ThemeProvider } from './context/ThemeContext';
+import ErrorBoundary from './pages/core/ErrorBoundary';
 import { ModalProvider } from './context/ModalManager';
 import LoadingPage from './pages/core/loading.jsx';
 import { errorRoutes } from './errorConfig.jsx';
@@ -88,115 +89,120 @@ const dynamicRoutes = Object.entries(autoRouting).map(([path, component]) => {
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <Toaster
-      position="top-right"
-      reverseOrder={false}
-      toastOptions={{
-        duration: 4000,
-        style: {
-          backgroundColor: 'var(--background)',
-          color: 'var(--foreground)',
-          border: '1px solid var(--border)',
-        },
-      }}
-    />
-    <ColorProvider>
-      <ThemeProvider>
-        <ModalProvider>
-          <Router>
-            <Routes>
-              {/* Static routes */}
-              <Route key={'/'} path="/" element={<LandingPage />} />
-              <Route
-                key={'/ref/:userId'}
-                path="/ref/:userId"
-                element={<ReferralRedirect />}
-              />
-              <Route key={'/login'} path="/login" element={<LoginPage />} />
-              <Route
-                key={'/recoverAccount'}
-                path="/recoverAccount"
-                element={<RecoveryPage />}
-              />
-
-              {/* Dashboard routes */}
-              <Route
-                key={'/dashboard'}
-                path="/dashboard"
-                element={<DashboardPage />}>
-                {dashboardMenuItems.flatMap((section) =>
-                  section.items.map(
-                    ({ path, component }) =>
-                      component && (
-                        <Route
-                          key={path}
-                          path={path}
-                          element={
-                            <React.Suspense fallback={<LoadingPage />}>
-                              {React.createElement(component)}
-                            </React.Suspense>
-                          }
-                        />
-                      )
-                  )
-                )}
-              </Route>
-
-              {/* Explore routes */}
-              <Route key={'/explore'} path="/explore" element={<ExplorePage />}>
-                {exploreMenuItems.flatMap((section) =>
-                  section.items.map(
-                    ({ path, component }) =>
-                      component && (
-                        <Route
-                          key={path}
-                          path={path}
-                          element={
-                            <React.Suspense fallback={<LoadingPage />}>
-                              {React.createElement(component)}
-                            </React.Suspense>
-                          }
-                        />
-                      )
-                  )
-                )}
-              </Route>
-
-              {/* Dynamic routes from autoRouting directory */}
-              {dynamicRoutes.map(({ path, component: Component }) => (
+  <ErrorBoundary>
+    <React.StrictMode>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 4000,
+          style: {
+            backgroundColor: 'var(--background)',
+            color: 'var(--foreground)',
+            border: '1px solid var(--border)',
+          },
+        }}
+      />
+      <ColorProvider>
+        <ThemeProvider>
+          <ModalProvider>
+            <Router>
+              <Routes>
+                {/* Static routes */}
+                <Route key={'/'} path="/" element={<LandingPage />} />
                 <Route
-                  key={path}
-                  path={path}
-                  element={
-                    <React.Suspense fallback={<LoadingPage />}>
-                      <Component />
-                    </React.Suspense>
-                  }
+                  key={'/ref/:userId'}
+                  path="/ref/:userId"
+                  element={<ReferralRedirect />}
                 />
-              ))}
+                <Route key={'/login'} path="/login" element={<LoginPage />} />
+                <Route
+                  key={'/recoverAccount'}
+                  path="/recoverAccount"
+                  element={<RecoveryPage />}
+                />
 
-              {/* Dynamically generated error routes */}
-              {errorRoutes
-                .filter((route) => route.path) // Filter out routes without a `path`
-                .map((route) => (
+                {/* Dashboard routes */}
+                <Route
+                  key={'/dashboard'}
+                  path="/dashboard"
+                  element={<DashboardPage />}>
+                  {dashboardMenuItems.flatMap((section) =>
+                    section.items.map(
+                      ({ path, component }) =>
+                        component && (
+                          <Route
+                            key={path}
+                            path={path}
+                            element={
+                              <React.Suspense fallback={<LoadingPage />}>
+                                {React.createElement(component)}
+                              </React.Suspense>
+                            }
+                          />
+                        )
+                    )
+                  )}
+                </Route>
+
+                {/* Explore routes */}
+                <Route
+                  key={'/explore'}
+                  path="/explore"
+                  element={<ExplorePage />}>
+                  {exploreMenuItems.flatMap((section) =>
+                    section.items.map(
+                      ({ path, component }) =>
+                        component && (
+                          <Route
+                            key={path}
+                            path={path}
+                            element={
+                              <React.Suspense fallback={<LoadingPage />}>
+                                {React.createElement(component)}
+                              </React.Suspense>
+                            }
+                          />
+                        )
+                    )
+                  )}
+                </Route>
+
+                {/* Dynamic routes from autoRouting directory */}
+                {dynamicRoutes.map(({ path, component: Component }) => (
                   <Route
-                    key={route.path} // Ensure the key is unique
-                    path={route.path}
-                    element={route.element}
+                    key={path}
+                    path={path}
+                    element={
+                      <React.Suspense fallback={<LoadingPage />}>
+                        <Component />
+                      </React.Suspense>
+                    }
                   />
                 ))}
 
-              {/* Catch-all route for unknown pages */}
-              <Route
-                key={'*'}
-                path="*"
-                element={<Navigate to="/error/not-found" />}
-              />
-            </Routes>
-          </Router>
-        </ModalProvider>
-      </ThemeProvider>
-    </ColorProvider>
-  </React.StrictMode>
+                {/* Dynamically generated error routes */}
+                {errorRoutes
+                  .filter((route) => route.path) // Filter out routes without a `path`
+                  .map((route) => (
+                    <Route
+                      key={route.path} // Ensure the key is unique
+                      path={route.path}
+                      element={route.element}
+                    />
+                  ))}
+
+                {/* Catch-all route for unknown pages */}
+                <Route
+                  key={'*'}
+                  path="*"
+                  element={<Navigate to="/error/not-found" />}
+                />
+              </Routes>
+            </Router>
+          </ModalProvider>
+        </ThemeProvider>
+      </ColorProvider>
+    </React.StrictMode>
+  </ErrorBoundary>
 );

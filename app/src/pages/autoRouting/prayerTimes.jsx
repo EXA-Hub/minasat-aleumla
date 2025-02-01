@@ -5,18 +5,15 @@ const PrayerTimes = () => {
   const [prayerTimes, setPrayerTimes] = useState(null);
 
   useEffect(() => {
-    console.log(navigator, navigator.geolocation);
     // Check if geolocation is available
-    if ('geolocation' in navigator) {
+    if ('geolocation' in navigator)
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
         const date = new Date();
         const prayTimes = new PrayTimes();
 
-        console.log(latitude, longitude, date, prayTimes);
         // Set calculation method (e.g., Muslim World League, ISNA, Umm al-Qura)
         prayTimes.setMethod('MWL');
-        console.log(latitude, longitude, date, prayTimes);
 
         // Get prayer times
         const times = prayTimes.getTimes(
@@ -26,11 +23,8 @@ const PrayerTimes = () => {
           '24h'
         );
 
-        console.log(latitude, longitude, date, prayTimes, times);
-
         setPrayerTimes(times);
       });
-    }
   }, []);
 
   return (

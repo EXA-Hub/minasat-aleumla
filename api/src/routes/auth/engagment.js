@@ -1,6 +1,7 @@
+// api/src/routes/auth/engagment.js
 import express from 'express';
-import Engagement from '../../utils/schemas/engagements.js';
 import getRedisClient from '../../utils/libs/redisClient.js';
+import Engagement from '../../utils/schemas/engagements.js';
 import User from '../../utils/schemas/mongoUserSchema.js';
 
 const router = express.Router();
@@ -11,8 +12,8 @@ router.get('/@me/engagement', async (req, res) => {
     const redisClient = await getRedisClient();
     // Check if data is already cached
     const cacheKey = `userEngagementData_${userId}`;
-    const cachedData = await redisClient.get(cacheKey);
-    if (cachedData) return res.json(JSON.parse(cachedData));
+    if (cachedData)
+      return res.json(JSON.parse(await redisClient.get(cacheKey)));
 
     // Calculate the date 30 days ago
     const thirtyDaysAgo = new Date();
@@ -44,20 +45,22 @@ router.get('/@me/engagement', async (req, res) => {
       .filter((viewerId) => viewerId) // Filter out null or undefined viewer IDs
       .map((viewerId) => viewerId.toString()); // Convert ObjectId to string for comparison
 
-    // Cache the data
-    await redisClient.set(cacheKey, JSON.stringify({ viewsData, viewerIds }), {
-      EX: 86400,
-    }); // 24 hours TTL
-
-    // Send the response
-    res.json({
+    const response = {
       viewsData: formattedViewsData,
       viewerIds: (
         await User.find({ _id: { $in: [...new Set(viewerIds)] } })
           .select('username')
           .lean()
       ).map((user) => user.username),
-    });
+    };
+
+    // Cache the data
+    await redisClient.set(cacheKey, JSON.stringify(response), {
+      EX: 86400,
+    }); // 24 hours TTL
+
+    // Send the response
+    res.json(response);
   } catch (error) {
     console.error('Error fetching user engagement data:', error);
     res.status(500).json({ error: 'خطآ في الخادم' });

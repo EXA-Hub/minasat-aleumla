@@ -60,7 +60,7 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
   return (
     <Dialog open={open}>
       <DialogContent>
-        <DialogHeader className="flex justify-between items-center">
+        <DialogHeader className="flex items-center justify-between">
           <DialogTitle>إنشاء هدية جديدة</DialogTitle>
           <button
             onClick={() => onOpenChange(false)}
@@ -131,7 +131,7 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-primary-foreground hover:bg-blue-900 disabled:opacity-50 h-10 rounded-md">
+            className="h-10 w-full rounded-md bg-blue-500 text-primary-foreground hover:bg-blue-900 disabled:opacity-50">
             {loading ? 'جاري الإنشاء...' : 'إنشاء الهدية'}
           </button>
           <span className="text-xs text-red-700">سيتم فرض الرسوم</span>
@@ -196,11 +196,11 @@ const AirdropPage = () => {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold">الهدايا المتاحة</h2>
         <button
           onClick={() => setDialogOpen(true)}
-          className="bg-blue-500 text-primary-foreground hover:bg-blue-900 px-4 py-2 rounded-md">
+          className="rounded-md bg-blue-500 px-4 py-2 text-primary-foreground hover:bg-blue-900">
           إنشاء هدية جديدة
         </button>
       </div>
@@ -213,32 +213,28 @@ const AirdropPage = () => {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {gifts.map((gift) => (
-          <Card key={gift.id} className="hover:shadow-lg transition-shadow">
+          <Card key={gift.id} className="transition-shadow hover:shadow-lg">
             <CardHeader>
-              <CardTitle className="flex justify-between items-center">
+              <CardTitle className="flex items-center justify-between">
                 {gift.title}
                 <CoinIcon amount={gift.coins} />
               </CardTitle>
             </CardHeader>
             <CardContent>
               {gift.url && (
-                <a
-                  to={gift.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline block mb-4">
-                  تفاصيل إضافية
+                <a className="mb-4 block text-blue-500 hover:underline">
+                  ثمة تفاصيل إضافية
                 </a>
               )}
             </CardContent>
-            <CardFooter className="flex justify-between items-center">
+            <CardFooter className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
                 المتبقي: {gift.max - gift.claimedCount} / {gift.max}
               </span>
               <button
                 onClick={() => handleGiftClaim(gift)}
                 disabled={claimingId === gift.id || gift.claimed}
-                className="bg-blue-500 text-primary-foreground hover:bg-blue-900 disabled:opacity-50 px-4 py-2 rounded-md">
+                className="rounded-md bg-blue-500 px-4 py-2 text-primary-foreground hover:bg-blue-900 disabled:opacity-50">
                 {claimingId === gift.id
                   ? 'جاري تقديم الهدية...'
                   : gift.claimed

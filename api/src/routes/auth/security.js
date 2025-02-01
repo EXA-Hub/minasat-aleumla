@@ -2,6 +2,8 @@ import argon2 from 'argon2';
 import express from 'express';
 import { authenticator } from 'otplib';
 import { body } from 'express-validator';
+import { validateRequest } from '../../utils/middleware/validateRequest.js';
+import getRedisClient from '../../utils/libs/redisClient.js';
 import User from '../../utils/schemas/mongoUserSchema.js';
 import { generateToken } from '../../utils/token-sys.js';
 import mail from '../../utils/mail.js';
@@ -20,8 +22,6 @@ router.get('/@me/security/settings', async (req, res) => {
     res.status(500).json({ error: 'حدث خطأ أثناء جلب الإعدادات' });
   }
 });
-
-import { validateRequest } from '../../utils/middleware/validateRequest.js';
 
 router.post(
   '/@me/security/password',
@@ -108,8 +108,6 @@ router.post(
     }
   }
 );
-
-import getRedisClient from '../../utils/libs/redisClient.js';
 
 router.post(
   '/@me/security/verify',
