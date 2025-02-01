@@ -84,6 +84,19 @@ const handleApiError = async (error) => {
 };
 
 const api = {
+  commentsAndRatings: {
+    createComment: async (productId, data) =>
+      axiosInstance.post(`/api/auth/products/${productId}/comments`, data),
+    updateComment: async (productId, commentId, data) =>
+      axiosInstance.put(
+        `/api/auth/products/${productId}/comments/${commentId}`,
+        data
+      ),
+    deleteComment: async (productId, commentId) =>
+      axiosInstance.delete(
+        `/api/auth/products/${productId}/comments/${commentId}`
+      ),
+  },
   chat: {
     getMsgs: async (tradeid) => axiosInstance.get('/api/auth/chat/' + tradeid),
     sendMsg: async (tradeid, message) =>
@@ -103,10 +116,6 @@ const api = {
   market: {
     getProduct: async (id) =>
       axiosInstance.get('/api/public/market/product/' + id),
-    getUsers: async (ids) =>
-      axiosInstance.post('/api/public/market/users', {
-        ids,
-      }),
     exploreProducts: async () =>
       axiosInstance.post('/api/public/market/products/explore'),
     searchProducts: async (searchParams) =>
@@ -165,7 +174,6 @@ const api = {
   },
   products: {
     getAll: async () => axiosInstance.get('/api/auth/products'),
-    getOne: async (id) => axiosInstance.get(`/api/auth/products/${id}`),
     create: async (data) => axiosInstance.post('/api/auth/products', data),
     update: async (id, data) =>
       axiosInstance.put(`/api/auth/products/${id}`, data),

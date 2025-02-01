@@ -31,15 +31,15 @@ export function ProductCard({ product, user }) {
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 rtl:flex-row-reverse">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center sm:gap-6 rtl:flex-row-reverse">
           {/* Left Section: Product Info */}
           <div className="flex-1 space-y-3">
             {/* Product Name */}
-            <h3 className="text-lg sm:text-xl font-semibold">{product.name}</h3>
+            <h3 className="text-lg font-semibold sm:text-xl">{product.name}</h3>
 
             {/* Price & Open Trades */}
             <div className="flex flex-wrap items-center gap-3 text-sm">
-              <span className="font-semibold text-primary flex items-center gap-1">
+              <span className="flex items-center gap-1 font-semibold text-primary">
                 <CoinIcon amount={product.price} />
               </span>
               <span className="text-muted-foreground">
@@ -48,7 +48,7 @@ export function ProductCard({ product, user }) {
             </div>
 
             {/* Dates Section */}
-            <div className="text-muted-foreground text-sm flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
                 <CalendarIcon className="h-4 w-4 text-muted-foreground" />
                 📅 <strong>تاريخ الإنشاء:</strong>{' '}
@@ -71,7 +71,7 @@ export function ProductCard({ product, user }) {
           <div className="mt-4 flex items-center justify-between gap-2 border-t pt-4">
             <div className="flex items-center gap-2">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user.profile?.profilePicture} />
+                <AvatarImage src={user.profilePicture} />
                 <AvatarFallback>{user.username[0]}</AvatarFallback>
               </Avatar>
               <UserName username={user.username} />
@@ -79,7 +79,7 @@ export function ProductCard({ product, user }) {
             <Button
               onClick={() => navigate(`/product/${product._id}`)}
               size="sm"
-              className="opacity-60 hover:opacity-100 transition-opacity duration-300 ease-in-out">
+              className="opacity-60 transition-opacity duration-300 ease-in-out hover:opacity-100">
               فتح صفقة
             </Button>
           </div>
@@ -189,11 +189,11 @@ export function SearchPanel({ onSearch }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-muted/40 p-4 rounded-lg space-y-4"
+      className="bg-muted/40 space-y-4 rounded-lg p-4"
       dir="rtl">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div>
-          <label className="text-sm mb-1 block">البحث</label>
+          <label className="mb-1 block text-sm">البحث</label>
           <Input
             placeholder="اسم المنتج..."
             value={searchParams.searchTerm}
@@ -203,7 +203,7 @@ export function SearchPanel({ onSearch }) {
           />
         </div>
         <div>
-          <label className="text-sm mb-1 block">السعر الأدنى</label>
+          <label className="mb-1 block text-sm">السعر الأدنى</label>
           <Input
             type="number"
             min="0"
@@ -218,7 +218,7 @@ export function SearchPanel({ onSearch }) {
           )}
         </div>
         <div>
-          <label className="text-sm mb-1 block">السعر الأقصى</label>
+          <label className="mb-1 block text-sm">السعر الأقصى</label>
           <Input
             type="number"
             min="0"
@@ -235,7 +235,7 @@ export function SearchPanel({ onSearch }) {
 
         {/* Creation Date Range */}
         <div>
-          <label className="text-sm mb-1 block">نطاق تاريخ الإنشاء</label>
+          <label className="mb-1 block text-sm">نطاق تاريخ الإنشاء</label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -257,7 +257,7 @@ export function SearchPanel({ onSearch }) {
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-muted">
+            <PopoverContent className="w-auto bg-muted p-0">
               <Calendar
                 mode="range"
                 selected={{
@@ -276,7 +276,7 @@ export function SearchPanel({ onSearch }) {
 
         {/* Update Date Range */}
         <div>
-          <label className="text-sm mb-1 block">نطاق تاريخ التعديل</label>
+          <label className="mb-1 block text-sm">نطاق تاريخ التعديل</label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
@@ -298,7 +298,7 @@ export function SearchPanel({ onSearch }) {
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-muted">
+            <PopoverContent className="w-auto bg-muted p-0">
               <Calendar
                 mode="range"
                 selected={{
@@ -316,7 +316,7 @@ export function SearchPanel({ onSearch }) {
         </div>
 
         <div>
-          <label className="text-sm mb-1 block">الترتيب حسب</label>
+          <label className="mb-1 block text-sm">الترتيب حسب</label>
           <Select
             value={searchParams.sortBy}
             onValueChange={(value) =>
@@ -334,7 +334,7 @@ export function SearchPanel({ onSearch }) {
           </Select>
         </div>
         <div>
-          <label className="text-sm mb-1 block">اتجاه الترتيب</label>
+          <label className="mb-1 block text-sm">اتجاه الترتيب</label>
           <Select
             value={searchParams.sortOrder}
             onValueChange={(value) =>
@@ -350,7 +350,7 @@ export function SearchPanel({ onSearch }) {
           </Select>
         </div>
         <div>
-          <label className="text-sm mb-1 block">عدد النتائج</label>
+          <label className="mb-1 block text-sm">عدد النتائج</label>
           <Select
             value={searchParams.limit.toString()}
             onValueChange={(value) =>
@@ -371,7 +371,7 @@ export function SearchPanel({ onSearch }) {
             </SelectContent>
           </Select>
         </div>
-        <Button type="submit" className="mt-7 hover:bg-accent w-full">
+        <Button type="submit" className="mt-7 w-full hover:bg-accent">
           بحث
         </Button>
       </div>
@@ -393,11 +393,9 @@ export default function Market() {
       setLoading(true);
       const productsData = await api.market.exploreProducts();
       setProducts(productsData);
-      const userIds = [
+      const usersData = [
         ...new Set(productsData.map((product) => product.userId)),
       ];
-      const usersData =
-        userIds.length > 0 ? await api.market.getUsers(userIds) : [];
       const usersMap = {};
       usersData.forEach((user) => {
         usersMap[user._id] = user;
@@ -416,11 +414,9 @@ export default function Market() {
       setLoading(true);
       const productsData = await api.market.searchProducts(searchParams);
       setProducts(productsData);
-      const userIds = [
+      const usersData = [
         ...new Set(productsData.map((product) => product.userId)),
       ];
-      const usersData =
-        userIds.length > 0 ? await api.market.getUsers(userIds) : [];
       const usersMap = {};
       usersData.forEach((user) => {
         usersMap[user._id] = user;
@@ -439,26 +435,26 @@ export default function Market() {
   }, []);
 
   return (
-    <div className="container mx-auto py-8 px-4" dir="rtl">
-      <h1 className="text-3xl font-bold mb-8">السوق</h1>
+    <div className="container mx-auto px-4 py-8" dir="rtl">
+      <h1 className="mb-8 text-3xl font-bold">السوق</h1>
 
       <SearchPanel onSearch={handleSearch} />
 
       {loading ? (
-        <div className="flex justify-center items-center min-h-[200px]">
-          <Loader2 className="w-8 h-8 animate-spin" />
+        <div className="flex min-h-[200px] items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin" />
         </div>
       ) : (
-        <div className="grid gap-6 mt-8 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
             <ProductCard
               key={product._id}
               product={product}
-              user={users[product.userId]}
+              user={users[product.userId._id]}
             />
           ))}
           {products.length === 0 && (
-            <div className="col-span-full text-center text-muted-foreground py-12">
+            <div className="col-span-full py-12 text-center text-muted-foreground">
               لا توجد منتجات متاحة
             </div>
           )}

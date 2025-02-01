@@ -24,7 +24,9 @@ function requireAppWs(app, ws) {
   // Get all products
   router.get('/products/', async (req, res) => {
     try {
-      const products = await Product.find({ userId: req.user._id });
+      const products = await Product.find({ userId: req.user._id }).select(
+        '-commentsAndRatings'
+      );
       const { slots, maxCoins } =
         subscriptions[req.user.tier].features.products;
       res.json({ products, plan: { slots, maxCoins } });
@@ -33,26 +35,6 @@ function requireAppWs(app, ws) {
       res.status(500).json({ error: 'فشل في جلب المنتجات.' });
     }
   });
-
-  // Get a single product
-  router.get(
-    '/products/:id',
-    [param('id').isMongoId().withMessage(validateMessages.id), validateRequest],
-    async (req, res) => {
-      try {
-        const product = await Product.findOne({
-          _id: req.params.id,
-          userId: req.user._id,
-        });
-        if (!product)
-          return res.status(404).json({ error: 'المنتج غير موجود.' });
-        res.json(product);
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'فشل في جلب المنتج.' });
-      }
-    }
-  );
 
   // Create a product
   router.post(
@@ -68,7 +50,9 @@ function requireAppWs(app, ws) {
     ],
     async (req, res) => {
       try {
-        const count = await Product.countDocuments({ userId: req.user._id });
+        const count = await Product.countDocuments({
+          userId: req.user._id,
+        }).select('-commentsAndRatings');
         const { slots, maxCoins } =
           subscriptions[req.user.tier].features.products;
         if (count >= slots)
@@ -133,7 +117,7 @@ function requireAppWs(app, ws) {
             price: req.body.price,
           },
           { new: true }
-        );
+        ).select('-commentsAndRatings');
         if (!product)
           return res
             .status(404)
@@ -163,7 +147,7 @@ function requireAppWs(app, ws) {
           return res.status(404).json({
             error: 'المنتج غير موجود أو لديه صفقات مفتوحة. او غير مقفل',
           });
-        res.status(204);
+        res.sendStatus(204);
       } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'فشل في حذف المنتج.' });
@@ -219,10 +203,10 @@ function requireAppWs(app, ws) {
         const product = await Product.findOne({
           _id: req.body.productId,
           isLocked: false,
-        });
+        }).select('price userId isLocked openTrades');
         if (!product)
           return res.status(404).json({ error: 'المنتج غير موجود. او مقفل' });
-        if (req.user._id.toString() === product.userId.toString())
+        if (req.user._id.equals(product.userId))
           return res
             .status(400)
             .json({ error: 'لا يمكنك إنشاء صفقة بالمنتج الخاص بك' });
@@ -237,7 +221,6 @@ function requireAppWs(app, ws) {
             product.price * req.body.quantity
         )
           return res.status(400).json({ error: 'رصيد غير كافٍ' });
-
         const session = await mongoose.startSession();
         try {
           session.startTransaction();
@@ -327,7 +310,7 @@ function requireAppWs(app, ws) {
         const product = await Product.findOne({
           _id: trade.productId,
           userId: req.user._id,
-        });
+        }).select('-commentsAndRatings');
         if (!product)
           return res.status(404).json({ error: 'المنتج غير موجود.' });
         const buyer = await User.findOne({ _id: trade.buyerId });
@@ -383,7 +366,9 @@ function requireAppWs(app, ws) {
         });
         if (!trade)
           return res.status(404).json({ error: 'الصفقة غير موجودة.' });
-        const product = await Product.findOne({ _id: trade.productId });
+        const product = await Product.findOne({ _id: trade.productId }).select(
+          '-commentsAndRatings'
+        );
         if (!product)
           return res.status(404).json({ error: 'المنتج غير موجود.' });
         const seller = await User.findOne({ _id: product.userId });
@@ -416,7 +401,9 @@ function requireAppWs(app, ws) {
       }
 
       // Fetch product details
-      const products = await Product.find({ _id: { $in: [...productIds] } });
+      const products = await Product.find({
+        _id: { $in: [...productIds] },
+      }).select('-commentsAndRatings -description');
 
       // Create product map and collect unique seller IDs
       const productsMap = new Map();
@@ -464,7 +451,9 @@ function requireAppWs(app, ws) {
   // get all my product's trades
   router.get('/@me/products/trades', async (req, res) => {
     try {
-      const products = await Product.find({ userId: req.user._id });
+      const products = await Product.find({ userId: req.user._id }).select(
+        '-commentsAndRatings -description'
+      );
 
       // Extract product IDs efficiently
       const productIds = products.map((p) => p._id);

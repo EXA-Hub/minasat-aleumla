@@ -6,13 +6,14 @@ import { toast } from 'react-hot-toast';
 import { useOutletContext } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { Lock, Unlock, XCircle } from 'lucide-react';
+import CommentDialog from '../../../components/shared/commentDialog.jsx';
 import Username from '../../../components/explore/widgets/Username';
 import { ScrollArea } from '../../../components/ui/scroll-area';
 import { Skeleton } from '../../../components/ui/skeleton';
-import LoadingPage from '../../core/loading.jsx';
 import CoinIcon from '../../../components/ui/CoinIcon';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
+import LoadingPage from '../../core/loading.jsx';
 import wss from '../../../services/wss.js';
 import { cn } from '../../../lib/utils';
 import api from '../../../utils/api';
@@ -43,6 +44,7 @@ const translateStage = {
 
 // Updated chat area with new styling
 const RenderTradeChat = ({
+  setAskCommentAndRateDialog,
   selectedTrade,
   sendMessage,
   setSelectedTrade,
@@ -53,12 +55,15 @@ const RenderTradeChat = ({
   const [loading, setLoading] = useState(false);
   const [sendingMsg, setSendingMsg] = useState(false);
 
-  if (
-    chatContainerRef &&
-    chatContainerRef.current &&
-    chatContainerRef.current.scrollHeight
-  )
-    chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+  useEffect(() => {
+    if (
+      chatContainerRef &&
+      chatContainerRef.current &&
+      chatContainerRef.current.scrollHeight
+    )
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight + 100;
+  }, [chatContainerRef, chatContainerRef.current?.scrollHeight]);
 
   if (loading)
     return (
@@ -81,30 +86,102 @@ const RenderTradeChat = ({
 
   function mergeMessages(messages) {
     const merged = [];
-    let lastSender = '';
-    let lastMessage = '';
+    let currentUser = null;
+    let contents = [];
+    let minDate = null;
+
+    const parseMessage = (msg) => {
+      const colonIndex = msg.indexOf(':');
+      if (colonIndex === -1) return { username: '', content: msg, date: null };
+
+      const username = msg.slice(0, colonIndex).trim();
+      const rest = msg.slice(colonIndex + 1).trim();
+      const parts = rest.split('\n');
+      let date = null;
+      let contentLines = [];
+
+      // Extract date from last numeric part
+      for (let i = parts.length - 1; i >= 0; i--) {
+        if (/^\d+$/.test(parts[i])) {
+          date = parts[i];
+          contentLines = parts.slice(0, i);
+          break;
+        }
+      }
+      if (date === null) contentLines = parts;
+
+      return {
+        username,
+        content: contentLines.join('\n'),
+        date,
+        isSpecial:
+          contentLines.length === 1 &&
+          contentLines[0].startsWith('[') &&
+          contentLines[0].endsWith(']'),
+      };
+    };
 
     for (const msg of messages) {
-      const [sender, ...textParts] = msg.split(':');
-      const text = textParts.join(':').trim();
+      if (!msg.trim()) continue;
 
-      if (text.startsWith('[') || text.endsWith(']')) {
-        if (lastMessage) merged.push(`${lastSender}:${lastMessage}`);
-        merged.push(msg);
-        lastSender = '';
-        lastMessage = '';
+      // Handle system messages
+      if (msg.startsWith('النظام:')) {
+        if (currentUser !== null) {
+          merged.push({
+            username: currentUser,
+            content: contents.join('\n'),
+            date: minDate,
+          });
+          currentUser = null;
+          contents = [];
+          minDate = null;
+        }
+        merged.push(parseMessage(msg));
         continue;
       }
 
-      if (sender === lastSender) {
-        lastMessage += `\n${text}`;
+      const parsed = parseMessage(msg);
+
+      // Merge logic
+      if (parsed.isSpecial) {
+        if (currentUser !== null) {
+          merged.push({
+            username: currentUser,
+            content: contents.join('\n'),
+            date: minDate,
+          });
+        }
+        merged.push(parsed);
+        currentUser = null;
+        contents = [];
+        minDate = null;
+      } else if (parsed.username === currentUser) {
+        contents.push(parsed.content);
+        if (parsed.date && (!minDate || parsed.date < minDate)) {
+          minDate = parsed.date;
+        }
       } else {
-        if (lastMessage) merged.push(`${lastSender}:${lastMessage}`);
-        lastSender = sender;
-        lastMessage = text;
+        if (currentUser !== null) {
+          merged.push({
+            username: currentUser,
+            content: contents.join('\n'),
+            date: minDate,
+          });
+        }
+        currentUser = parsed.username;
+        contents = [parsed.content];
+        minDate = parsed.date;
       }
     }
-    if (lastMessage) merged.push(`${lastSender}:${lastMessage}`);
+
+    // Add remaining messages
+    if (currentUser !== null) {
+      merged.push({
+        username: currentUser,
+        content: contents.join('\n'),
+        date: minDate,
+      });
+    }
 
     return merged;
   }
@@ -151,145 +228,138 @@ const RenderTradeChat = ({
           ref={chatContainerRef}
           className="scrollbar-thin scrollbar-thumb-primary scrollbar-track-background flex-grow overflow-y-auto p-4">
           <div className="flex flex-col gap-6 px-2 py-4">
-            {mergeMessages([...chats[selectedTrade._id]]).map((msg, index) => {
-              const msgAuthor = msg.startsWith('النظام:')
-                ? {
-                    profile: {
-                      profilePicture: '/icon.svg',
-                    },
-                  }
-                : msg.startsWith('البائع:')
-                  ? isSeller
-                    ? user
-                    : otherUser
-                  : msg.startsWith('المشتري:')
-                    ? !isSeller
-                      ? user
-                      : otherUser
-                    : msg.split(':')[0] === user.username
-                      ? user
-                      : otherUser;
+            {mergeMessages([...chats[selectedTrade._id]]).map(
+              ({ username, content, date, isSpecial }, index) => {
+                const msgAuthor =
+                  username === 'النظام'
+                    ? { profile: { profilePicture: '/icon.svg' } }
+                    : username === 'البائع'
+                      ? isSeller
+                        ? user
+                        : otherUser
+                      : username === 'المشتري'
+                        ? !isSeller
+                          ? user
+                          : otherUser
+                        : username === user.username
+                          ? user
+                          : otherUser;
 
-              const isSystem = msg.startsWith('النظام:');
-              const isError = msg === 'النظام:[حدث خطأ]';
-              const isGreen = msg === 'النظام:[تم إرسالها بالفعل]';
-              const isSent = msg.startsWith(ourParty + ':');
-              const messageContent =
-                msg.split(':').slice(1).join(':').split('\n')[0] || msg;
+                const isSystem = username === 'النظام';
+                const isError = content === '[حدث خطأ]';
+                const isGreen = content === '[تم إرسالها بالفعل]';
+                const isSent = username === ourParty;
 
-              return (
-                <div
-                  key={index}
-                  className={cn(
-                    'group flex items-start gap-3',
-                    isSent ? 'flex-row-reverse' : 'flex-row'
-                  )}>
-                  <Avatar
-                    className={cn(
-                      'h-8 w-8 flex-shrink-0 select-none md:h-10 md:w-10',
-                      'border-2 border-border shadow-sm ring-2 ring-background transition-transform duration-200',
-                      'group-hover:scale-105'
-                    )}>
-                    <AvatarImage
-                      src={
-                        msgAuthor.profile?.profilePicture ||
-                        msgAuthor.profilePicture ||
-                        '/avatar.jpg'
-                      }
-                      alt={msgAuthor.username || 'User Avatar'}
-                      className="object-cover"
-                    />
-                    <AvatarFallback>
-                      <img
-                        src="/avatar.jpg"
-                        alt="Default Avatar"
-                        className="h-full w-full rounded-full object-cover"
-                      />
-                    </AvatarFallback>
-                  </Avatar>
-
+                return (
                   <div
+                    key={index}
                     className={cn(
-                      'flex max-w-[80%] flex-col gap-1 md:max-w-[70%]',
-                      isSent && 'items-end'
+                      'group flex items-start gap-3',
+                      isSent ? 'flex-row-reverse' : 'flex-row'
                     )}>
-                    {msgAuthor &&
-                      msgAuthor.username &&
-                      (user.username === msgAuthor.username ? (
-                        <div className="flex items-center gap-2 px-1">
-                          <span className="text-xs text-muted-foreground">
-                            {format(
-                              parseInt(msg.split('\n')[1]) || new Date(),
-                              'p',
-                              { locale: ar }
-                            )}
-                          </span>
-                          <Username username={msgAuthor.username} />
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2 px-1">
-                          <Username username={msgAuthor.username} />
-
-                          <span className="text-xs text-muted-foreground">
-                            {format(
-                              parseInt(msg.split('\n')[1]) || new Date(),
-                              'p',
-                              { locale: ar }
-                            )}
-                          </span>
-                        </div>
-                      ))}
-
-                    <p
+                    <Avatar
                       className={cn(
-                        'w-fit rounded-2xl px-4 py-2.5 text-sm',
-                        'shadow-sm transition-colors duration-200',
-                        'whitespace-pre-line',
-                        isSystem &&
-                          !isError &&
-                          'bg-yellow-500/10 text-yellow-600',
-                        isGreen && 'bg-green-500/10 text-green-600',
-                        isError && 'bg-red-500/10 text-red-600',
-                        !isSystem &&
-                          !isError &&
-                          cn(
-                            isSent
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-accent text-foreground'
-                          )
+                        'h-8 w-8 flex-shrink-0 select-none md:h-10 md:w-10',
+                        'border-2 border-border shadow-sm ring-2 ring-background transition-transform duration-200',
+                        'group-hover:scale-105'
                       )}>
-                      {messageContent}
-                    </p>
+                      <AvatarImage
+                        src={
+                          msgAuthor.profile?.profilePicture ||
+                          msgAuthor.profilePicture ||
+                          '/avatar.jpg'
+                        }
+                        alt={msgAuthor.username || 'User Avatar'}
+                        className="object-cover"
+                      />
+                      <AvatarFallback>
+                        <img
+                          src="/avatar.jpg"
+                          alt="Default Avatar"
+                          className="h-full w-full rounded-full object-cover"
+                        />
+                      </AvatarFallback>
+                    </Avatar>
 
-                    {msg.split(':')[1] === '[تم إرسال المنتج]' && (
-                      <div className="mt-2">
-                        <Button
-                          variant="success"
-                          size="sm"
-                          className={cn(
-                            'transition-all duration-200',
-                            'hover:scale-105 active:scale-95',
-                            'disabled:opacity-50 disabled:hover:scale-100'
-                          )}
-                          disabled={
-                            isSeller ||
-                            [...chats[selectedTrade._id]].includes(
-                              'المشتري:[تم استلام المنتج]'
+                    <div
+                      className={cn(
+                        'flex max-w-[80%] flex-col gap-1 md:max-w-[70%]',
+                        isSent && 'items-end'
+                      )}>
+                      {msgAuthor &&
+                        msgAuthor.username &&
+                        (user.username === msgAuthor.username ? (
+                          <div className="flex items-center gap-2 px-1">
+                            <span className="text-xs text-muted-foreground">
+                              {format(parseInt(date) || new Date(), 'p', {
+                                locale: ar,
+                              }).toString()}
+                            </span>
+                            <Username username={msgAuthor.username} />
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 px-1">
+                            <Username username={msgAuthor.username} />
+                            <span className="text-xs text-muted-foreground">
+                              {format(parseInt(date) || new Date(), 'p', {
+                                locale: ar,
+                              }).toString()}
+                            </span>
+                          </div>
+                        ))}
+
+                      <p
+                        className={cn(
+                          'w-fit rounded-2xl px-4 py-2.5 text-sm',
+                          'shadow-sm transition-colors duration-200',
+                          'whitespace-pre-line',
+                          isSystem &&
+                            !isError &&
+                            'bg-yellow-500/10 text-yellow-600',
+                          isGreen && 'bg-green-500/10 text-green-600',
+                          isError && 'bg-red-500/10 text-red-600',
+                          !isSystem &&
+                            !isError &&
+                            cn(
+                              isSent
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-accent text-foreground'
                             )
-                          }
-                          onClick={async () => {
-                            setSendingMsg(true);
-                            await sendMessage('[تم استلام المنتج]', ourParty);
-                            setSendingMsg(false);
-                          }}>
-                          تأكيد الاستلام
-                        </Button>
-                      </div>
-                    )}
+                        )}>
+                        {content}
+                      </p>
+                      {isSpecial && content.includes('[تم إرسال المنتج]') && (
+                        <div className="mt-2">
+                          <Button
+                            variant="success"
+                            size="sm"
+                            className={cn(
+                              'transition-all duration-200',
+                              'hover:scale-105 active:scale-95',
+                              'disabled:opacity-50 disabled:hover:scale-100'
+                            )}
+                            disabled={
+                              isSeller ||
+                              [...chats[selectedTrade._id]].includes(
+                                'المشتري:[تم استلام المنتج]'
+                              )
+                            }
+                            onClick={async () => {
+                              setSendingMsg(true);
+                              await sendMessage('[تم استلام المنتج]', ourParty);
+                              setSendingMsg(false);
+                              toast.success('تم استلام المنتج بنجاح');
+                              setAskCommentAndRateDialog(true);
+                            }}>
+                            تأكيد الاستلام
+                          </Button>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              }
+            )}
           </div>
 
           {/* Skeleton Chat Messages Loader */}
@@ -395,8 +465,8 @@ const RenderTradeChat = ({
               />
             )}
             {isSeller &&
-              ![...chats[selectedTrade._id]]?.includes(
-                'البائع:[تم إرسال المنتج]'
+              ![...chats[selectedTrade._id]]?.some((someMsg) =>
+                someMsg.includes('البائع:[تم إرسال المنتج]')
               ) && (
                 <button
                   className="hover:bg-primary/90 rounded bg-primary px-4 py-2 text-primary-foreground"
@@ -416,6 +486,7 @@ const RenderTradeChat = ({
 };
 
 RenderTradeChat.propTypes = {
+  setAskCommentAndRateDialog: PropTypes.func.isRequired,
   selectedTrade: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     isSellTrade: PropTypes.bool.isRequired,
@@ -606,6 +677,7 @@ const TradesPage = () => {
   const [activeTab, setActiveTab] = useState('buy');
   const [chats, setChats] = useState({});
   const [loaded, setLoaded] = useState(false);
+  const [askCommentAndRateDialog, setAskCommentAndRateDialog] = useState(false);
 
   // Existing fetch trades effect and handlers remain the same
   useEffect(() => {
@@ -722,12 +794,13 @@ const TradesPage = () => {
           ],
         }));
       if (
-        ([...chats[selectedTrade._id]].includes('البائع:[تم إرسال المنتج]') &&
-          sender === 'البائع' &&
-          /^[[\]].*[[\]]$/.test(message)) ||
-        ([...chats[selectedTrade._id]].includes('المشتري:[تم استلام المنتج]') &&
-          sender === 'المشتري' &&
-          /^[[\]].*[[\]]$/.test(message))
+        /^[[\]].*[[\]]$/.test(message.trim()) &&
+        (([...chats[selectedTrade._id]].includes('البائع:[تم إرسال المنتج]') &&
+          sender === 'البائع') ||
+          ([...chats[selectedTrade._id]].includes(
+            'المشتري:[تم استلام المنتج]'
+          ) &&
+            sender === 'المشتري'))
       )
         return setChats((prev) => ({
           ...prev,
@@ -838,6 +911,13 @@ const TradesPage = () => {
 
   return (
     <div className="rtl flex h-screen min-h-[50rem] flex-col overflow-hidden bg-background md:flex-row">
+      {askCommentAndRateDialog && (
+        <CommentDialog
+          productId={selectedTrade?.productId}
+          otherId={selectedTrade?._id}
+          onSuccess={() => setAskCommentAndRateDialog(false)}
+        />
+      )}
       <div className="flex flex-1 flex-col overflow-hidden md:h-full md:min-h-[50rem] md:w-1/2 md:flex-row">
         <div className="flex-col overflow-y-auto md:flex">
           {renderMobileTabs()}
@@ -856,6 +936,7 @@ const TradesPage = () => {
           setSelectedTrade={setSelectedTrade}
           user={user}
           chats={chats}
+          setAskCommentAndRateDialog={setAskCommentAndRateDialog}
         />
       </div>
     </div>

@@ -3,7 +3,6 @@ import express from 'express';
 import { body, param } from 'express-validator';
 import { validateRequest } from '../../utils/middleware/validateRequest.js';
 import { Product } from '../../utils/schemas/traderSchema.js';
-import User from '../../utils/schemas/mongoUserSchema.js';
 
 const router = express.Router();
 
@@ -114,6 +113,27 @@ router.post(
       const sortOptions = { [sortBy]: sortOrder === 'asc' ? 1 : -1 };
 
       const products = await Product.find(query)
+        .select('-__v -commentsAndRatings')
+        // Populate product owner details
+        .populate({
+          path: 'userId',
+          select: 'username profile.profilePicture privacy.showProfile',
+          transform: (doc) => {
+            if (!doc) return null; // Handle deleted users
+            if (!doc.privacy?.showProfile) {
+              return {
+                _id: doc._id,
+                username: doc.username,
+                profilePicture: null,
+              };
+            }
+            return {
+              _id: doc._id,
+              username: doc.username,
+              profilePicture: doc.profile?.profilePicture || null,
+            };
+          },
+        })
         .sort(sortOptions)
         .limit(limit)
         .skip(offset)
@@ -147,6 +167,27 @@ router.post(
       const { limit = 10, offset = 0 } = req.body;
 
       const products = await Product.find({ isLocked: false })
+        .select('-__v -commentsAndRatings')
+        // Populate product owner details
+        .populate({
+          path: 'userId',
+          select: 'username profile.profilePicture privacy.showProfile',
+          transform: (doc) => {
+            if (!doc) return null; // Handle deleted users
+            if (!doc.privacy?.showProfile) {
+              return {
+                _id: doc._id,
+                username: doc.username,
+                profilePicture: null,
+              };
+            }
+            return {
+              _id: doc._id,
+              username: doc.username,
+              profilePicture: doc.profile?.profilePicture || null,
+            };
+          },
+        })
         .sort({ openTrades: -1, updatedAt: -1 })
         .limit(limit)
         .skip(offset)
@@ -155,39 +196,6 @@ router.post(
       res.json(products);
     } catch (error) {
       res.status(500).json({ error: 'خطأ في الخادم أثناء استكشاف المنتجات' });
-    }
-  }
-);
-
-// الحصول على المستخدمين
-router.post(
-  '/market/users',
-  [
-    body('ids')
-      .isArray({ min: 1, max: 25 })
-      .withMessage(
-        'يجب أن تكون معرفات المستخدمين مصفوفة تحتوي على 1-25 عنصرًا'
-      ),
-    body('ids.*')
-      .isMongoId()
-      .withMessage('يجب أن يكون كل معرف مستخدم معرفًا صالحًا'),
-    validateRequest,
-  ],
-  async (req, res) => {
-    try {
-      res.json(
-        await User.find(
-          {
-            _id: { $in: req.body.ids },
-            'privacy.showProfile': true, // Ensure privacy.showProfile is true
-          },
-          '_id username profile.profilePicture' // Select only necessary fields
-        )
-          .limit(25) // Limit results to 25
-          .lean() // Return plain JavaScript objects
-      );
-    } catch (error) {
-      res.status(500).json({ error: 'خطأ في الخادم أثناء جلب المستخدمين' });
     }
   }
 );
@@ -201,7 +209,39 @@ router.get(
   ],
   async (req, res) => {
     try {
-      const product = await Product.findById(req.params.id);
+      const product = await Product.findById(req.params.id)
+        // Populate product owner details
+        .populate({
+          path: 'userId',
+          select: 'username profile.profilePicture privacy.showProfile',
+          transform: (doc) => {
+            if (!doc) return null; // Handle deleted users
+            if (!doc.privacy?.showProfile) {
+              return {
+                _id: doc._id,
+                username: doc.username,
+                profilePicture: null,
+              };
+            }
+            return {
+              _id: doc._id,
+              username: doc.username,
+              profilePicture: doc.profile?.profilePicture || null,
+            };
+          },
+        })
+        .populate({
+          path: 'commentsAndRatings.userId',
+          select: 'username profile.profilePicture privacy.showProfile',
+          transform: (doc) => {
+            if (!doc.privacy?.showProfile) return { username: doc.username };
+            return {
+              username: doc.username,
+              profilePicture: doc.profile?.profilePicture,
+            };
+          },
+        })
+        .lean();
       if (!product) return res.status(404).json({ error: 'المنتج غير موجود' });
       res.json(product);
     } catch (error) {

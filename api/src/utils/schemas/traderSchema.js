@@ -1,5 +1,42 @@
 // api/src/utils/schemas/traderSchema.js
-import mongoose from 'mongoose';
+import mongoose, { version } from 'mongoose';
+
+// Define the subdocument schema for comments and ratings
+const commentAndRatingSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
+    comment: {
+      type: String,
+      trim: true,
+      maxlength: 100, // Note: Corrected to 'maxlength' (lowercase 'l')
+    },
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+    },
+    date: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  {
+    // Add custom validator at the schema level
+    validate: {
+      validator: function () {
+        // 'this' refers to the subdocument
+        return (
+          (this.comment && this.comment.trim()) || this.rating !== undefined
+        );
+      },
+      message: 'يجب إضافة تعليق او تقييم',
+    },
+  }
+);
 
 const productSchema = new mongoose.Schema(
   {
@@ -34,6 +71,7 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    commentsAndRatings: [commentAndRatingSchema],
   },
   { timestamps: true }
 );
