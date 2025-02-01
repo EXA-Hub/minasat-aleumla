@@ -320,121 +320,141 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
-
-      <div className="space-y-4 rounded-xl bg-muted p-4 md:space-y-6 md:p-6">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <h2 className="text-xl font-bold md:text-2xl">
-            التعليقات
-            <span className="font-medium text-muted-foreground">
-              ({product.commentsAndRatings.filter((c) => c.comment).length})
-            </span>
-            {product.commentsAndRatings.length === 0 && (
-              <span className="mt-1 block text-xs text-primary sm:mr-2 sm:mt-0 sm:inline md:text-sm">
-                لا توجد تعليقات ولا توجد تقييمات
+      {/* comments and ratings */}
+      {product.commentsAndRatings ? (
+        <div className="space-y-4 rounded-xl bg-muted p-4 md:space-y-6 md:p-6">
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <h2 className="text-xl font-bold md:text-2xl">
+              التعليقات
+              <span className="font-medium text-muted-foreground">
+                ({product.commentsAndRatings.filter((c) => c.comment).length})
               </span>
-            )}
-          </h2>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-4 w-4 md:h-5 md:w-5 ${
-                    i <
-                    Math.round(
-                      product.commentsAndRatings
-                        .filter((c) => c.rating)
-                        .reduce((sum, c) => sum + c.rating, 0) /
-                        product.commentsAndRatings.filter((c) => c.rating)
-                          .length || 0
-                    )
-                      ? 'fill-primary text-primary'
-                      : 'text-25mutedforeground'
-                  }`}
-                />
+              {product.commentsAndRatings.length === 0 && (
+                <span className="mt-1 block text-xs text-primary sm:mr-2 sm:mt-0 sm:inline md:text-sm">
+                  لا توجد تعليقات ولا توجد تقييمات
+                </span>
+              )}
+            </h2>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 md:h-5 md:w-5 ${
+                      i <
+                      Math.round(
+                        product.commentsAndRatings
+                          .filter((c) => c.rating)
+                          .reduce((sum, c) => sum + c.rating, 0) /
+                          product.commentsAndRatings.filter((c) => c.rating)
+                            .length || 0
+                      )
+                        ? 'fill-primary text-primary'
+                        : 'text-25mutedforeground'
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="text-xs font-medium md:text-sm">
+                ({product.commentsAndRatings.filter((c) => c.rating).length}{' '}
+                تقييم)
+              </span>
+            </div>
+          </div>
+          {product?.commentsAndRatings?.length === 0 ? (
+            <div className="space-y-4 md:space-y-6">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="flex gap-4">
+                  <Skeleton className="h-8 w-8 rounded-full bg-40accent md:h-10 md:w-10" />
+                  <div className="flex-1 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-3 w-24 bg-40accent md:h-4 md:w-32" />
+                      <Skeleton className="h-3 w-12 bg-40accent md:h-4 md:w-16" />
+                    </div>
+                    <Skeleton className="h-3 w-full bg-40accent md:h-4" />
+                    <Skeleton className="h-3 w-3/4 bg-40accent md:h-4" />
+                  </div>
+                </div>
               ))}
             </div>
-            <span className="text-xs font-medium md:text-sm">
-              ({product.commentsAndRatings.filter((c) => c.rating).length}{' '}
-              تقييم)
-            </span>
-          </div>
-        </div>
-        {product?.commentsAndRatings?.length === 0 ? (
-          <div className="space-y-4 md:space-y-6">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="flex gap-4">
-                <Skeleton className="h-8 w-8 rounded-full bg-40accent md:h-10 md:w-10" />
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="h-3 w-24 bg-40accent md:h-4 md:w-32" />
-                    <Skeleton className="h-3 w-12 bg-40accent md:h-4 md:w-16" />
-                  </div>
-                  <Skeleton className="h-3 w-full bg-40accent md:h-4" />
-                  <Skeleton className="h-3 w-3/4 bg-40accent md:h-4" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-4 divide-y divide-border">
-            {product.commentsAndRatings.map((comment) => (
-              <div
-                key={comment._id}
-                className="group flex gap-4 pt-4 first:pt-0">
-                <Avatar className="h-8 w-8 border-2 border-border shadow-sm md:h-10 md:w-10">
-                  <AvatarImage
-                    src={comment.userId.profilePicture || '/avatar.jpg'}
-                  />
-                  <AvatarFallback>{comment.userId.username[0]}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-2">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                    <div className="flex items-center gap-2">
-                      <Username username={comment.userId.username} />
-                      <span className="text-xs text-muted-foreground md:text-sm">
-                        {comment.date &&
-                          format(new Date(comment.date), 'd MMMM yyyy', {
-                            locale: ar,
-                          })}
-                      </span>
-                      {comment.userId.username === buyer?.username && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => setOpenDialog(true)}>
-                          <PenBox className="h-5 w-5 md:h-6 md:w-6" />
-                        </Button>
-                      )}
-                    </div>
-                    {comment.rating ? (
-                      <div className="flex items-center gap-0.5 sm:mr-auto">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-3 w-3 md:h-4 md:w-4 ${
-                              i < Math.round(comment.rating || 0)
-                                ? 'fill-primary text-primary'
-                                : 'text-25mutedforeground'
-                            }`}
-                          />
-                        ))}
+          ) : (
+            <div className="space-y-4 divide-y divide-border">
+              {product.commentsAndRatings.map((comment) => (
+                <div
+                  key={comment._id}
+                  className="group flex gap-4 pt-4 first:pt-0">
+                  <Avatar className="h-8 w-8 border-2 border-border shadow-sm md:h-10 md:w-10">
+                    <AvatarImage
+                      src={comment.userId.profilePicture || '/avatar.jpg'}
+                    />
+                    <AvatarFallback>
+                      {comment.userId.username[0]}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      <div className="flex items-center gap-2">
+                        <Username username={comment.userId.username} />
+                        <span className="text-xs text-muted-foreground md:text-sm">
+                          {comment.date &&
+                            format(new Date(comment.date), 'd MMMM yyyy', {
+                              locale: ar,
+                            })}
+                        </span>
+                        {comment.userId.username === buyer?.username && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setOpenDialog(true)}>
+                            <PenBox className="h-5 w-5 md:h-6 md:w-6" />
+                          </Button>
+                        )}
                       </div>
-                    ) : null}
+                      {comment.rating ? (
+                        <div className="flex items-center gap-0.5 sm:mr-auto">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`h-3 w-3 md:h-4 md:w-4 ${
+                                i < Math.round(comment.rating || 0)
+                                  ? 'fill-primary text-primary'
+                                  : 'text-25mutedforeground'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                    <p
+                      className={
+                        'text-xs leading-relaxed md:text-sm ' +
+                        (comment.comment ? '' : 'text-muted-foreground')
+                      }>
+                      {comment.comment || '[لا يوجد تعليق]'}
+                    </p>
                   </div>
-                  <p
-                    className={
-                      'text-xs leading-relaxed md:text-sm ' +
-                      (comment.comment ? '' : 'text-muted-foreground')
-                    }>
-                    {comment.comment || '[لا يوجد تعليق]'}
-                  </p>
                 </div>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4 md:space-y-6">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex gap-4">
+              <Skeleton className="h-8 w-8 rounded-full bg-40accent md:h-10 md:w-10" />
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-3 w-24 bg-40accent md:h-4 md:w-32" />
+                  <Skeleton className="h-3 w-12 bg-40accent md:h-4 md:w-16" />
+                </div>
+                <Skeleton className="h-3 w-full bg-40accent md:h-4" />
+                <Skeleton className="h-3 w-3/4 bg-40accent md:h-4" />
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
