@@ -138,35 +138,35 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formattedParams = Object.entries({
-      ...searchParams,
-      minPrice: searchParams.minPrice
-        ? Number.parseFloat(searchParams.minPrice)
-        : undefined,
-      maxPrice: searchParams.maxPrice
-        ? Number.parseFloat(searchParams.maxPrice)
-        : undefined,
-      searchTerm: searchParams.searchTerm || undefined,
-      minCreatedAt: searchParams.minCreatedAt
-        ? new Date(searchParams.minCreatedAt).toISOString()
-        : undefined,
-      maxCreatedAt: searchParams.maxCreatedAt
-        ? new Date(searchParams.maxCreatedAt).toISOString()
-        : undefined,
-      minUpdatedAt: searchParams.minUpdatedAt
-        ? new Date(searchParams.minUpdatedAt).toISOString()
-        : undefined,
-      maxUpdatedAt: searchParams.maxUpdatedAt
-        ? new Date(searchParams.maxUpdatedAt).toISOString()
-        : undefined,
-      limit: Number.parseInt(searchParams.limit),
-      offset: Number.parseInt(searchParams.offset),
-      rating: searchParams.rating,
-    })
-      .filter(([, value]) => value !== undefined && value !== '')
-      .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
-
-    onSearch(formattedParams);
+    onSearch(
+      Object.entries({
+        ...searchParams,
+        minPrice: searchParams.minPrice
+          ? Number.parseFloat(searchParams.minPrice)
+          : undefined,
+        maxPrice: searchParams.maxPrice
+          ? Number.parseFloat(searchParams.maxPrice)
+          : undefined,
+        searchTerm: searchParams.searchTerm || undefined,
+        minCreatedAt: searchParams.minCreatedAt
+          ? new Date(searchParams.minCreatedAt).toISOString()
+          : undefined,
+        maxCreatedAt: searchParams.maxCreatedAt
+          ? new Date(searchParams.maxCreatedAt).toISOString()
+          : undefined,
+        minUpdatedAt: searchParams.minUpdatedAt
+          ? new Date(searchParams.minUpdatedAt).toISOString()
+          : undefined,
+        maxUpdatedAt: searchParams.maxUpdatedAt
+          ? new Date(searchParams.maxUpdatedAt).toISOString()
+          : undefined,
+        limit: Number.parseInt(searchParams.limit),
+        offset: Number.parseInt(searchParams.offset),
+        rating: searchParams.rating,
+      })
+        .filter(([, value]) => value !== undefined && value !== '')
+        .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+    );
   };
 
   const handleRangeSelect = (range, fieldPrefix) => {
@@ -234,6 +234,8 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
                   minPrice: Number.parseInt(e.target.value),
                 })
               }
+              min={1}
+              max={maxPriceAvailable}
             />
             <Input
               type="number"
@@ -246,6 +248,8 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
                   maxPrice: Number.parseInt(e.target.value),
                 })
               }
+              min={1}
+              max={maxPriceAvailable}
             />
           </div>
         </div>
