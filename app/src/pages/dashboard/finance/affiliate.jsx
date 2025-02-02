@@ -46,7 +46,7 @@ const AffiliatePage = () => {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
@@ -82,57 +82,54 @@ const AffiliatePage = () => {
   };
 
   return (
-    <div dir="rtl" className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
+    <div dir="rtl" className="space-y-6 p-6">
+      <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">برنامج الإحالة</h2>
         <button
           onClick={handleCollectTaxes}
           disabled={!referrals.reduce((sum, ref) => sum + ref.tax, 0)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-        >
+          className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
           حصد الأرباح
         </button>
       </div>
 
       <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">رابط الإحالة الخاص بك</h3>
-        <div className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-md">
-          <code className="flex-1 break-words truncate">{url}</code>
+        <h3 className="mb-4 text-lg font-semibold">رابط الإحالة الخاص بك</h3>
+        <div className="flex items-center gap-2 rounded-md bg-gray-50 p-3 dark:bg-gray-800">
+          <code className="flex-1 truncate break-words">{url}</code>
           <button
             onClick={() => handleCopy(url)}
-            className="text-blue-600 hover:text-blue-700"
-          >
+            className="text-primary hover:text-primary">
             نسخ
           </button>
           {copyStatus && (
             <span
               className={`transition-all duration-500 ${
                 copyStatus === 'success'
-                  ? 'text-green-600 animate-bounce'
-                  : 'text-red-600 animate-shake'
-              }`}
-            >
+                  ? 'animate-bounce text-green-600'
+                  : 'animate-shake text-red-600'
+              }`}>
               {copyStatus === 'success' ? '✔' : '✘'}
             </span>
           )}
         </div>
       </Card>
 
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid gap-4 md:grid-cols-2">
         <Card className="p-4">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-600" />
+            <Users className="h-5 w-5 text-primary" />
             <span className="text-gray-600">عدد الإحالات</span>
           </div>
-          <p className="text-2xl font-bold mt-2">{referrals.length}</p>
+          <p className="mt-2 text-2xl font-bold">{referrals.length}</p>
         </Card>
 
         <Card className="p-4">
           <div className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5 text-blue-600" />
+            <DollarSign className="h-5 w-5 text-primary" />
             <span className="text-gray-600">مجموع الأرباح</span>
           </div>
-          <div className="text-2xl font-bold mt-2">
+          <div className="mt-2 text-2xl font-bold">
             <CoinIcon
               amount={referrals.reduce((sum, ref) => sum + ref.tax, 0)}
             />

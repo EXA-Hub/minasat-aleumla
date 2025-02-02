@@ -60,19 +60,19 @@ const TopUsers = () => {
 
   if (error) {
     return (
-      <div className="text-center p-4 text-red-500">
+      <div className="p-4 text-center text-red-500">
         حدث خطأ في تحميل البيانات
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto p-4" dir="rtl">
-      <Card className="bg-gradient-to-br from-slate-50 to-white dark:from-gray-900 dark:to-gray-800 shadow-xl">
+    <div className="container mx-auto p-4">
+      <Card className="to-0foreground dark:from-0primary bg-gradient-to-br from-15foreground shadow-xl dark:to-5primary">
         <CardHeader className="border-b">
           <CardTitle className="flex items-center gap-2 text-2xl">
-            <Trophy className="text-yellow-500 h-8 w-8" />
-            <span className="bg-gradient-to-r from-yellow-500 to-orange-500 text-transparent bg-clip-text">
+            <Trophy className="h-8 w-8 text-yellow-500" />
+            <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
               أغنى المستخدمين
             </span>
           </CardTitle>
@@ -82,13 +82,13 @@ const TopUsers = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="text-right font-bold text-lg">
+                  <TableHead className="text-right text-lg font-bold">
                     الترتيب
                   </TableHead>
-                  <TableHead className="text-right font-bold text-lg">
+                  <TableHead className="text-right text-lg font-bold">
                     المستخدم
                   </TableHead>
-                  <TableHead className="text-left font-bold text-lg">
+                  <TableHead className="text-left text-lg font-bold">
                     الرصيد
                   </TableHead>
                 </TableRow>
@@ -117,16 +117,14 @@ const TopUsers = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3, delay: index * 0.1 }}
                         className={cn(
-                          'relative group hover:scale-[1.02] transition-all duration-300',
+                          'group relative transition-all duration-300 hover:scale-[1.02]',
                           index < 3 ? 'font-semibold' : ''
-                        )}
-                      >
+                        )}>
                         <td
                           className={cn(
-                            'p-4 relative',
+                            'relative p-4',
                             index < 3 ? 'text-lg' : ''
-                          )}
-                        >
+                          )}>
                           <div className={getTopRankStyle(index)} />
                           <div className="flex items-center gap-2">
                             {getRankIcon(index)}
@@ -145,8 +143,7 @@ const TopUsers = () => {
                                   'bg-gradient-to-r from-gray-300 to-gray-400',
                                 index === 2 &&
                                   'bg-gradient-to-r from-orange-500 to-orange-600'
-                              )}
-                            >
+                              )}>
                               <Avatar className="h-12 w-12 border-2 border-white">
                                 <AvatarImage
                                   src={
@@ -155,7 +152,7 @@ const TopUsers = () => {
                                   }
                                   alt={user.username}
                                 />
-                                <AvatarFallback className="font-bold text-lg">
+                                <AvatarFallback className="text-lg font-bold">
                                   {user.username[0].toUpperCase()}
                                 </AvatarFallback>
                               </Avatar>
@@ -169,8 +166,7 @@ const TopUsers = () => {
                         <td className="p-4">
                           <motion.div
                             whileHover={{ scale: 1.1 }}
-                            className="flex items-center gap-2"
-                          >
+                            className="flex items-center gap-2">
                             <CoinsIcon
                               amount={user.balance}
                               className="h-6 w-6"

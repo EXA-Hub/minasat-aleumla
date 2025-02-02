@@ -164,7 +164,7 @@ const LandingPage = () => {
       {/* Header */}
       <header className="bg-background p-4 shadow-sm">
         <div className="container mx-auto flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-blue-600">منصة العملة</h1>
+          <h1 className="text-2xl font-bold text-primary">منصة العملة</h1>
           <AuthSection />
         </div>
       </header>
@@ -190,7 +190,7 @@ const LandingPage = () => {
             {!user && (
               <Button
                 size="lg"
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-primary hover:bg-primary"
                 onClick={() => navigate('/login')}>
                 احصل على محفظتك المجانية
                 <Gift className="mr-2 h-5 w-5" />
@@ -199,7 +199,7 @@ const LandingPage = () => {
             {user && (
               <Button
                 size="lg"
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-primary hover:bg-primary"
                 onClick={() => navigate('/dashboard')}>
                 الذهاب إلى محفظتي
                 <Wallet className="mr-2 h-5 w-5" />
@@ -226,25 +226,25 @@ const LandingPage = () => {
           }}
           className="mb-16 grid gap-8 md:grid-cols-4">
           <Card className="bg-background p-6 text-center">
-            <Wallet className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+            <Wallet className="mx-auto mb-4 h-12 w-12 text-primary" />
             <h3 className="mb-2 text-xl font-bold">محفظة رقمية</h3>
             <p>احصل على محفظة مجانية فور التسجيل مع رصيد ترحيبي</p>
           </Card>
 
           <Card className="bg-background p-6 text-center">
-            <ShoppingBag className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+            <ShoppingBag className="mx-auto mb-4 h-12 w-12 text-primary" />
             <h3 className="mb-2 text-xl font-bold">بيع واشتري</h3>
             <p>تداول المنتجات والخدمات باستخدام عملات المنصة</p>
           </Card>
 
           <Card className="bg-background p-6 text-center">
-            <Trophy className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+            <Trophy className="mx-auto mb-4 h-12 w-12 text-primary" />
             <h3 className="mb-2 text-xl font-bold">مهام وهدايا</h3>
             <p>اكسب المزيد من العملات من خلال إكمال المهام</p>
           </Card>
 
           <Card className="bg-background p-6 text-center">
-            <CreditCard className="mx-auto mb-4 h-12 w-12 text-blue-600" />
+            <CreditCard className="mx-auto mb-4 h-12 w-12 text-primary" />
             <h3 className="mb-2 text-xl font-bold">تحويل للنقود</h3>
             <p>حول عملاتك إلى أموال حقيقية عند تجاوز الحد الأدنى</p>
           </Card>
@@ -262,19 +262,19 @@ const LandingPage = () => {
           <h2 className="mb-8 text-center text-3xl font-bold">كيف تبدأ؟</h2>
           <div className="grid gap-8 md:grid-cols-3">
             <Card className="bg-background p-6 text-center">
-              <div className="mb-4 text-3xl font-bold text-blue-600">1</div>
+              <div className="mb-4 text-3xl font-bold text-primary">1</div>
               <h3 className="mb-2 text-xl font-bold">سجل حساب جديد</h3>
               <p>احصل على محفظتك المجانية ورصيد ترحيبي فور التسجيل</p>
             </Card>
 
             <Card className="bg-background p-6 text-center">
-              <div className="mb-4 text-3xl font-bold text-blue-600">2</div>
+              <div className="mb-4 text-3xl font-bold text-primary">2</div>
               <h3 className="mb-2 text-xl font-bold">اكسب العملات</h3>
               <p>أكمل المهام اليومية واحصل على الهدايا لزيادة رصيدك</p>
             </Card>
 
             <Card className="bg-background p-6 text-center">
-              <div className="mb-4 text-3xl font-bold text-blue-600">3</div>
+              <div className="mb-4 text-3xl font-bold text-primary">3</div>
               <h3 className="mb-2 text-xl font-bold">تداول أو اسحب</h3>
               <p>استخدم عملاتك للتداول أو حولها إلى أموال حقيقية</p>
             </Card>
@@ -289,16 +289,17 @@ const LandingPage = () => {
             visible: { opacity: 1, y: 0 },
             hidden: { opacity: 0, y: 50 },
           }}
-          className="mb-16 rounded-lg bg-blue-50 p-8 text-center dark:bg-blue-950">
-          <Globe className="mx-auto mb-4 h-16 w-16 text-blue-600" />
+          className="mb-16 rounded-lg bg-primary p-8 text-center dark:bg-50primary">
+          <Globe className="mx-auto mb-4 h-16 w-16 text-white" />
           <h3 className="mb-4 text-2xl font-bold">اكتشف المزيد</h3>
           <p className="mb-6">
             استكشف المستخدمين، المنتجات، والأكثر نشاطاً على المنصة
           </p>
           <Button
             size="lg"
+            variant="outline"
             onClick={() => navigate('/explore')}
-            className="hover:bg-blue-700">
+            className="hover:bg-primary">
             اكتشف الآن
             <ArrowLeftCircle className="mr-2 h-5 w-5" />
           </Button>
@@ -313,14 +314,15 @@ const LandingPage = () => {
               visible: { opacity: 1, y: 0 },
               hidden: { opacity: 0, y: 50 },
             }}
-            className="rounded-lg bg-blue-50 p-8 text-center dark:bg-blue-950">
-            <DollarSign className="mx-auto mb-4 h-16 w-16 text-blue-600" />
+            className="rounded-lg bg-primary p-8 text-center dark:bg-50primary">
+            <DollarSign className="mx-auto mb-4 h-16 w-16 text-white" />
             <h3 className="mb-4 text-2xl font-bold">ابدأ الآن مجاناً</h3>
             <p className="mb-6">احصل على محفظتك الرقمية وابدأ في كسب العملات</p>
             <Button
               size="lg"
+              variant="outline"
               onClick={() => navigate('/login')}
-              className="hover:bg-blue-700">
+              className="hover:bg-primary">
               إنشاء حساب
               <ArrowLeftCircle className="mr-2 h-5 w-5" />
             </Button>

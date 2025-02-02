@@ -43,12 +43,12 @@ const Transactions = () => {
 
   if (error) {
     return (
-      <div className="h-[50vh] flex items-center justify-center">
+      <div className="flex h-[50vh] items-center justify-center">
         <Card className="p-6 text-center text-red-600">
           <p className="font-bold">{error}</p>
           <button
             onClick={() => setPagination((prev) => ({ ...prev, page: 1 }))}
-            className="mt-4 text-blue-600 hover:underline">
+            className="mt-4 text-primary hover:underline">
             إعادة المحاولة
           </button>
         </Card>
@@ -58,8 +58,8 @@ const Transactions = () => {
 
   if (loading && transactions.length === 0) {
     return (
-      <div className="h-[50vh] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -77,10 +77,10 @@ const Transactions = () => {
               onClick={() =>
                 setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
               }
-              className="px-4 py-2 text-blue-600 hover:underline disabled:opacity-50"
+              className="px-4 py-2 text-primary hover:underline disabled:opacity-50"
               disabled={loading}>
               {loading ? (
-                <Loader2 className="h-4 w-4 animate-spin inline mr-2" />
+                <Loader2 className="mr-2 inline h-4 w-4 animate-spin" />
               ) : null}
               تحميل المزيد
             </button>

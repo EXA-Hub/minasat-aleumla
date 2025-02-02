@@ -19,15 +19,14 @@ const Alert = forwardRef(
               variant === 'destructive',
             'border-yellow-200 bg-yellow-50 text-yellow-900 dark:border-yellow-200/30 dark:bg-yellow-900/10 dark:text-yellow-200':
               variant === 'warning',
-            'border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-200/30 dark:bg-blue-900/10 dark:text-blue-200':
+            'border-primary bg-primary text-primary dark:border-30primary dark:bg-10primary dark:text-primary':
               variant === 'info', // New informational alert style
           },
           // Add RTL-specific padding adjustments
-          'rtl:text-right ltr:text-left',
+          'ltr:text-left rtl:text-right',
           className
         )}
-        {...props}
-      >
+        {...props}>
         {children}
       </div>
     );
@@ -42,7 +41,7 @@ const AlertTitle = forwardRef(({ className, dir = 'auto', ...props }, ref) => (
     dir={dir}
     className={cn(
       'mb-1 font-medium leading-none tracking-tight',
-      'rtl:text-right ltr:text-left',
+      'ltr:text-left rtl:text-right',
       className
     )}
     {...props}
@@ -58,7 +57,7 @@ const AlertDescription = forwardRef(
       dir={dir}
       className={cn(
         'text-sm [&_p]:leading-relaxed',
-        'rtl:text-right ltr:text-left',
+        'ltr:text-left rtl:text-right',
         className
       )}
       {...props}

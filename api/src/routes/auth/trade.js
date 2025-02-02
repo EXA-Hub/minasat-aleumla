@@ -329,7 +329,7 @@ function requireAppWs(app, ws) {
         session.startTransaction();
         try {
           buyer.balance -= totalCost;
-          if (buyer.referralId) buyer.tax += totalFee / 2;
+          if (buyer.referralId) buyer.tax += Math.floor(totalFee / 2);
           buyer.transactionStats.totalPayout += totalCost;
           buyer.transactionStats.totalTransactions += 1;
           trade.stage = 'seller_accepted';

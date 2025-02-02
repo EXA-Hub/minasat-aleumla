@@ -87,29 +87,29 @@ const MarkdownDisplay = ({
             display: 'inline-block',
             width: 'max-content',
           }}
-          className="text-foreground hover:underline hover:text-purple-400">
+          className="text-foreground hover:text-purple-400 hover:underline">
           {children}
         </a>
       ),
       h1: ({ children }) => (
-        <h1 className="scroll-m-20 text-4xl font-bold tracking-tight text-right bg-gradient-to-l from-purple-600 to-purple-900 bg-clip-text text-transparent">
+        <h1 className="scroll-m-20 bg-gradient-to-l from-purple-600 to-purple-900 bg-clip-text text-right text-4xl font-bold tracking-tight text-transparent">
           {children}
         </h1>
       ),
       h2: ({ children }) => (
-        <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight text-right mt-8 mb-4 border-r-4 border-purple-500 pr-4">
+        <h2 className="mb-4 mt-8 scroll-m-20 border-r-4 border-purple-500 pr-4 text-right text-2xl font-semibold tracking-tight">
           {children}
         </h2>
       ),
       h3: ({ children }) => (
-        <h3 className="scroll-m-20 text-xl font-semibold tracking-tight text-right mt-6 mb-2 text-purple-600 dark:text-purple-400">
+        <h3 className="mb-2 mt-6 scroll-m-20 text-right text-xl font-semibold tracking-tight text-purple-600 dark:text-purple-400">
           {children}
         </h3>
       ),
       p: ({ children }) => {
         // Remove this check to allow admonitions to render properly
         return (
-          <p className="leading-7 text-right [&:not(:first-child)]:mt-4 dark:text-slate-300">
+          <p className="text-right leading-7 dark:text-slate-300 [&:not(:first-child)]:mt-4">
             {children}
           </p>
         );
@@ -120,12 +120,12 @@ const MarkdownDisplay = ({
         </ul>
       ),
       li: ({ children }) => (
-        <li className="before:absolute before:right-0 before:content-['◆'] before:text-purple-500 before:text-sm">
+        <li className="before:absolute before:right-0 before:text-sm before:text-purple-500 before:content-['◆']">
           {children}
         </li>
       ),
       em: ({ children }) => (
-        <em className="text-blue-500 dark:text-blue-400 not-italic">
+        <em className="not-italic text-primary dark:text-primary">
           {children}
         </em>
       ),
@@ -174,8 +174,8 @@ const MarkdownDisplay = ({
           const [, type, content] = admonitionMatch;
           const { icon: Icon, styles } = ADMONITION_TYPES[type];
           return (
-            <div className={cn('flex gap-2 border-r-2 p-3 my-3', styles)}>
-              <Icon className="w-4 h-4 shrink-0 self-center" />
+            <div className={cn('my-3 flex gap-2 border-r-2 p-3', styles)}>
+              <Icon className="h-4 w-4 shrink-0 self-center" />
               <ReactMarkdown
                 components={markdownComponents}
                 className="text-sm leading-tight [&>p]:m-0">
@@ -230,8 +230,8 @@ const MarkdownDisplay = ({
         return (
           <div
             className={cn(
-              'relative my-4 rounded-lg overflow-hidden group border border-slate-200 dark:border-slate-700',
-              isDark ? 'bg-slate-900' : 'bg-white border border-slate-200'
+              'group relative my-4 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700',
+              isDark ? 'bg-slate-900' : 'border border-slate-200 bg-white'
             )}>
             <div
               className={cn(
@@ -240,19 +240,19 @@ const MarkdownDisplay = ({
               )}>
               <div className="flex items-center gap-2">
                 <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-500" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                  <div className="w-3 h-3 rounded-full bg-green-500" />
+                  <div className="h-3 w-3 rounded-full bg-red-500" />
+                  <div className="h-3 w-3 rounded-full bg-yellow-500" />
+                  <div className="h-3 w-3 rounded-full bg-green-500" />
                 </div>
                 {language && (
-                  <span className="text-xs text-slate-400 font-mono ml-2">
+                  <span className="ml-2 font-mono text-xs text-slate-400">
                     {language}
                   </span>
                 )}
               </div>
               <button
                 onClick={copyToClipboard}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-slate-700 rounded"
+                className="rounded p-1 opacity-0 transition-opacity hover:bg-slate-700 group-hover:opacity-100"
                 aria-label="Copy code">
                 {copied.className === className &&
                 copied.children === children ? (
@@ -292,12 +292,12 @@ const MarkdownDisplay = ({
         </div>
       ),
       th: ({ children }) => (
-        <th className="border border-slate-400 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 p-2 text-right">
+        <th className="border border-slate-400 bg-slate-100 p-2 text-right dark:border-slate-600 dark:bg-slate-800">
           {children}
         </th>
       ),
       td: ({ children }) => (
-        <td className="border border-slate-400 dark:border-slate-600 p-2 text-right dark:text-slate-300">
+        <td className="border border-slate-400 p-2 text-right dark:border-slate-600 dark:text-slate-300">
           {children}
         </td>
       ),
@@ -307,7 +307,7 @@ const MarkdownDisplay = ({
 
   if (loading)
     return (
-      <div className="h-[50vh] flex items-center justify-center" role="status">
+      <div className="flex h-[50vh] items-center justify-center" role="status">
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="sr-only">جاري التحميل...</span>
       </div>

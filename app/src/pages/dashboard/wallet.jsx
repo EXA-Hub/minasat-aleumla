@@ -1,11 +1,6 @@
 // src/pages/dashboard/wallet.jsx
 import { useState, useEffect } from 'react';
-import { Card } from '../../components/ui/card';
-import { Button } from '../../components/ui/button';
 import { Send, AlertTriangle, InfoIcon } from 'lucide-react';
-import BalanceCard from '../../components/dashboard/widgets/BalanceCard';
-import { CardHeader, CardTitle, CardContent } from '../../components/ui/card';
-import CoinIcon from '../../components/ui/CoinIcon';
 import {
   LineChart,
   Line,
@@ -15,8 +10,14 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { walletService } from '../../services/walletService';
+import { CardHeader, CardTitle, CardContent } from '../../components/ui/card';
+import BalanceCard from '../../components/dashboard/widgets/BalanceCard';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { walletService } from '../../services/walletService';
+import { Button } from '../../components/ui/button';
+import CoinIcon from '../../components/ui/CoinIcon';
+import { Card } from '../../components/ui/card';
+
 const Wallet = () => {
   const [activeTab, setActiveTab] = useState('buy');
   const [rates, setRates] = useState([]);
@@ -91,9 +92,9 @@ const Wallet = () => {
       <h2 className="text-3xl font-bold">الرصيد</h2>
       <BalanceCard balance={{ amount: balance }} />
       <Card className="p-6">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
-            <Send className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+        <div className="mb-6 flex items-center gap-4">
+          <div className="rounded-full bg-primary p-3">
+            <Send className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
             <h3 className="text-xl font-semibold">تحويل العملات</h3>
@@ -105,7 +106,7 @@ const Wallet = () => {
 
         {(error || success) && (
           <div
-            className={`p-4 mb-6 rounded-lg ${
+            className={`mb-6 rounded-lg p-4 ${
               error
                 ? 'bg-red-100 text-red-600 dark:bg-red-900/20'
                 : 'bg-green-100 text-green-600 dark:bg-green-900/20'
@@ -116,21 +117,21 @@ const Wallet = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">المستلم</label>
+            <label className="mb-2 block text-sm font-medium">المستلم</label>
             <input
               type="text"
               value={formData.recipient}
               onChange={(e) =>
                 setFormData({ ...formData, recipient: e.target.value })
               }
-              className="w-full p-2 rounded-md border bg-background"
+              className="w-full rounded-md border bg-background p-2"
               required
               placeholder="أدخل اسم المستخدم"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">المبلغ</label>
+            <label className="mb-2 block text-sm font-medium">المبلغ</label>
             <div className="relative">
               <input
                 type="number"
@@ -138,31 +139,31 @@ const Wallet = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, amount: e.target.value })
                 }
-                className="w-full p-2 rounded-md border bg-background"
+                className="w-full rounded-md border bg-background p-2"
                 required
                 min="1"
                 placeholder="0"
               />
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <img src="/icon.svg" alt="coin" className="w-5 h-5" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <img src="/icon.svg" alt="coin" className="h-5 w-5" />
               </div>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">الوصف</label>
+            <label className="mb-2 block text-sm font-medium">الوصف</label>
             <textarea
               value={formData.description}
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full p-2 rounded-md border bg-background"
+              className="w-full rounded-md border bg-background p-2"
               rows="3"
               placeholder="اكتب وصفاً للتحويل (اختياري)"
             />
           </div>
 
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-[var(--background)] text-[var(--foreground)]">
+          <div className="flex items-center gap-2 rounded-lg bg-background p-3 text-foreground">
             <input
               type="checkbox"
               id="payFee"
@@ -170,13 +171,13 @@ const Wallet = () => {
               onChange={(e) =>
                 setFormData({ ...formData, payFee: e.target.checked })
               }
-              className="rounded text-[#1d4ed8] focus:ring-[#1d4ed8] bg-[var(--background)] text-[var(--foreground)]"
+              className="rounded bg-background text-foreground text-primary focus:ring-primary"
             />
             <label htmlFor="payFee" className="text-sm">
               دفع الرسوم ({formData.amount ? calculateFee(formData.amount) : 0}{' '}
               عملة)
             </label>
-            <div className="p-4 rounded-lg text-sm bg-[var(--background)] text-[var(--foreground)]">
+            <div className="rounded-lg bg-background p-4 text-sm text-foreground">
               الرسوم: {fee}% ={' '}
               {formData.amount ? calculateFee(formData.amount) : 0} عملة
             </div>
@@ -185,7 +186,7 @@ const Wallet = () => {
           <div className="flex gap-4">
             <Button
               type="submit"
-              className="flex items-center gap-2 bg-blue-600/90 dark:bg-blue-400/90"
+              className="flex items-center gap-2 bg-90primary dark:bg-90primary"
               disabled={loading}>
               <Send className="h-4 w-4" />
               {loading ? 'جاري التحويل...' : 'تحويل'}
@@ -203,22 +204,22 @@ const Wallet = () => {
       </Card>
 
       <div className="space-y-6 p-6">
-        <div className="flex gap-4 mb-6">
+        <div className="mb-6 flex gap-4">
           <Button
             onClick={() => setActiveTab('buy')}
-            className={`flex-1 ${activeTab === 'buy' ? 'bg-[#1d4ed8]' : 'bg-gray-200 text-gray-800'}`}>
+            className={`flex-1 ${activeTab === 'buy' ? 'bg-primary' : 'bg-gray-200 text-gray-800'}`}>
             شراء عملات
           </Button>
           <Button
             onClick={() => setActiveTab('sell')}
-            className={`flex-1 ${activeTab === 'sell' ? 'bg-[#1d4ed8]' : 'bg-gray-200 text-gray-800'}`}>
+            className={`flex-1 ${activeTab === 'sell' ? 'bg-primary' : 'bg-gray-200 text-gray-800'}`}>
             بيع عملات
           </Button>
         </div>
         <Alert
           variant="warning"
-          className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
-          <AlertTriangle className="w-6 h-6 mr-3" />
+          className="flex items-center rounded-lg bg-yellow-100 p-4 text-yellow-800 shadow-md">
+          <AlertTriangle className="mr-3 h-6 w-6" />
           <AlertDescription className="text-sm">
             شامل الضريبة التحويلية
           </AlertDescription>
@@ -227,9 +228,9 @@ const Wallet = () => {
           {rates.map((rate) => (
             <Card
               key={rate.coins}
-              className="hover:shadow-lg transition-shadow">
+              className="transition-shadow hover:shadow-lg">
               <CardHeader>
-                <CardTitle className="flex justify-between items-center">
+                <CardTitle className="flex items-center justify-between">
                   {Object.keys(rate).length < 6 ? (
                     Object.keys(rate)
                       .filter((key) => key !== 'coins') // Exclude the coins property from display
@@ -241,13 +242,13 @@ const Wallet = () => {
                         );
                       })
                   ) : (
-                    <div className="flex flex-wrap gap-4 max-w-full overflow-auto">
+                    <div className="flex max-w-full flex-wrap gap-4 overflow-auto">
                       {Object.keys(rate)
                         .filter((key) => key !== 'coins')
                         .map((currency) => (
                           <span
                             key={currency}
-                            className="bg-[var(--muted)] p-1 rounded-lg font-bold text-sm max-w-[150px] text-center">
+                            className="max-w-[150px] rounded-lg bg-muted p-1 text-center text-sm font-bold">
                             {rate[currency]} {currency.toUpperCase()}
                           </span>
                         ))}
@@ -257,7 +258,7 @@ const Wallet = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Button className="w-full bg-[#1d4ed8]">
+                <Button className="w-full bg-primary">
                   {activeTab === 'buy' ? 'شراء' : 'بيع'}
                 </Button>
               </CardContent>
@@ -269,15 +270,15 @@ const Wallet = () => {
         <Card>
           <Alert
             variant="info"
-            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
-            <InfoIcon className="w-6 h-6 mr-3" />
+            className="flex items-center rounded-lg bg-yellow-100 p-4 text-yellow-800 shadow-md">
+            <InfoIcon className="mr-3 h-6 w-6" />
             <AlertDescription className="text-sm">
               مجرد بيانات إفتراضية (سيتم العمل على هذه الميزة للمشتركين فقط)
             </AlertDescription>
           </Alert>
 
           <CardHeader>
-            <CardTitle className="text-xl font-bold text-center text-foreground">
+            <CardTitle className="text-center text-xl font-bold text-foreground">
               الرصيد اليومي
             </CardTitle>
           </CardHeader>
@@ -288,21 +289,24 @@ const Wallet = () => {
                 <LineChart
                   data={dailyData}
                   margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="4 4" stroke="#e5e7eb" />
+                  <CartesianGrid
+                    strokeDasharray="4 4"
+                    stroke="var(--foreground)"
+                  />
                   <XAxis
                     dataKey="day"
-                    tick={{ fontSize: 12, fill: '#6b7280' }}
-                    axisLine={{ stroke: '#d1d5db' }}
+                    tick={{ fontSize: 12, fill: 'var(--foreground)' }}
+                    axisLine={{ stroke: 'var(--background)' }}
                     tickLine={false}
                   />
                   <YAxis
-                    tick={{ fontSize: 12, fill: '#6b7280' }}
-                    axisLine={{ stroke: '#d1d5db' }}
+                    tick={{ fontSize: 12, fill: 'var(--foreground)' }}
+                    axisLine={{ stroke: 'var(--background)' }}
                     tickLine={false}
                   />
                   <Tooltip
                     content={({ payload }) => (
-                      <div className="bg-background text-foreground p-2 border rounded shadow">
+                      <div className="rounded border bg-background p-2 text-foreground shadow">
                         {payload?.[0]?.value && (
                           <>
                             <p className="text-sm font-medium">الرصيد:</p>
@@ -311,14 +315,18 @@ const Wallet = () => {
                         )}
                       </div>
                     )}
-                    cursor={{ fill: 'rgba(29, 78, 216, 0.1)' }}
+                    cursor={{ fill: 'var(--10primary)' }}
                   />
                   <Line
                     type="monotone"
                     dataKey="balance"
-                    stroke="#1d4ed8"
+                    stroke="var(--primary)"
                     strokeWidth={3}
-                    dot={{ stroke: '#1d4ed8', fill: '#ffffff', r: 4 }}
+                    dot={{
+                      stroke: 'var(--primary)',
+                      fill: 'var(--primary-foreground)',
+                      r: 4,
+                    }}
                     activeDot={{ r: 6 }}
                   />
                 </LineChart>

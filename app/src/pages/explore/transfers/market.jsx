@@ -60,7 +60,7 @@ function ProductCard({ product, user }) {
               )}
             </div>
             <div className="flex flex-wrap items-center gap-4 text-sm">
-              <span className="bg-primary/10 inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-medium text-primary">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-10primary px-3 py-1 font-medium text-primary">
                 <CoinIcon amount={product.price} />
               </span>
               <span className="inline-flex items-center gap-1.5 text-muted-foreground">

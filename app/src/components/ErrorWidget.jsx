@@ -48,7 +48,7 @@ const ErrorWidget = ({ error, onClose, response }) => {
           </button>
 
           {/* Content */}
-          <div className="px-6 pt-12 pb-6">
+          <div className="px-6 pb-6 pt-12">
             <div className="text-center">
               {/* Error Icon/Image */}
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100/10">
@@ -108,10 +108,10 @@ const ErrorWidget = ({ error, onClose, response }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="border-t bg-muted/50 px-6 py-4">
+          <div className="bg-muted/50 border-t px-6 py-4">
             <button
               onClick={handleClose}
-              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-90primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
               حسناً، فهمت
             </button>
           </div>

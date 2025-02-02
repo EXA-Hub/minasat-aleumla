@@ -18,14 +18,13 @@ const colorVariants = {
 export const PageTitle = ({ children, className, ...props }) => (
   <h1
     className={cn(
-      'text-3xl font-bold mb-8 text-right text-foreground',
+      'mb-8 text-right text-3xl font-bold text-foreground',
       'md:text-4xl lg:text-5xl',
       'tracking-tight',
       fadeIn,
       className
     )}
-    {...props}
-  >
+    {...props}>
     {children}
   </h1>
 );
@@ -38,14 +37,13 @@ PageTitle.propTypes = {
 export const SectionTitle = ({ children, className, ...props }) => (
   <h2
     className={cn(
-      'text-xl font-semibold mb-6 text-right text-foreground',
+      'mb-6 text-right text-xl font-semibold text-foreground',
       'md:text-2xl',
       'tracking-tight',
       fadeIn,
       className
     )}
-    {...props}
-  >
+    {...props}>
     {children}
   </h2>
 );
@@ -64,12 +62,12 @@ export const IconWrapper = ({
   <div
     className={cn(
       colorVariants[color].bg,
-      'p-3 rounded-full',
+      'rounded-full p-3',
       'transition-all duration-200 hover:scale-105',
+      scaleIn,
       className
     )}
-    {...props}
-  >
+    {...props}>
     {children}
   </div>
 );
@@ -83,24 +81,24 @@ IconWrapper.propTypes = {
 export const StatsCard = ({ icon: Icon, title, value, color = 'blue' }) => (
   <div
     className={cn(
-      'p-6 bg-card rounded-xl border shadow-sm',
-      'hover:shadow-md transition-shadow duration-200',
+      'rounded-xl border bg-card p-6 shadow-sm',
+      'transition-shadow duration-200 hover:shadow-md',
       'group'
-    )}
-  >
+    )}>
     <div className="flex items-center gap-4">
       <IconWrapper color={color}>
         <Icon
           className={cn(
             'h-6 w-6',
             colorVariants[color].text,
-            'group-hover:scale-110 transition-transform duration-200'
+            'transition-transform duration-200 group-hover:scale-110',
+            scaleIn
           )}
         />
       </IconWrapper>
       <div className="space-y-2 text-right">
         <div className="text-sm font-medium text-muted-foreground">{title}</div>
-        <div className="text-2xl font-bold text-foreground tracking-tight">
+        <div className="text-2xl font-bold tracking-tight text-foreground">
           {value}
         </div>
       </div>
@@ -123,8 +121,7 @@ export const DataTable = ({ columns, data }) => (
           {columns.map((column, i) => (
             <th
               key={i}
-              className="px-4 py-3 font-medium text-right text-foreground text-sm"
-            >
+              className="px-4 py-3 text-right text-sm font-medium text-foreground">
               {column.header}
             </th>
           ))}
@@ -137,8 +134,7 @@ export const DataTable = ({ columns, data }) => (
             className={cn(
               'border-t border-border',
               'hover:bg-muted/50 transition-colors duration-200'
-            )}
-          >
+            )}>
             {columns.map((column, j) => (
               <td key={j} className="px-4 py-3 text-right">
                 {column.cell(row)}
@@ -164,12 +160,11 @@ DataTable.propTypes = {
 export const ChartContainer = ({ children, className, ...props }) => (
   <div
     className={cn(
-      'h-[400px] w-full bg-card rounded-xl border p-6',
-      'shadow-sm hover:shadow-md transition-shadow duration-200',
+      'h-[400px] w-full rounded-xl border bg-card p-6',
+      'shadow-sm transition-shadow duration-200 hover:shadow-md',
       className
     )}
-    {...props}
-  >
+    {...props}>
     {children}
   </div>
 );
@@ -203,12 +198,12 @@ const inputStyles = cva(
 export const FormInput = ({ label, error, className, ...props }) => (
   <div className="space-y-2">
     {label && (
-      <label className="block text-sm font-medium text-right text-foreground">
+      <label className="block text-right text-sm font-medium text-foreground">
         {label}
       </label>
     )}
     <input className={cn(inputStyles({ error }), className)} {...props} />
-    {error && <p className="text-sm text-red-500 text-right mt-1">{error}</p>}
+    {error && <p className="mt-1 text-right text-sm text-red-500">{error}</p>}
   </div>
 );
 
@@ -221,7 +216,7 @@ FormInput.propTypes = {
 export const FormTextArea = ({ label, error, className, ...props }) => (
   <div className="space-y-2">
     {label && (
-      <label className="block text-sm font-medium text-right text-foreground">
+      <label className="block text-right text-sm font-medium text-foreground">
         {label}
       </label>
     )}
@@ -233,7 +228,7 @@ export const FormTextArea = ({ label, error, className, ...props }) => (
       )}
       {...props}
     />
-    {error && <p className="text-sm text-red-500 text-right mt-1">{error}</p>}
+    {error && <p className="mt-1 text-right text-sm text-red-500">{error}</p>}
   </div>
 );
 
@@ -253,7 +248,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-primary hover:bg-primary/90 text-primary-foreground',
+        primary: 'bg-primary hover:bg-90primary text-primary-foreground',
         secondary:
           'bg-secondary hover:bg-secondary/90 text-secondary-foreground',
         outline:
@@ -283,8 +278,7 @@ export const ActionButton = ({
 }) => (
   <button
     className={cn(buttonVariants({ variant, size }), className)}
-    {...props}
-  >
+    {...props}>
     {children}
   </button>
 );

@@ -43,9 +43,9 @@ const HelpPage = () => {
     <div className="space-y-6" dir="rtl">
       {dialogData && (
         <Dialog>
-          <DialogContent className="animate-fade-in scale-95 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-6">
+          <DialogContent className="animate-fade-in scale-95 rounded-lg border border-gray-300 bg-white p-6 shadow-lg dark:border-gray-700 dark:bg-gray-800">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-center text-gray-800 dark:text-gray-200">
+              <DialogTitle className="text-center text-2xl font-bold text-gray-800 dark:text-gray-200">
                 تم إرسال رسالتك بنجاح
               </DialogTitle>
             </DialogHeader>
@@ -53,7 +53,7 @@ const HelpPage = () => {
               سنقوم بالرد عليك في أقرب وقت ممكن عن طريق البريد الإلكتروني الذي
               قمت بإدخاله.
               <DialogTrigger
-                className="px-6 py-2 bg-blue-500 hover:bg-blue-900 text-white rounded-md shadow-lg focus:ring focus:ring-primary-light focus:outline-none"
+                className="focus:ring-primary-light rounded-md bg-primary px-6 py-2 text-white shadow-lg hover:bg-primary focus:outline-none focus:ring"
                 onClick={() => setDialogData(false)}>
                 إغلاق
               </DialogTrigger>
@@ -65,11 +65,11 @@ const HelpPage = () => {
 
       <Alert
         variant="warning"
-        className="flex mb-6"
+        className="mb-6 flex"
         style={{
           display: 'ruby-base',
         }}>
-        <AlertTriangle className="h-5 w-5 ml-2 rtl:ml-2 rtl:mr-2" />
+        <AlertTriangle className="ml-2 h-5 w-5 rtl:ml-2 rtl:mr-2" />
         <AlertDescription>
           البريد الإلكتروني الرسمي للدعم: {officialEmails.join('، ')}. احذر من
           المحتالين الذين ينتحلون هوية فريق الدعم لدينا.
@@ -79,15 +79,15 @@ const HelpPage = () => {
       <Card className="p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="flex block text-sm font-medium mb-2">
+            <label className="mb-2 block flex text-sm font-medium">
               نوع الطلب
               {formData.type === 'bug' && (
                 <div
-                  className="flex mx-2 border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-200/30 dark:bg-blue-900/10 dark:text-blue-200"
+                  className="mx-2 flex border-primary bg-primary text-primary dark:border-30primary dark:bg-10primary dark:text-primary"
                   style={{
                     display: 'ruby-base',
                   }}>
-                  <Info className="h-5 w-5 mx-2" />
+                  <Info className="mx-2 h-5 w-5" />
                   <AlertDescription>
                     ستحصل على مكآفأة في حال إكتشافك مشكلة أمنية في المنصة
                   </AlertDescription>
@@ -95,7 +95,7 @@ const HelpPage = () => {
               )}
             </label>
             <select
-              className="w-full p-2 border rounded-md bg-background text-foreground"
+              className="w-full rounded-md border bg-background p-2 text-foreground"
               value={formData.type}
               name="type"
               onChange={(e) =>
@@ -108,13 +108,13 @@ const HelpPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">الموضوع</label>
+            <label className="mb-2 block text-sm font-medium">الموضوع</label>
             <input
               type="text"
               name="subject"
               minLength={3}
               maxLength={25}
-              className="w-full p-2 border rounded-md bg-background text-foreground"
+              className="w-full rounded-md border bg-background p-2 text-foreground"
               value={formData.subject}
               onChange={(e) =>
                 setFormData({ ...formData, subject: e.target.value })
@@ -124,12 +124,12 @@ const HelpPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">الرسالة</label>
+            <label className="mb-2 block text-sm font-medium">الرسالة</label>
             <textarea
               name="message"
               minLength={3}
               maxLength={1000}
-              className="w-full p-2 border rounded-md h-32 bg-background text-foreground"
+              className="h-32 w-full rounded-md border bg-background p-2 text-foreground"
               value={formData.message}
               onChange={(e) =>
                 setFormData({ ...formData, message: e.target.value })
@@ -139,13 +139,13 @@ const HelpPage = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="mb-2 block text-sm font-medium">
               بريدك الإلكتروني
             </label>
             <input
               type="email"
               name="email"
-              className="w-full p-2 border rounded-md bg-background text-foreground"
+              className="w-full rounded-md border bg-background p-2 text-foreground"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
@@ -157,7 +157,7 @@ const HelpPage = () => {
           <button
             type="submit"
             disabled={dialogData}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+            className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
             إرسال
           </button>
         </form>

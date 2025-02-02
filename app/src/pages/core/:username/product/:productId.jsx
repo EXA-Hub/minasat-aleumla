@@ -51,9 +51,9 @@ const ProductPage = ({
   if (loading || err) {
     const bgClass = err
       ? 'from-red-50 to-pink-50'
-      : 'from-blue-50 to-purple-50';
+      : 'from-primary to-purple-50';
     const content = err ? err : 'جارٍ التحميل...';
-    const textClass = err ? 'text-red-500' : 'text-blue-600';
+    const textClass = err ? 'text-red-500' : 'text-primary';
 
     return (
       <div
@@ -96,7 +96,7 @@ const ProductPage = ({
               <AvatarFallback>{user?.username || 'مستخدم'}</AvatarFallback>
             </Avatar>
             <div className="space-y-1">
-              <h2 className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-2xl font-bold text-transparent">
+              <h2 className="bg-gradient-to-r from-purple-600 to-primary bg-clip-text text-2xl font-bold text-transparent">
                 {product.name}
               </h2>
               <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
@@ -135,7 +135,7 @@ const ProductPage = ({
             </div>
 
             <div className="rounded-lg bg-white/30 p-4 dark:bg-gray-800/30">
-              <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+              <div className="flex items-center gap-2 text-primary dark:text-primary">
                 <Clock size={18} />
                 <span className="font-semibold">الصفقات المفتوحة</span>
               </div>

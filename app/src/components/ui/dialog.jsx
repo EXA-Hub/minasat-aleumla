@@ -59,7 +59,7 @@ const DialogTrigger = ({ asChild = false, children, ...props }) => {
   ) : (
     <button
       type="button"
-      className="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-400"
+      className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-semibold text-white hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary"
       {...props}>
       {children}
     </button>

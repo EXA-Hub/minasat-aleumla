@@ -11,13 +11,14 @@ const { coinsAmount, usdsAmount } = process.env; // Use defaults if missing
 
 // Exchange rates usd to other currencies
 const EXCHANGE_Rates = {
-  oneUsdToEgpRate: 50,
+  oneUsdToBtcRate: 1 / 100000,
 };
 
 // Conversion rates object for multiple currencies
 const conversionRates = {
-  coinToUsdRate: usdsAmount / coinsAmount, // MAIN usd/coin rate
-  coinToEgpRate: (EXCHANGE_Rates.oneUsdToEgpRate * usdsAmount) / coinsAmount,
+  coinToUsdtRate: usdsAmount / coinsAmount, // MAIN usd/coin rate
+  coinToBtcRate: (EXCHANGE_Rates.oneUsdToBtcRate * usdsAmount) / coinsAmount,
+  coinToXmnRate: 1,
 };
 
 const coins = [
@@ -32,7 +33,11 @@ const convertCoins = (coins) => {
     // Dynamically calculate conversion for each currency in the conversionRates object
     for (const [currency, rate] of Object.entries(conversionRates)) {
       const currencyName = currency.replace('coinTo', '').replace('Rate', ''); // Get currency name (e.g. 'usd')
-      convertedRates[currencyName] = parseFloat((coinAmount * rate).toFixed(2));
+      convertedRates[currencyName] = parseFloat(
+        (coinAmount * rate).toFixed(
+          currencyName.toLocaleLowerCase() === 'btc' ? 8 : 2
+        )
+      );
     }
 
     return {
@@ -47,7 +52,7 @@ const convertedCoins = convertCoins(coins);
 
 // how much usd i gain for 1000 daily task the user do
 const UsdtoDaily = 6 / 1000;
-const CoinstoDaily = UsdtoDaily * (1 / conversionRates.coinToUsdRate);
+const CoinstoDaily = UsdtoDaily * (1 / conversionRates.coinToUsdtRate);
 const dailyBonus = Math.floor(CoinstoDaily / 10 - CoinstoDaily / 40);
 const dailyQuarter = Math.floor(CoinstoDaily / 4 - dailyBonus);
 

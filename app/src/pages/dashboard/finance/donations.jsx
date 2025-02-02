@@ -68,18 +68,17 @@ const DonationsPage = () => {
   };
 
   const PreviewDonation = () => (
-    <div className={`p-6 rounded-lg bg-[var(--background)]`}>
-      <h2 className="text-2xl font-bold text-center mb-6">
+    <div className={`rounded-lg bg-[var(--background)] p-6`}>
+      <h2 className="mb-6 text-center text-2xl font-bold">
         {donationPage.title}
       </h2>
 
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="mb-6 grid grid-cols-3 gap-3">
         {donationPage.customAmounts.map((amount) => (
           <button
             key={amount}
-            className="p-3 rounded border hover:bg-blue-50 dark:hover:bg-gray-700"
-          >
-            <div className="flex justify-center items-center">
+            className="rounded border p-3 hover:bg-primary dark:hover:bg-gray-700">
+            <div className="flex items-center justify-center">
               <CoinIcon amount={amount} />
             </div>
           </button>
@@ -89,10 +88,10 @@ const DonationsPage = () => {
       <input
         type="text"
         placeholder="رسالة دعم (اختياري)"
-        className="w-full p-3 border rounded mb-4 bg-[var(--background)]"
+        className="mb-4 w-full rounded border bg-[var(--background)] p-3"
       />
 
-      <button className="w-full bg-blue-600 text-white p-3 rounded-lg flex items-center justify-center gap-2">
+      <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary p-3 text-white">
         <Heart className="h-5 w-5" />
         ادعم الآن
       </button>
@@ -102,45 +101,44 @@ const DonationsPage = () => {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
 
   return (
     <div dir="rtl" className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold">صفحة التبرعات</h2>
         <div className="flex gap-2">
           <button
             onClick={copyDonationLink}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md flex items-center gap-2 hover:bg-blue-700"
-          >
+            className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
             <Link2 className="h-5 w-5" />
             نسخ الرابط
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-6">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">الإعدادات الأساسية</h3>
+            <h3 className="mb-4 text-lg font-semibold">الإعدادات الأساسية</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm mb-2">عنوان الصفحة</label>
+                <label className="mb-2 block text-sm">عنوان الصفحة</label>
                 <input
                   type="text"
                   value={donationPage.title}
                   onChange={(e) =>
                     setDonationPage({ ...donationPage, title: e.target.value })
                   }
-                  className="w-full p-2 border rounded bg-[var(--background)]"
+                  className="w-full rounded border bg-[var(--background)] p-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-2">الحد الأدنى للتبرع</label>
+                <label className="mb-2 block text-sm">الحد الأدنى للتبرع</label>
                 <input
                   type="number"
                   value={donationPage.minAmount}
@@ -151,12 +149,12 @@ const DonationsPage = () => {
                     })
                   }
                   min={1}
-                  className="w-full p-2 border rounded bg-[var(--background)]"
+                  className="w-full rounded border bg-[var(--background)] p-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm mb-2">المبالغ المقترحة</label>
+                <label className="mb-2 block text-sm">المبالغ المقترحة</label>
                 <input
                   type="text"
                   value={donationPage.customAmounts.join(', ')}
@@ -169,15 +167,14 @@ const DonationsPage = () => {
                         .filter((n) => !isNaN(n)),
                     })
                   }
-                  className="w-full p-2 border rounded bg-[var(--background)]"
+                  className="w-full rounded border bg-[var(--background)] p-2"
                 />
               </div>
 
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
+                className="w-full rounded-md bg-primary p-2 text-white hover:bg-primary disabled:opacity-50">
                 {saving ? 'جاري الحفظ...' : 'حفظ الإعدادات'}
               </button>
             </div>
@@ -186,7 +183,7 @@ const DonationsPage = () => {
 
         <div className="sticky top-6">
           <Card className="p-6">
-            <h3 className="text-lg font-semibold mb-4">معاينة</h3>
+            <h3 className="mb-4 text-lg font-semibold">معاينة</h3>
             <PreviewDonation />
           </Card>
         </div>

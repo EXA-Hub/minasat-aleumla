@@ -19,20 +19,20 @@ const PrivacyToggle = ({
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div className="relative rtl">
+    <div className="rtl relative">
       <div
-        className={`p-4 rounded-lg border-2 transition-all duration-300 ${
+        className={`rounded-lg border-2 p-4 transition-all duration-300 ${
           isEnabled
-            ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/10'
+            ? 'border-primary bg-primary dark:bg-10primary'
             : 'border-gray-200 hover:border-gray-300 dark:border-gray-700'
         }`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-reverse space-x-3">
+          <div className="flex items-center space-x-3 space-x-reverse">
             <div
-              className={`p-2 rounded-full transition-colors ${
-                isEnabled ? 'bg-blue-500' : 'bg-gray-200'
+              className={`rounded-full p-2 transition-colors ${
+                isEnabled ? 'bg-primary' : 'bg-gray-200'
               }`}>
               {isEnabled ? (
                 <Lock className="h-5 w-5 text-white" />
@@ -49,11 +49,11 @@ const PrivacyToggle = ({
           <button
             onClick={onClick}
             disabled={disabled}
-            className={`relative w-14 h-7 rounded-full transition-all duration-300 focus:outline-none ${
-              isEnabled ? 'bg-blue-500' : 'bg-gray-200'
+            className={`relative h-7 w-14 rounded-full transition-all duration-300 focus:outline-none ${
+              isEnabled ? 'bg-primary' : 'bg-gray-200'
             }`}>
             <span
-              className={`absolute top-1 left-1 w-5 h-5 rounded-full bg-white transition-transform duration-300 transform ${
+              className={`absolute left-1 top-1 h-5 w-5 transform rounded-full bg-white transition-transform duration-300 ${
                 isEnabled ? 'translate-x-7' : 'translate-x-0'
               }`}
             />
@@ -61,9 +61,9 @@ const PrivacyToggle = ({
         </div>
 
         {isHovered && (
-          <div className="mt-4 text-sm text-gray-500 animate-fadeIn rtl:text-right">
-            <div className="flex items-start space-x-reverse space-x-2">
-              <Info className="h-4 w-4 mt-0.5 flex-shrink-0" />
+          <div className="animate-fadeIn mt-4 text-sm text-gray-500 rtl:text-right">
+            <div className="flex items-start space-x-2 space-x-reverse">
+              <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
               <p>
                 عند التفعيل، تساعدك هذه الإعدادات في حماية معلوماتك من خلال
                 {isEnabled ? ' تقييد ' : ' السماح بـ'}الوصول إلى ميزات محددة.
@@ -141,18 +141,18 @@ const PrivacyPage = () => {
   };
 
   return (
-    <div className="space-y-6 rtl text-right">
+    <div className="rtl space-y-6 text-right">
       <h2 className="text-3xl font-bold">
         إعدادات الخصوصية
         <Button
           onClick={savePrivacySettings}
           disabled={disabled}
-          className="bg-blue-500 hover:bg-blue-600 text-white mr-6">
+          className="mr-6 bg-primary text-white hover:bg-primary">
           حفظ التغييرات
           {disabled ? (
             // spinner
             <svg
-              className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+              className="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24">
@@ -169,7 +169,7 @@ const PrivacyPage = () => {
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           ) : (
-            <Save className="w-4 h-4 mr-2" />
+            <Save className="mr-2 h-4 w-4" />
           )}
         </Button>
       </h2>
@@ -181,7 +181,7 @@ const PrivacyPage = () => {
           معلوماتك.
         </AlertDescription>
         <Link
-          className="text-blue-500 hover:underline"
+          className="text-primary hover:underline"
           to="/dashboard/security/privacy-policy">
           تعرف على المزيد
         </Link>
@@ -212,15 +212,15 @@ const PrivacyPage = () => {
         </Card>
       )}
 
-      <Card className="p-6 bg-gray-50 dark:bg-gray-800/50">
-        <div className="flex items-start space-x-reverse space-x-4">
-          <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900">
+      <Card className="bg-gray-50 p-6 dark:bg-gray-800/50">
+        <div className="flex items-start space-x-4 space-x-reverse">
+          <div className="rounded-full bg-primary p-2">
             {privacySettings.length > 0 ? (
-              <Shield className="h-6 w-6 text-blue-500" />
+              <Shield className="h-6 w-6 text-primary-foreground" />
             ) : (
               // spinner
               <svg
-                className="animate-spin h-5 w-5 text-blue-500"
+                className="h-5 w-5 animate-spin text-primary-foreground"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24">
@@ -239,7 +239,7 @@ const PrivacyPage = () => {
             )}
           </div>
           <div>
-            <h3 className="font-medium mb-2">حول إعدادات الخصوصية</h3>
+            <h3 className="mb-2 font-medium">حول إعدادات الخصوصية</h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               تساعدك هذه الإعدادات في إدارة كيفية استخدام معلوماتك عبر منصتنا.
               ننصح بمراجعة كل إعداد بعناية للتأكد من تهيئة تفضيلات الخصوصية بشكل

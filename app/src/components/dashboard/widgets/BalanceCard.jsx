@@ -7,7 +7,7 @@ const CoinIcon = ({ amount }) => (
     <img
       src="/icon.svg"
       alt="coin"
-      className="w-5 h-5 inline filter brightness-0 invert" // Makes SVG white
+      className="inline h-5 w-5 brightness-0 invert filter" // Makes SVG white
     />
   </div>
 );
@@ -18,7 +18,7 @@ CoinIcon.propTypes = {
 
 const BalanceCard = ({ balance }) => {
   return (
-    <Card className="p-6 bg-gradient-to-l from-blue-600 to-blue-700 text-white">
+    <Card className="bg-gradient-to-l from-primary to-accent p-6 text-white">
       <div className="flex flex-col">
         <h3 className="text-lg font-medium opacity-90">الرصيد الحالي</h3>
         <div className="mt-2 text-3xl font-bold">

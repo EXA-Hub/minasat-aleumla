@@ -4,7 +4,13 @@ import { ar } from 'date-fns/locale';
 import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeftIcon, Star, ShoppingBag, PenBox } from 'lucide-react';
+import {
+  ChevronLeftIcon,
+  Star,
+  ShoppingBag,
+  PenBox,
+  Trash2,
+} from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import CommentDialog from '../../../components/shared/commentDialog.jsx';
 import Username from '../../../components/explore/widgets/Username';
@@ -402,12 +408,34 @@ const ProductPage = () => {
                             })}
                         </span>
                         {comment.userId.username === buyer?.username && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => setOpenDialog(true)}>
-                            <PenBox className="h-5 w-5 md:h-6 md:w-6" />
-                          </Button>
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setOpenDialog(true)}>
+                              <PenBox className="h-5 w-5 md:h-6 md:w-6" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="hover:text-red-500"
+                              onClick={async () => {
+                                await api.commentsAndRatings.deleteComment(
+                                  productid,
+                                  comment._id
+                                );
+                                toast.success('تم حذف التعليق');
+                                setProduct({
+                                  ...product,
+                                  commentsAndRatings:
+                                    product.commentsAndRatings.filter(
+                                      (c) => c._id !== comment._id
+                                    ),
+                                });
+                              }}>
+                              <Trash2 className="h-5 w-5 md:h-6 md:w-6" />
+                            </Button>
+                          </>
                         )}
                       </div>
                       {comment.rating ? (

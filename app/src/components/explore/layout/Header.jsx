@@ -39,9 +39,8 @@ const Header = ({ user, onToggleSidebar }) => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 w-full bg-background/30 backdrop-blur-xl border-b border-white/10 z-30 transition-transform duration-300 ease-in-out ${shouldHideHeader ? '-translate-y-full' : 'translate-y-0'}`}
-      >
-        <div className="px-6 h-16 flex items-center justify-between">
+        className={`bg-background/30 fixed left-0 top-0 z-30 w-full border-b border-white/10 backdrop-blur-xl transition-transform duration-300 ease-in-out ${shouldHideHeader ? '-translate-y-full' : 'translate-y-0'}`}>
+        <div className="flex h-16 items-center justify-between px-6">
           {user ? (
             <div className="flex items-center gap-4">
               <User
@@ -52,19 +51,18 @@ const Header = ({ user, onToggleSidebar }) => {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <div className="p-2 rounded-xl bg-background/50 backdrop-blur-sm border border-white/10 shadow-sm">
+              <div className="bg-background/50 rounded-xl border border-white/10 p-2 shadow-sm backdrop-blur-sm">
                 <ThemeToggle />
               </div>
               <Button
                 onClick={() => navigate('/login')}
-                className="relative overflow-hidden bg-gradient-to-r from-primary to-blue-600 text-white py-2 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
-              >
+                className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary px-6 py-2 text-white transition-all duration-300 hover:shadow-lg hover:shadow-30primary">
                 تسجيل الدخول
               </Button>
             </div>
           )}
 
-          <h1 className="font-bold text-xl bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent mr-4">
+          <h1 className="mr-4 bg-gradient-to-r from-primary to-primary bg-clip-text text-xl font-bold text-transparent">
             منصة العملة
           </h1>
 
@@ -74,8 +72,7 @@ const Header = ({ user, onToggleSidebar }) => {
                 variant="ghost"
                 size="icon"
                 onClick={onToggleSidebar}
-                className="rounded-full text-foreground hover:bg-primary/10"
-              >
+                className="rounded-full text-foreground hover:bg-10primary">
                 <Menu className="h-5 w-5" />
               </Button>
             </div>

@@ -77,7 +77,7 @@ const TipPage = () => {
       // Make the donation request
       toast.success('تم التبرع بنجاح', {
         icon: (
-          <Heart className="h-6 w-6 text-red-500 animate__animated animate__pulse animate__infinite" />
+          <Heart className="animate__animated animate__pulse animate__infinite h-6 w-6 text-red-500" />
         ),
       });
     } catch (error) {
@@ -91,54 +91,54 @@ const TipPage = () => {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <div className="animate-spin h-12 w-12 border-4 border-blue-500 rounded-full border-t-transparent"></div>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 rounded-lg bg-[var(--background)] shadow-lg transform transition duration-500">
-      <h2 className="text-3xl font-bold text-center mb-6 text-blue-600 animate__animated animate__fadeIn">
+    <div className="transform rounded-lg bg-[var(--background)] p-6 shadow-lg transition duration-500">
+      <h2 className="animate__animated animate__fadeIn mb-6 text-center text-3xl font-bold text-primary">
         {data.donationPage.title}
       </h2>
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-6 animate__animated animate__fadeIn animate__delay-1s">
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        className="animate__animated animate__fadeIn animate__delay-1s space-y-6">
+        <div className="mb-6 grid grid-cols-3 gap-3">
           {data.donationPage.customAmounts.map((amount) => (
             <button
               key={amount}
               type="button"
-              className={`p-4 rounded-lg border-2 border-transparent hover:border-blue-500 transition-all duration-300 ease-in-out ${
+              className={`rounded-lg border-2 border-transparent p-4 transition-all duration-300 ease-in-out hover:border-primary ${
                 selectedAmount === amount && !showCustomAmount
-                  ? 'transform scale-105 ease-in bg-blue-900'
+                  ? 'scale-105 transform bg-primary ease-in'
                   : ''
               }`}
               onClick={() => handleAmountSelect(amount)}>
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <CoinIcon amount={amount} />
               </div>
             </button>
           ))}
           <button
             type="button"
-            className={`p-4 rounded-lg border-2 border-transparent hover:border-blue-500 transition-all duration-300 ease-in-out ${
+            className={`rounded-lg border-2 border-transparent p-4 transition-all duration-300 ease-in-out hover:border-primary ${
               showCustomAmount || selectedAmount === null
-                ? 'transform scale-105 ease-in bg-blue-900'
+                ? 'scale-105 transform bg-primary ease-in'
                 : ''
             }`}
             onClick={() => setShowCustomAmount(true)} // Show custom input when clicked
           >
-            <div className="flex justify-center items-center">مخصص</div>
+            <div className="flex items-center justify-center">مخصص</div>
           </button>
         </div>
 
         {showCustomAmount && (
-          <div className="mb-4 animate__animated animate__fadeIn">
+          <div className="animate__animated animate__fadeIn mb-4">
             <label
               htmlFor="custom-amount"
-              className="block text-sm font-medium text-blue-600">
+              className="block text-sm font-medium text-primary">
               مبلغ تبرع مخصص
             </label>
             <input
@@ -148,7 +148,7 @@ const TipPage = () => {
               onChange={handleCustomAmountChange}
               min={data.donationPage.minAmount}
               placeholder="أدخل مبلغ مخصص"
-              className="bg-background w-full p-3 border-2 border-blue-500 rounded-lg transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-lg border-2 border-primary bg-background p-3 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
         )}
@@ -159,14 +159,14 @@ const TipPage = () => {
           onChange={(e) => setMessage(e.target.value)}
           maxLength={250}
           placeholder="رسالة دعم (اختياري)"
-          className="bg-background w-full p-3 border-2 border-blue-500 rounded-lg mb-4 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mb-4 w-full rounded-lg border-2 border-primary bg-background p-3 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary"
         />
 
         <button
           type="submit"
           disabled={!selectedAmount || loading}
-          className="w-full bg-blue-600 text-white p-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 ease-in-out hover:bg-blue-500">
-          <Heart className="h-5 w-5 animate__animated animate__tada" />
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary p-3 text-white transition-all duration-300 ease-in-out hover:bg-primary">
+          <Heart className="animate__animated animate__tada h-5 w-5" />
           ادعم الآن
         </button>
       </form>

@@ -102,7 +102,7 @@ const ExploreLayout = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -118,8 +118,8 @@ const ExploreLayout = () => {
         />
         <main className="p-6">
           {!user && timeout && (
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-40 opacity-100 transition-opacity duration-300">
-              <Dialog className="z-60 max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 opacity-100 backdrop-blur-sm transition-opacity duration-300">
+              <Dialog className="z-60 w-full max-w-md rounded-lg bg-white shadow-lg dark:bg-gray-800">
                 <DialogHeader className="z-60 p-6 text-center">
                   <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     الرجاء تسجيل الدخول
@@ -132,8 +132,7 @@ const ExploreLayout = () => {
                   <div className="mt-6 flex justify-center">
                     <DialogTrigger
                       onClick={() => (window.location.pathname = '/login')}
-                      className="z-60 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    >
+                      className="z-60 rounded-lg bg-primary px-4 py-2 text-white hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                       تسجيل الدخول
                     </DialogTrigger>
                   </div>
@@ -147,18 +146,17 @@ const ExploreLayout = () => {
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-300 z-40 ${
-          isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${
+          isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
         onClick={() => setIsSidebarOpen(false)}
       />
 
       {/* Floating Sidebar */}
       <div
-        className={`fixed top-4 bottom-4 right-4 w-72 transition-transform duration-500 ease-out z-50 ${
+        className={`fixed bottom-4 right-4 top-4 z-50 w-72 transition-transform duration-500 ease-out ${
           isSidebarOpen ? 'translate-x-0' : 'translate-x-[120%]'
-        }`}
-      >
+        }`}>
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
@@ -167,7 +165,7 @@ const ExploreLayout = () => {
 
       {/* Timer Card */}
       {!user && !timeout && remainingTime > 0 && (
-        <div className="fixed bottom-4 left-4 z-50 bg-gray-200 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+        <div className="fixed bottom-4 left-4 z-50 rounded-lg bg-gray-200 p-4 shadow-lg dark:bg-gray-800">
           <p className="text-sm text-gray-800 dark:text-gray-200">
             وقتك المتبقي: {formatTime(remainingTime)}
           </p>

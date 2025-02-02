@@ -12,8 +12,8 @@ router.get('/@me/engagement', async (req, res) => {
     const redisClient = await getRedisClient();
     // Check if data is already cached
     const cacheKey = `userEngagementData_${userId}`;
-    if (cachedData)
-      return res.json(JSON.parse(await redisClient.get(cacheKey)));
+    const cachedData = await redisClient.get(cacheKey);
+    if (cachedData) return res.json(JSON.parse(cachedData));
 
     // Calculate the date 30 days ago
     const thirtyDaysAgo = new Date();

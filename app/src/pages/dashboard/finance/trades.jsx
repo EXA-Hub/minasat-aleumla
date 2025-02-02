@@ -188,7 +188,7 @@ const RenderTradeChat = ({
 
   return (
     <div className="rtl relative min-h-[500px] flex-1 overflow-hidden pt-4 md:p-4 md:pt-0">
-      <div className="hover:bg-primary/50 absolute left-0 top-0 h-full w-1 cursor-ew-resize transition-colors" />
+      <div className="absolute left-0 top-0 h-full w-1 cursor-ew-resize transition-colors hover:bg-50primary" />
       <div className="flex h-full flex-col rounded-lg bg-card shadow-md">
         {/* Header */}
         {/* selectedTrade.quantity */}
@@ -340,8 +340,8 @@ const RenderTradeChat = ({
                             )}
                             disabled={
                               isSeller ||
-                              [...chats[selectedTrade._id]].includes(
-                                'المشتري:[تم استلام المنتج]'
+                              [...chats[selectedTrade._id]].some((msg) =>
+                                msg.includes('المشتري:[تم استلام المنتج]')
                               )
                             }
                             onClick={async () => {
@@ -469,7 +469,7 @@ const RenderTradeChat = ({
                 someMsg.includes('البائع:[تم إرسال المنتج]')
               ) && (
                 <button
-                  className="hover:bg-primary/90 rounded bg-primary px-4 py-2 text-primary-foreground"
+                  className="rounded bg-primary px-4 py-2 text-primary-foreground hover:bg-90primary"
                   onClick={async () => {
                     setSendingMsg(true);
                     await sendMessage('[تم إرسال المنتج]', ourParty);
@@ -614,7 +614,7 @@ const RenderSellTradesSidebar = ({
                     className={`cursor-pointer p-3 transition-colors hover:bg-primary hover:text-primary-foreground ${
                       selectedTrade?._id === trade._id &&
                       selectedTrade?.isSellTrade
-                        ? 'bg-primary/10 text-primary'
+                        ? 'bg-10primary text-primary'
                         : ''
                     } `}>
                     <div className="flex flex-col gap-1 text-sm">

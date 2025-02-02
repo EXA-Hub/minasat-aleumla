@@ -1,16 +1,16 @@
 // react-app/src/pages/explore/support/plans.jsx
+import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import {
   Card,
   CardHeader,
   CardContent,
   CardFooter,
 } from '@/components/ui/card';
+import { useTheme } from '../../../context/ThemeContext';
 import CoinIcon from '@/components/ui/CoinIcon';
 import api from '../../../utils/api';
-import { useTheme } from '../../../context/ThemeContext';
-import { useOutletContext } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
 
 const featureTranslations = {
   apps: 'التطبيقات',
@@ -109,24 +109,24 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
   return (
     <Dialog>
       <DialogContent className="sm:max-w-2xl" dir="rtl">
-        <div className="flex justify-between items-center mb-4">
+        <div className="mb-4 flex items-center justify-between">
           <DialogTitle className="text-2xl">
             إدارة الاشتراك - {planTranslations[plan]}
           </DialogTitle>
           <button
             onClick={onClose}
-            className="p-2 rounded-full bg-muted hover:bg-muted-foreground transition-colors">
-            <X className="w-6 h-6" />
+            className="rounded-full bg-muted p-2 transition-colors hover:bg-muted-foreground">
+            <X className="h-6 w-6" />
           </button>
         </div>
 
         {action !== 'cancel' && action !== 'code' && (
           <div className="mb-6">
-            <div className="bg-muted p-4 rounded-lg mb-4">
-              <h4 className="font-bold mb-4 text-lg">تفاصيل الخطة</h4>
+            <div className="mb-4 rounded-lg bg-muted p-4">
+              <h4 className="mb-4 text-lg font-bold">تفاصيل الخطة</h4>
               <div className="flex flex-col space-y-3">
-                <div className="flex justify-between items-center border-b border-border/30 pb-2">
-                  <span className="text-muted-foreground text-sm">
+                <div className="border-border/30 flex items-center justify-between border-b pb-2">
+                  <span className="text-sm text-muted-foreground">
                     التكلفة الأساسية
                   </span>
                   <span className="font-bold">
@@ -136,8 +136,8 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
 
                 {user && (
                   <>
-                    <div className="flex justify-between items-center border-b border-border/30 pb-2">
-                      <span className="text-muted-foreground text-sm">
+                    <div className="border-border/30 flex items-center justify-between border-b pb-2">
+                      <span className="text-sm text-muted-foreground">
                         الرسوم ({calculateFee()}%)
                       </span>
                       <span className="font-bold">
@@ -147,8 +147,8 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center border-b border-border/30 pb-2">
-                      <span className="text-muted-foreground text-sm">
+                    <div className="border-border/30 flex items-center justify-between border-b pb-2">
+                      <span className="text-sm text-muted-foreground">
                         رصيدك الحالي
                       </span>
                       <span className="font-bold">
@@ -158,9 +158,9 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                   </>
                 )}
 
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-muted-foreground text-sm">المجموع</span>
-                  <span className="font-bold text-lg text-primary">
+                <div className="flex items-center justify-between pt-2">
+                  <span className="text-sm text-muted-foreground">المجموع</span>
+                  <span className="text-lg font-bold text-primary">
                     {calculateTotal()}
                   </span>
                 </div>
@@ -174,37 +174,37 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
             <button
               type="button"
               onClick={() => setAction('subscribe')}
-              className={`p-3 rounded-lg font-semibold transition-colors ${
+              className={`rounded-lg p-3 font-semibold transition-colors ${
                 action === 'subscribe'
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted hover:bg-muted/80'
+                  : 'hover:bg-muted/80 bg-muted'
               }`}>
               اشتراك جديد
             </button>
             <button
               type="button"
               onClick={() => setAction('code')}
-              className={`p-3 rounded-lg font-semibold transition-colors ${
+              className={`rounded-lg p-3 font-semibold transition-colors ${
                 action === 'code'
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted hover:bg-muted/80'
+                  : 'hover:bg-muted/80 bg-muted'
               }`}>
               استخدام كود
             </button>
             <button
               type="button"
               onClick={() => setAction('generate')}
-              className={`p-3 rounded-lg font-semibold transition-colors ${
+              className={`rounded-lg p-3 font-semibold transition-colors ${
                 action === 'generate'
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted hover:bg-muted/80'
+                  : 'hover:bg-muted/80 bg-muted'
               }`}>
               إنشاء كود
             </button>
             <button
               type="button"
               onClick={() => setAction('cancel')}
-              className={`p-3 rounded-lg font-semibold transition-colors ${
+              className={`rounded-lg p-3 font-semibold transition-colors ${
                 action === 'cancel'
                   ? 'bg-red-600 text-foreground'
                   : 'bg-muted hover:bg-opacity-80'
@@ -219,7 +219,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                 placeholder="ادخل كود الاشتراك"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="text-lg p-6"
+                className="p-6 text-lg"
                 required
               />
               <p className="text-sm text-muted-foreground">
@@ -236,7 +236,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                 placeholder="عدد الأكواد"
                 value={quantity}
                 onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                className="text-lg p-6"
+                className="p-6 text-lg"
                 required
               />
               <p className="text-sm text-muted-foreground">
@@ -249,7 +249,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
           )}
 
           {error && (
-            <div className="bg-red-900 text-foreground p-4 rounded-lg">
+            <div className="rounded-lg bg-red-900 p-4 text-foreground">
               {error}
             </div>
           )}
@@ -257,7 +257,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
           <button
             type="submit"
             disabled={loading || !canAfford()}
-            className={`w-full p-6 rounded-lg transition-all duration-300 font-bold text-lg disabled:opacity-50 ${
+            className={`w-full rounded-lg p-6 text-lg font-bold transition-all duration-300 disabled:opacity-50 ${
               action === 'cancel'
                 ? 'bg-red text-foreground'
                 : 'bg-primary text-primary-foreground hover:opacity-80'
@@ -305,7 +305,7 @@ const PlansPage = () => {
 
   if (loading)
     return (
-      <div className="p-6 text-center text-foreground animate-pulse">
+      <div className="animate-pulse p-6 text-center text-foreground">
         جاري تحميل الخطط...
       </div>
     );
@@ -342,17 +342,17 @@ const PlansPage = () => {
   };
 
   const renderFeatureValue = (value, key) => {
-    if (typeof value === 'number') {
+    if (typeof value === 'number')
       if (key === 'fee') return `${value}%`;
-      return value;
-    }
-    if (typeof value === 'object') {
+      else return value;
+
+    if (typeof value === 'object')
       return Object.entries(value).map(([subKey, val]) => (
         <div key={subKey} className="text-sm text-muted-foreground">
           {featureTranslations[subKey]}: {renderFeatureValue(val, subKey)}
         </div>
       ));
-    }
+
     return value;
   };
 
@@ -364,7 +364,7 @@ const PlansPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto" dir="rtl">
+    <div className="mx-auto max-w-7xl p-6" dir="rtl">
       {dialogOpen && (
         <SubscriptionDialog
           plan={selectedPlan}
@@ -376,30 +376,30 @@ const PlansPage = () => {
       )}
 
       {user && (
-        <div className="text-center animate-fadeIn">
-          <h2 className="text-2xl font-bold mb-4 text-foreground">
+        <div className="animate-fadeIn text-center">
+          <h2 className="mb-4 text-2xl font-bold text-foreground">
             خطتك الحالية: {planTranslations[user.tier]}
           </h2>
         </div>
       )}
 
-      <h1 className="text-4xl font-bold mb-12 text-center text-foreground animate-fadeIn">
+      <h1 className="animate-fadeIn mb-12 text-center text-4xl font-bold text-foreground">
         اختر خطتك المناسبة
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         {Object.entries(plans).map(([planName, planDetails], index) => (
           <Card
             key={planName}
             className={
-              'border-2 border-border transition-all duration-300 hover:scale-5 animate-slideUp ' +
+              'hover:scale-5 animate-slideUp border-2 border-border transition-all duration-300 ' +
               planStyle[planName][theme]
             }
             style={{
               animationDelay: `${index * 150}ms`,
             }}>
             <CardHeader className="relative">
-              <div className="flex justify-between items-center mb-4">
+              <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-2xl font-bold text-foreground">
                   {planTranslations[planName]}
                 </h2>
@@ -413,14 +413,14 @@ const PlansPage = () => {
               {Object.entries(planDetails.features).map(
                 ([category, features]) => (
                   <div key={category} className="mb-6 last:mb-0">
-                    <h3 className="font-semibold mb-3 text-lg text-foreground border-b border-border pb-2">
+                    <h3 className="mb-3 border-b border-border pb-2 text-lg font-semibold text-foreground">
                       {featureTranslations[category]}
                     </h3>
                     <div className="space-y-3">
                       {Object.entries(features).map(([feature, value]) => (
                         <div
                           key={feature}
-                          className="flex justify-between items-start">
+                          className="flex items-start justify-between">
                           <span className="text-sm text-muted-foreground">
                             {featureTranslations[feature]}
                           </span>
@@ -439,14 +439,14 @@ const PlansPage = () => {
               <CardFooter className="justify-center pt-4">
                 <button
                   onClick={() => handlePlanSelection(planName)}
-                  className="w-full px-6 py-3 bg-40primary rounded-full text-foreground hover:bg-primary transition-all duration-300 hover:shadow-lg text-lg font-bold">
+                  className="w-full rounded-full bg-40primary px-6 py-3 text-lg font-bold text-foreground transition-all duration-300 hover:bg-primary hover:shadow-lg">
                   اختيار الخطة
                 </button>
               </CardFooter>
             ) : (
               <CardFooter className="justify-center pt-4">
                 <button
-                  className="w-full px-6 py-3 bg-red-600 rounded-full text-foreground bg-opacity-10 hover:bg-opacity-100 transition-all duration-300 hover:shadow-lg text-lg font-bold"
+                  className="w-full rounded-full bg-red-600 bg-opacity-10 px-6 py-3 text-lg font-bold text-foreground transition-all duration-300 hover:bg-opacity-100 hover:shadow-lg"
                   onClick={async () => {
                     if (user.tier === 'free')
                       return toast.error('ليس لديك خطة أصلا');

@@ -69,10 +69,10 @@ const ImageSelector = ({ type, close }) => {
   return (
     <Dialog>
       {loading ? (
-        <div className="p-4 flex text-center bg-card rounded-lg border border-border">
+        <div className="flex rounded-lg border border-border bg-card p-4 text-center">
           جارٍ التحميل...
           <div className="flex items-center justify-center pr-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
           </div>
         </div>
       ) : (
@@ -80,7 +80,7 @@ const ImageSelector = ({ type, close }) => {
           <button
             onClick={close}
             aria-label="close"
-            className="absolute top-2 left-2 bg-transparent border-none cursor-pointer rounded-full hover:bg-gray-600/60">
+            className="absolute left-2 top-2 cursor-pointer rounded-full border-none bg-transparent hover:bg-gray-600/60">
             <XCircleIcon size={24} />
           </button>
           <DialogHeader>
@@ -90,7 +90,7 @@ const ImageSelector = ({ type, close }) => {
           {loading ? (
             <div className="p-4 text-center">جارٍ التحميل...</div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {apps.map((app) => {
                 const images = getImagesForApp(app);
                 if (images.length === 0) return null;
@@ -99,9 +99,9 @@ const ImageSelector = ({ type, close }) => {
                   <div key={app.id} className="space-y-2">
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-8 h-8 flex items-center justify-center"
+                        className="flex h-8 w-8 items-center justify-center"
                         style={{ backgroundColor: app.bgColor }}>
-                        <img src={app.svg} alt={app.name} className="w-6 h-6" />
+                        <img src={app.svg} alt={app.name} className="h-6 w-6" />
                       </div>
                       <span className="font-medium">{app.name}</span>
                     </div>
@@ -111,11 +111,11 @@ const ImageSelector = ({ type, close }) => {
                         <button
                           key={img.id}
                           onClick={() => handleImageSelect(app.id, img.id)}
-                          className="relative aspect-square overflow-hidden rounded-lg hover:opacity-90 transition-opacity">
+                          className="relative aspect-square overflow-hidden rounded-lg transition-opacity hover:opacity-90">
                           <img
                             src={img.url}
                             alt={`${app.name} ${img.id}`}
-                            className="w-full h-full object-cover"
+                            className="h-full w-full object-cover"
                           />
                         </button>
                       ))}
@@ -186,7 +186,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="space-y-6 rtl text-right">
+    <div className="rtl space-y-6 text-right">
       <h2 className="text-3xl font-bold">ملفي الشخصي</h2>
       {showImageSelector && (
         <ImageSelector
@@ -195,18 +195,18 @@ const ProfilePage = () => {
         />
       )}
       <div className="relative mb-20">
-        <div className="relative h-48 md:h-64 rounded-lg overflow-hidden bg-gray-100">
+        <div className="relative h-48 overflow-hidden rounded-lg bg-gray-100 md:h-64">
           <img
             src={profile.wallpaper || '/wallpaper.jpg'}
             alt="صورة خلفية الملف الشخصي"
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
           <Link
             onClick={() => {
               setImageType('wallpaper');
               setShowImageSelector(true);
             }}
-            className="absolute bottom-4 right-4 p-2 bg-black/50 text-white rounded-md hover:bg-black/70">
+            className="absolute bottom-4 right-4 rounded-md bg-black/50 p-2 text-white hover:bg-black/70">
             <Upload className="h-5 w-5" />
           </Link>
         </div>
@@ -216,14 +216,14 @@ const ProfilePage = () => {
             <img
               src={profile.profilePicture || '/avatar.jpg'}
               alt="صورة الملف الشخصي"
-              className="w-32 h-32 rounded-full border-4 border-white"
+              className="h-32 w-32 rounded-full border-4 border-white"
             />
             <Link
               onClick={() => {
                 setImageType('profilePicture');
                 setShowImageSelector(true);
               }}
-              className="absolute bottom-0 right-0 p-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">
+              className="absolute bottom-0 right-0 rounded-full bg-primary p-2 text-white hover:bg-primary">
               <Camera className="h-5 w-5" />
             </Link>
           </div>
@@ -235,58 +235,58 @@ const ProfilePage = () => {
           {isEditing ? (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">
+                <label className="mb-2 block text-sm font-medium">
                   اسم المستخدم
                 </label>
                 <input
                   name="username"
                   type="text"
                   defaultValue={profile.username}
-                  className="w-full p-2 border rounded-md bg-[var(--background)]"
+                  className="w-full rounded-md border bg-[var(--background)] p-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">اللقب</label>
+                <label className="mb-2 block text-sm font-medium">اللقب</label>
                 <input
                   name="title"
                   type="text"
                   defaultValue={profile.title}
-                  className="w-full p-2 border rounded-md bg-[var(--background)]"
+                  className="w-full rounded-md border bg-[var(--background)] p-2"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">الوصف</label>
+                <label className="mb-2 block text-sm font-medium">الوصف</label>
                 <textarea
                   name="description"
                   defaultValue={profile.description}
-                  className="w-full p-2 border rounded-md h-32 bg-[var(--background)]"
+                  className="h-32 w-full rounded-md border bg-[var(--background)] p-2"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="mb-2 block text-sm font-medium">
                     العمر
                   </label>
                   <input
                     name="age"
                     type="number"
                     defaultValue={profile.age}
-                    className="w-full p-2 border rounded-md bg-[var(--background)]"
+                    className="w-full rounded-md border bg-[var(--background)] p-2"
                     min="0"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
+                  <label className="mb-2 block text-sm font-medium">
                     الجنس
                   </label>
                   <select
                     name="sex"
                     defaultValue={profile.sex}
-                    className="w-full p-2 border rounded-md bg-[var(--background)]">
+                    className="w-full rounded-md border bg-[var(--background)] p-2">
                     <option value="ذكر">ذكر</option>
                     <option value="أنثى">أنثى</option>
                   </select>
@@ -296,27 +296,27 @@ const ProfilePage = () => {
               <div className="flex space-x-4 rtl:space-x-reverse">
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                  className="flex-1 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
                   حفظ التغييرات
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">
+                  className="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300">
                   إلغاء
                 </button>
               </div>
             </form>
           ) : (
             <div className="space-y-6">
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-2xl font-bold">{profile.username}</h3>
                   <p className="text-gray-600">{profile.title}</p>
                 </div>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                  className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
                   تعديل الملف
                 </button>
               </div>

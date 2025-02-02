@@ -77,23 +77,22 @@ const TasksPage = () => {
       {dialogData.open && (
         <Dialog>
           <Confetti width={width} height={height} />
-          <DialogContent className="animate-fade-in scale-95 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg p-6">
+          <DialogContent className="animate-fade-in scale-95 rounded-lg border border-gray-300 bg-white p-6 shadow-lg dark:border-gray-700 dark:bg-gray-800">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-center text-gray-800 dark:text-gray-200">
+              <DialogTitle className="text-center text-2xl font-bold text-gray-800 dark:text-gray-200">
                 🎁 مبروك لقد حصلت على هديتك
               </DialogTitle>
             </DialogHeader>
             <div className="mt-4 text-center text-gray-700 dark:text-gray-300">
               <p className="text-lg">{dialogData.message}</p>
-              <div className="mt-3 flex justify-center items-center space-x-2">
+              <div className="mt-3 flex items-center justify-center space-x-2">
                 <CoinIcon amount={dialogData.daily} />
               </div>
             </div>
             <div className="mt-6 flex justify-center">
               <DialogTrigger
-                className="px-6 py-2 bg-blue-500 hover:bg-blue-900 text-white rounded-md shadow-lg focus:ring focus:ring-primary-light focus:outline-none"
-                onClick={() => setDialogData({ open: false })}
-              >
+                className="focus:ring-primary-light rounded-md bg-primary px-6 py-2 text-white shadow-lg hover:bg-primary focus:outline-none focus:ring"
+                onClick={() => setDialogData({ open: false })}>
                 إغلاق
               </DialogTrigger>
             </div>
@@ -103,13 +102,13 @@ const TasksPage = () => {
 
       {/* Task Cards */}
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">المهام اليومية</h2>
         </div>
         {/* Task Card - Daily Gift */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex justify-between items-center">
+            <CardTitle className="flex items-center justify-between">
               <div className="flex flex-col">
                 <h3 className="text-xl font-semibold">الهدية اليومية</h3>
                 <p className="text-sm text-gray-500">
@@ -120,8 +119,7 @@ const TasksPage = () => {
               <button
                 onClick={handleGetDaily}
                 disabled={dailyButton}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
+                className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary disabled:opacity-50">
                 {dailyButton ? 'جاري التحميل...' : 'الحصول على الهدية اليومية'}
               </button>
             </CardTitle>
@@ -136,13 +134,13 @@ const TasksPage = () => {
 
       {/* Task Cards */}
       <div className="space-y-4">
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">المهام الحالية</h2>
         </div>
         {/* Task Card - Another Task */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex justify-between items-center">
+            <CardTitle className="flex items-center justify-between">
               <div className="flex flex-col">
                 <h3 className="text-xl font-semibold">مهمة أخرى</h3>
                 <p className="text-sm text-gray-500">وصف المهمة اليومية هنا.</p>
@@ -150,8 +148,7 @@ const TasksPage = () => {
               <button
                 onClick={handleGetDaily}
                 disabled={dailyButton}
-                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
-              >
+                className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary disabled:opacity-50">
                 {dailyButton ? 'جاري التحميل...' : 'الحصول على المهمة'}
               </button>
             </CardTitle>

@@ -5,12 +5,12 @@ const NotFoundPage = () => {
 
   return (
     <div
-      className="min-h-screen bg-background flex items-center justify-center p-4"
+      className="flex min-h-screen items-center justify-center bg-background p-4"
       dir="rtl">
-      <div className="max-w-md w-full space-y-8 text-center">
+      <div className="w-full max-w-md space-y-8 text-center">
         {/* Error Number with Gradient */}
         <div className="relative">
-          <h1 className="text-[150px] font-black text-primary/10">404</h1>
+          <h1 className="text-[150px] font-black text-10primary">404</h1>
           <div className="absolute inset-0 flex items-center justify-center">
             <h2 className="text-4xl font-bold text-primary">
               الصفحة غير موجودة
@@ -20,9 +20,9 @@ const NotFoundPage = () => {
 
         {/* Error Icon */}
         <div className="flex justify-center">
-          <div className="relative w-24 h-24 rounded-full border-4 border-primary/20 flex items-center justify-center">
+          <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-4 border-20primary">
             <svg
-              className="w-12 h-12 text-primary"
+              className="h-12 w-12 text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor">
@@ -38,16 +38,16 @@ const NotFoundPage = () => {
 
         {/* Description */}
         <div className="space-y-4">
-          <p className="text-muted-foreground text-lg">
+          <p className="text-lg text-muted-foreground">
             يبدو أن الصفحة التي تبحث عنها غير موجودة أو تم نقلها إلى مكان آخر.
           </p>
 
           {/* Action Button */}
           <button
             onClick={() => navigate('/')}
-            className="inline-flex items-center px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            className="inline-flex transform items-center rounded-lg bg-primary px-6 py-3 text-primary-foreground shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-90primary hover:shadow-xl">
             <svg
-              className="w-5 h-5 ml-2"
+              className="ml-2 h-5 w-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor">

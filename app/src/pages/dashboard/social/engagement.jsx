@@ -28,8 +28,8 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload) return null;
   return (
-    <div className="bg-background border rounded-lg shadow-lg p-3">
-      <p className="font-medium text-sm mb-1">{label}</p>
+    <div className="rounded-lg border bg-background p-3 shadow-lg">
+      <p className="mb-1 text-sm font-medium">{label}</p>
       {payload.map((item, index) => (
         <p key={index} className="text-sm" style={{ color: item.color }}>
           {item.name}: {item.value.toLocaleString()}
@@ -53,7 +53,7 @@ CustomTooltip.propTypes = {
 
 // StatCard Component
 const StatCard = ({ icon: Icon, label, value, trend = 0, color }) => (
-  <div className={`p-4 rounded-xl bg-${color}-50 dark:bg-${color}-900/10`}>
+  <div className={`rounded-xl p-4 bg-${color}-50 dark:bg-${color}-900/10`}>
     <div className="flex items-center justify-between">
       <Icon className={`h-5 w-5 text-${color}-600`} />
       <span className="text-sm text-muted-foreground">{label}</span>
@@ -112,7 +112,7 @@ const EngagementPage = () => {
 
   if (loading) {
     return (
-      <div className="h-[50vh] flex flex-col items-center justify-center gap-4">
+      <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-muted-foreground">جاري تحميل البيانات...</p>
       </div>
@@ -121,7 +121,7 @@ const EngagementPage = () => {
 
   if (error) {
     return (
-      <div className="h-[50vh] flex flex-col items-center justify-center gap-4">
+      <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
         <p className="text-red-600">{error}</p>
       </div>
     );
@@ -160,10 +160,10 @@ const EngagementPage = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="animate-in fade-in space-y-8 duration-500">
       <PageTitle>تحليلات المشاركة</PageTitle>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatCard
           icon={Eye}
           label="إجمالي المشاهدات"
@@ -185,8 +185,8 @@ const EngagementPage = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6 col-span-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <Card className="col-span-2 p-6">
           <SectionTitle>تحليل المشاهدات</SectionTitle>
           <div className="h-[400px]">
             <ResponsiveContainer>
@@ -255,7 +255,7 @@ const EngagementPage = () => {
                       <TableCell>
                         <Link
                           to={`/@${viewerId}`}
-                          className="text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 hover:underline flex items-center gap-2">
+                          className="flex items-center gap-2 text-primary hover:text-primary hover:underline dark:hover:text-primary">
                           <span>عرض الملف</span>
                           <Eye className="h-4 w-4" />
                         </Link>
@@ -266,7 +266,7 @@ const EngagementPage = () => {
               </Table>
 
               {/* Pagination Controls */}
-              <div className="flex justify-center mt-6">
+              <div className="mt-6 flex justify-center">
                 <nav className="inline-flex rounded-md shadow-sm">
                   {Array.from({
                     length: Math.ceil(uniqueViewers.length / viewersPerPage),
@@ -276,9 +276,9 @@ const EngagementPage = () => {
                       onClick={() => paginate(index + 1)}
                       className={`px-4 py-2 text-sm font-medium ${
                         currentPage === index + 1
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                      } border border-gray-300 dark:border-gray-700 rounded-md mx-1`}>
+                          ? 'bg-primary text-white'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                      } mx-1 rounded-md border border-gray-300 dark:border-gray-700`}>
                       {index + 1}
                     </button>
                   ))}

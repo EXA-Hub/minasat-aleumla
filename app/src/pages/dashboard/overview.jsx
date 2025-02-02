@@ -49,12 +49,12 @@ const Overview = () => {
 
   if (error) {
     return (
-      <div className="h-[50vh] flex items-center justify-center">
+      <div className="flex h-[50vh] items-center justify-center">
         <Card className="p-6 text-center text-red-600">
           <p className="font-bold">{error}</p>
           <button
             onClick={() => fetchDashboardData()}
-            className="mt-4 text-blue-600 hover:underline">
+            className="mt-4 text-primary hover:underline">
             إعادة المحاولة
           </button>
         </Card>
@@ -64,15 +64,15 @@ const Overview = () => {
 
   if (loading && !stats && !balance) {
     return (
-      <div className="h-[50vh] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold">لوحة التحكم</h2>
         <p className="text-sm text-muted-foreground">
           آخر تحديث: {lastUpdated.toLocaleTimeString('ar-SA')}
@@ -81,15 +81,15 @@ const Overview = () => {
 
       <Alert
         variant="info"
-        className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
-        <InfoIcon className="w-6 h-6 mr-3" />
+        className="flex items-center rounded-lg bg-yellow-100 p-4 text-yellow-800 shadow-md">
+        <InfoIcon className="mr-3 h-6 w-6" />
         <AlertDescription className="text-sm">
           في حالة واجهتك مشاكل توجه إلى{' '}
           <Link to="/dashboard/security/help">صفحة المساعدة</Link>
         </AlertDescription>
       </Alert>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <StatsGrid stats={stats} />
         </div>
@@ -99,7 +99,7 @@ const Overview = () => {
       </div>
 
       <Card className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <div>
             <h3 className="text-xl font-semibold">آخر المعاملات</h3>
             <p className="text-sm text-muted-foreground">
@@ -108,7 +108,7 @@ const Overview = () => {
           </div>
           <Link
             to="/dashboard/transactions"
-            className="text-sm text-blue-600 hover:underline">
+            className="text-sm text-primary hover:underline">
             عرض الكل
           </Link>
         </div>
@@ -119,13 +119,13 @@ const Overview = () => {
         />
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Card className="p-6">
-          <h3 className="text-xl font-semibold mb-4">التحويلات الشهرية</h3>
+          <h3 className="mb-4 text-xl font-semibold">التحويلات الشهرية</h3>
           <Alert
             variant="info"
-            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
-            <InfoIcon className="w-6 h-6 mr-3" />
+            className="flex items-center rounded-lg bg-yellow-100 p-4 text-yellow-800 shadow-md">
+            <InfoIcon className="mr-3 h-6 w-6" />
             <AlertDescription className="text-sm">
               سيتم إضافة هذه الميزة قريباً للمشتركين
             </AlertDescription>
@@ -133,11 +133,11 @@ const Overview = () => {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-xl font-semibold mb-4">توزيع المعاملات</h3>
+          <h3 className="mb-4 text-xl font-semibold">توزيع المعاملات</h3>
           <Alert
             variant="info"
-            className="flex items-center bg-yellow-100 text-yellow-800 p-4 rounded-lg shadow-md">
-            <InfoIcon className="w-6 h-6 mr-3" />
+            className="flex items-center rounded-lg bg-yellow-100 p-4 text-yellow-800 shadow-md">
+            <InfoIcon className="mr-3 h-6 w-6" />
             <AlertDescription className="text-sm">
               سيتم إضافة هذه الميزة قريباً للمشتركين
             </AlertDescription>

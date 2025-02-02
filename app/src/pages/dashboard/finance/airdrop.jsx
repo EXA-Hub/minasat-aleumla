@@ -131,7 +131,7 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
           <button
             type="submit"
             disabled={loading}
-            className="h-10 w-full rounded-md bg-blue-500 text-primary-foreground hover:bg-blue-900 disabled:opacity-50">
+            className="h-10 w-full rounded-md bg-primary text-primary-foreground hover:bg-primary disabled:opacity-50">
             {loading ? 'جاري الإنشاء...' : 'إنشاء الهدية'}
           </button>
           <span className="text-xs text-red-700">سيتم فرض الرسوم</span>
@@ -200,7 +200,7 @@ const AirdropPage = () => {
         <h2 className="text-3xl font-bold">الهدايا المتاحة</h2>
         <button
           onClick={() => setDialogOpen(true)}
-          className="rounded-md bg-blue-500 px-4 py-2 text-primary-foreground hover:bg-blue-900">
+          className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary">
           إنشاء هدية جديدة
         </button>
       </div>
@@ -222,7 +222,7 @@ const AirdropPage = () => {
             </CardHeader>
             <CardContent>
               {gift.url && (
-                <a className="mb-4 block text-blue-500 hover:underline">
+                <a className="mb-4 block text-primary hover:underline">
                   ثمة تفاصيل إضافية
                 </a>
               )}
@@ -234,7 +234,7 @@ const AirdropPage = () => {
               <button
                 onClick={() => handleGiftClaim(gift)}
                 disabled={claimingId === gift.id || gift.claimed}
-                className="rounded-md bg-blue-500 px-4 py-2 text-primary-foreground hover:bg-blue-900 disabled:opacity-50">
+                className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary disabled:opacity-50">
                 {claimingId === gift.id
                   ? 'جاري تقديم الهدية...'
                   : gift.claimed

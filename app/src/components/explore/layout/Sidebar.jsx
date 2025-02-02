@@ -23,9 +23,8 @@ const SidebarContent = () => {
           <div key={section.id} className="rounded-xl backdrop-blur-sm">
             <button
               onClick={() => toggleSection(section.id)}
-              className="flex items-center justify-between w-full p-3 text-right rounded-lg hover:bg-primary/5 transition-all duration-300"
-            >
-              <span className="font-medium text-foreground/90">
+              className="flex w-full items-center justify-between rounded-lg p-3 text-right transition-all duration-300 hover:bg-5primary">
+              <span className="text-foreground/90 font-medium">
                 {section.title}
               </span>
               <ChevronDown
@@ -39,19 +38,17 @@ const SidebarContent = () => {
                 !collapsedSections[section.id]
                   ? 'max-h-[1000px] opacity-100'
                   : 'max-h-0 opacity-0'
-              }`}
-            >
+              }`}>
               <div className="space-y-1 p-2">
                 {section.items.map((item) => (
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-300 ${
+                    className={`flex items-center gap-3 rounded-lg px-4 py-2.5 transition-all duration-300 ${
                       isActive(item.path)
-                        ? 'bg-primary/10 text-primary shadow-lg shadow-primary/20'
-                        : 'hover:bg-primary/5 text-foreground/70 hover:text-foreground'
-                    }`}
-                  >
+                        ? 'bg-10primary text-primary shadow-lg shadow-20primary'
+                        : 'text-foreground/70 hover:bg-5primary hover:text-foreground'
+                    }`}>
                     <item.icon
                       className={`h-5 w-5 transition-transform duration-300 ${
                         isActive(item.path) ? 'scale-110' : ''
@@ -72,7 +69,7 @@ const SidebarContent = () => {
 const Sidebar = () => {
   return (
     <div className="fixed right-4 top-4 h-[calc(100vh-2rem)] w-72">
-      <div className="h-full rounded-2xl bg-background/30 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] overflow-hidden">
+      <div className="bg-background/30 h-full overflow-hidden rounded-2xl border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-xl">
         <SidebarContent />
       </div>
     </div>

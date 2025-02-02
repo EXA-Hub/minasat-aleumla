@@ -21,36 +21,36 @@ import api from '../../../utils/api.js';
 const ProductForm = ({ product, onSubmit, onCancel }) => (
   <form onSubmit={onSubmit} className="space-y-4">
     <div>
-      <label className="block text-sm font-medium mb-2">اسم المنتج</label>
+      <label className="mb-2 block text-sm font-medium">اسم المنتج</label>
       <input
         type="text"
         name="name"
         defaultValue={product?.name}
-        className="w-full p-2 border rounded-md bg-[var(--background)]"
+        className="w-full rounded-md border bg-[var(--background)] p-2"
         required
       />
     </div>
     <div>
-      <label className="block text-sm font-medium mb-2">
+      <label className="mb-2 block text-sm font-medium">
         الوصف{' '}
-        <Link to="/markdown" className="text-blue-500 hover:underline">
+        <Link to="/markdown" className="text-primary hover:underline">
           (Markdown)
         </Link>
       </label>
       <textarea
         name="description"
         defaultValue={product?.description}
-        className="w-full p-2 border rounded-md bg-[var(--background)] h-64 font-mono"
+        className="h-64 w-full rounded-md border bg-[var(--background)] p-2 font-mono"
         required
       />
     </div>
     <div>
-      <label className="block text-sm font-medium mb-2">السعر</label>
+      <label className="mb-2 block text-sm font-medium">السعر</label>
       <input
         type="number"
         name="price"
         defaultValue={product?.price}
-        className="w-full p-2 border rounded-md bg-[var(--background)]"
+        className="w-full rounded-md border bg-[var(--background)] p-2"
         required
         min="0"
       />
@@ -58,13 +58,13 @@ const ProductForm = ({ product, onSubmit, onCancel }) => (
     <div className="flex gap-4">
       <button
         type="submit"
-        className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+        className="flex-1 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
         {product?.isNew ? 'إضافة منتج' : 'تحديث المنتج'}
       </button>
       <button
         type="button"
         onClick={onCancel}
-        className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">
+        className="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-800 hover:bg-gray-300">
         إلغاء
       </button>
     </div>
@@ -201,7 +201,7 @@ const ProductsPage = () => {
   const SortButton = ({ field, children }) => (
     <button
       onClick={() => handleSort(field)}
-      className="flex items-center gap-2 px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded">
+      className="flex items-center gap-2 rounded px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800">
       {children}
       {sortField === field && (
         <ArrowUpDown
@@ -218,28 +218,28 @@ const ProductsPage = () => {
 
   if (loading)
     return (
-      <div className="h-[50vh] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="flex h-[50vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
 
   return (
     <div dir="rtl" className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold">
           منتجاتي ({products.length}/{plan.slots})
         </h2>
         <button
           onClick={() => setSelectedProduct({ isNew: true })}
           disabled={products.length >= plan.slots}
-          className="flex items-center gap-2 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50">
+          className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary disabled:opacity-50">
           <Plus className="h-5 w-5" />
           <span>إضافة منتج</span>
         </button>
       </div>
 
       <Card className="overflow-hidden">
-        <div className="p-4 border-b flex justify-end gap-4">
+        <div className="flex justify-end gap-4 border-b p-4">
           <SortButton field="price">السعر</SortButton>
           <SortButton field="openTrades">الصفقات المفتوحة</SortButton>
         </div>
@@ -248,18 +248,18 @@ const ProductsPage = () => {
           {products.map((product) => (
             <div
               key={product._id}
-              className={`p-4 flex flex-col sm:flex-row sm:items-center gap-4 cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 ${
+              className={`flex cursor-pointer flex-col gap-4 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 sm:flex-row sm:items-center ${
                 selectedProduct?._id === product._id
-                  ? 'bg-blue-50 dark:bg-blue-900'
+                  ? 'bg-primary dark:bg-primary'
                   : ''
               }`}
               onClick={() => setSelectedProduct(product)}>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold truncate">{product.name}</h3>
+                  <h3 className="truncate font-semibold">{product.name}</h3>
                   <button
                     disabled={product.openTrades > 0}
-                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50"
+                    className="rounded p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleToggleLock(product);
@@ -272,7 +272,7 @@ const ProductsPage = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex flex-row justify-between sm:justify-end items-center gap-4 sm:gap-8">
+              <div className="flex flex-row items-center justify-between gap-4 sm:justify-end sm:gap-8">
                 <div className="flex items-center gap-2">
                   <ShoppingBag className="h-5 w-5" />
                   <span>{product.openTrades}</span>
@@ -287,7 +287,7 @@ const ProductsPage = () => {
                       setEditingProduct(product._id);
                     }}
                     disabled={!product.isLocked}
-                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50">
+                    className="rounded p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700">
                     <Edit className="h-5 w-5" />
                   </button>
                   <button
@@ -296,7 +296,7 @@ const ProductsPage = () => {
                       handleDelete(product);
                     }}
                     disabled={!product.isLocked}
-                    className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50">
+                    className="rounded p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700">
                     <Trash2 className="h-5 w-5" />
                   </button>
                 </div>
@@ -319,12 +319,12 @@ const ProductsPage = () => {
             />
           ) : (
             <div className="space-y-4">
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div>
                   <h3 className="text-2xl font-semibold">
                     {selectedProduct.name}
                   </h3>
-                  <div className="text-xl font-bold mt-2">
+                  <div className="mt-2 text-xl font-bold">
                     <CoinIcon amount={selectedProduct.price} />
                   </div>
                 </div>

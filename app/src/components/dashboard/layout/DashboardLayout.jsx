@@ -36,8 +36,8 @@ const DashboardLayout = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -49,7 +49,7 @@ const DashboardLayout = () => {
         isMobileNavOpen={isMobileNavOpen}
       />
       <Sidebar isOpen={isMobileNavOpen} />
-      <div className="lg:mr-64 pt-16 lg:pt-0">
+      <div className="pt-16 lg:mr-64 lg:pt-0">
         <Header user={user} />
         <main className="p-6">
           <Outlet context={{ user }} />

@@ -125,10 +125,10 @@ const LoginPage = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-background flex items-center justify-center p-4">
+      className="flex min-h-screen items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md p-8">
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold mb-2 text-foreground">
+          <h1 className="mb-2 text-2xl font-bold text-foreground">
             {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
@@ -137,14 +137,14 @@ const LoginPage = () => {
         </div>
 
         {error && (
-          <div className="mb-4 p-3 text-sm text-red-500 bg-red-100 dark:bg-red-900/20 rounded">
+          <div className="mb-4 rounded bg-red-100 p-3 text-sm text-red-500 dark:bg-red-900/20">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-2">
+            <label className="mb-2 block text-sm font-medium">
               اسم المستخدم
             </label>
             <input
@@ -152,8 +152,7 @@ const LoginPage = () => {
               name="username"
               value={formData.username}
               onChange={handleInputChange}
-              className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 
-                       bg-background text-foreground"
+              className="w-full rounded-md border border-gray-300 bg-background p-2 text-foreground dark:border-gray-600"
               required
               pattern="[A-Za-z0-9]+"
               title="فقط الأحرف والأرقام مسموح بها"
@@ -161,7 +160,7 @@ const LoginPage = () => {
           </div>
 
           <div className="relative">
-            <label className="block text-sm font-medium mb-2">
+            <label className="mb-2 block text-sm font-medium">
               كلمة المرور
             </label>
             <div className="relative">
@@ -170,16 +169,14 @@ const LoginPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 
-               bg-background text-foreground pr-10"
+                className="w-full rounded-md border border-gray-300 bg-background p-2 pr-10 text-foreground dark:border-gray-600"
                 required
                 minLength={8}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 
-                dark:text-gray-400 dark:hover:text-gray-200"
+                className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                 aria-label={
                   showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'
                 }>
@@ -190,7 +187,7 @@ const LoginPage = () => {
 
           {!isLogin && (
             <div className="relative">
-              <label className="block text-sm font-medium mb-2">
+              <label className="mb-2 block text-sm font-medium">
                 تأكيد كلمة المرور
               </label>
               <div className="relative">
@@ -199,16 +196,14 @@ const LoginPage = () => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 
-                 bg-background text-foreground pr-10"
+                  className="w-full rounded-md border border-gray-300 bg-background p-2 pr-10 text-foreground dark:border-gray-600"
                   required
                   minLength={8}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 
-                  dark:text-gray-400 dark:hover:text-gray-200"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   aria-label={
                     showConfirmPassword
                       ? 'إخفاء تأكيد كلمة المرور'
@@ -226,15 +221,14 @@ const LoginPage = () => {
 
           {show2FA && (
             <div>
-              <label className="block text-sm font-medium mb-2">
+              <label className="mb-2 block text-sm font-medium">
                 رمز المصادقة الثنائية
               </label>
               <input
                 type="text"
                 value={tfaCode}
                 onChange={(e) => setTfaCode(e.target.value)}
-                className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-600 
-                     bg-background text-foreground"
+                className="w-full rounded-md border border-gray-300 bg-background p-2 text-foreground dark:border-gray-600"
                 required
                 pattern="[0-9]{6}"
               />
@@ -242,7 +236,7 @@ const LoginPage = () => {
           )}
 
           {/* hCaptcha */}
-          <div className="flex justify-center my-6">
+          <div className="my-6 flex justify-center">
             <HCaptcha
               ref={captchaRef} // Attach the ref to the HCaptcha component
               sitekey="3afe6d04-5c50-4094-8306-6350c67e250c"
@@ -261,7 +255,7 @@ const LoginPage = () => {
                 id="acceptTerms"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="mt-1 w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2 ml-2"
+                className="ml-2 mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
                 required
               />
               <label
@@ -272,7 +266,7 @@ const LoginPage = () => {
                   to="/terms"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500">
+                  className="text-primary hover:text-primary hover:underline dark:text-primary dark:hover:text-primary">
                   الشروط والأحكام
                 </Link>{' '}
                 و{' '}
@@ -280,7 +274,7 @@ const LoginPage = () => {
                   to="/privacy-policy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 hover:underline dark:text-blue-400 dark:hover:text-blue-500">
+                  className="text-primary hover:text-primary hover:underline dark:text-primary dark:hover:text-primary">
                   سياسة الخصوصية
                 </Link>
               </label>
@@ -289,7 +283,7 @@ const LoginPage = () => {
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full bg-primary hover:bg-primary"
             disabled={isLoading}>
             {isLoading
               ? 'جاري التحميل...'
@@ -307,7 +301,7 @@ const LoginPage = () => {
               setError('');
               setFormData({ username: '', password: '', confirmPassword: '' });
             }}
-            className="text-blue-600 hover:underline">
+            className="text-primary hover:underline">
             {isLogin
               ? 'ليس لديك حساب؟ سجل الآن'
               : 'لديك حساب بالفعل؟ سجل دخولك'}
@@ -315,12 +309,12 @@ const LoginPage = () => {
         </div>
         <button
           onClick={() => navigate('/recoverAccount')}
-          className="mt-4 text-gray-600 dark:text-gray-300 hover:underline text-sm block mx-auto">
+          className="mx-auto mt-4 block text-sm text-gray-600 hover:underline dark:text-gray-300">
           هل فقدت حسابك؟
         </button>
         <button
           onClick={() => navigate('/')}
-          className="mt-4 text-gray-600 dark:text-gray-300 hover:underline text-sm block mx-auto">
+          className="mx-auto mt-4 block text-sm text-gray-600 hover:underline dark:text-gray-300">
           العودة إلى الصفحة الرئيسية
         </button>
       </Card>
