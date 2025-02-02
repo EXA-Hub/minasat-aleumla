@@ -7,28 +7,28 @@ import { DayPicker } from 'react-day-picker';
 const customStyles = `
   .my-selected:not([disabled]) { 
     font-weight: bold; 
-    border: 2px solid #3b82f6;
-    background-color: #bfdbfe;
-    color: #1e40af;
+    border: 2px solid var(--primary);
+    background-color: var(--muted);
+    color: var(--accent);
   }
   
   .my-selected:hover:not([disabled]) { 
-    background-color: #93c5fd;
+    background-color: var(--border);
   }
   
   .my-range_start:not([disabled]) {
-    background-color: #3b82f6 !important;
+    background-color: var(--primary); !important;
     color: white !important;
   }
   
   .my-range_end:not([disabled]) {
-    background-color: #3b82f6 !important;
+    background-color: var(--primary); !important;
     color: white !important;
   }
   
   .my-range_middle:not([disabled]) {
-    background-color: #bfdbfe;
-    color: #1e40af;
+    background-color: var(--muted);
+    color: var(--accent);
   }
 `;
 
@@ -53,7 +53,7 @@ function Calendar({ selected, onSelect, mode = 'single' }) {
           range_end: 'my-range_end',
           range_middle: 'my-range_middle',
         }}
-        className="p-5 rounded-lg border"
+        className="rounded-lg border bg-background p-5 shadow-sm transition-shadow duration-200 hover:shadow-md"
       />
     </>
   );

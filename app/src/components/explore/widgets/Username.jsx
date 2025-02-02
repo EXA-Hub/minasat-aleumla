@@ -9,8 +9,7 @@ const Username = ({ username }) => {
   return (
     <span
       onClick={openProfile}
-      className="cursor-pointer hover:shadow-lg hover:text-blue-500 transition duration-200 ease-in-out"
-    >
+      className="cursor-pointer transition duration-200 ease-in-out hover:text-primary hover:shadow-lg">
       {username}@
     </span>
   );
