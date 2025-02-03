@@ -7,53 +7,19 @@ if (!process.env.coinsAmount || !process.env.usdsAmount)
 else if (isNaN(process.env.coinsAmount) || isNaN(process.env.usdsAmount))
   throw new Error('Invalid environment variables: coinsAmount, usdsAmount');
 
-const { coinsAmount, usdsAmount } = process.env; // Use defaults if missing
-
-// Exchange rates usd to other currencies
-const EXCHANGE_Rates = {
-  oneUsdToBtcRate: 1 / 100000,
-};
+const { coinsAmount, usdsAmount } = process.env;
 
 // Conversion rates object for multiple currencies
 const conversionRates = {
   coinToUsdtRate: usdsAmount / coinsAmount, // MAIN usd/coin rate
-  coinToBtcRate: (EXCHANGE_Rates.oneUsdToBtcRate * usdsAmount) / coinsAmount,
-  coinToXmnRate: 1,
 };
-
-const coins = [
-  1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000,
-];
-
-// Function to convert coins to various currencies
-const convertCoins = (coins) => {
-  return coins.map((coinAmount) => {
-    const convertedRates = {};
-
-    // Dynamically calculate conversion for each currency in the conversionRates object
-    for (const [currency, rate] of Object.entries(conversionRates)) {
-      const currencyName = currency.replace('coinTo', '').replace('Rate', ''); // Get currency name (e.g. 'usd')
-      convertedRates[currencyName] = parseFloat(
-        (coinAmount * rate).toFixed(
-          currencyName.toLocaleLowerCase() === 'btc' ? 8 : 2
-        )
-      );
-    }
-
-    return {
-      coins: coinAmount,
-      ...convertedRates,
-    };
-  });
-};
-
-// Generate the array of objects with the conversions
-const convertedCoins = convertCoins(coins);
-
-// how much usd i gain for 1000 daily task the user do
+// how much usd i gain for 1000 daily task the users do
 const UsdtoDaily = 6 / 1000;
-const CoinstoDaily = UsdtoDaily * (1 / conversionRates.coinToUsdtRate);
+// how much coins i gain for 1 daily task the users do
+const CoinstoDaily = UsdtoDaily / conversionRates.coinToUsdtRate;
+// the dailyBonus is static amount
 const dailyBonus = Math.floor(CoinstoDaily / 10 - CoinstoDaily / 40);
+// the dailyQuarter is random range
 const dailyQuarter = Math.floor(CoinstoDaily / 4 - dailyBonus);
 
 const plans = {
@@ -180,8 +146,8 @@ export default {
       days: 30,
     },
   },
-  rates: convertedCoins,
   subscriptions: plans,
+  conversionRates,
   badges,
   apps: [
     discordApp,
