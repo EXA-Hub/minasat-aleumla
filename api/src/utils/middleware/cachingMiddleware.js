@@ -10,7 +10,9 @@ function generateCacheKey(req) {
     query: req.query,
     body: req.body,
     params: req.params,
-    token: req.headers['authorization'],
+    ...(req.path.includes('/public/')
+      ? {}
+      : { token: req.headers['authorization'] }),
   };
   return createHash('sha256').update(JSON.stringify(keyData)).digest('hex');
 }

@@ -72,8 +72,6 @@ const { subscriptions } = config;
 const generateCode = () =>
   String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
 
-import ProxyCheck from 'proxycheck-ts';
-
 router.get(
   '/@me/daily',
   blockVpnProxy,
@@ -90,17 +88,12 @@ router.get(
     try {
       const { host } = req.query;
       const { clientIp } = req;
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const ipRecord = await DailyIp.findOne({
-        ip: clientIp,
-      });
-      if (ipRecord) {
-        const lastClaimDate = new Date(ipRecord.updatedAt);
-        lastClaimDate.setHours(0, 0, 0, 0);
-        if (lastClaimDate.getTime() === today.getTime())
-          return res.status(200).json({ dailyUrl: ipRecord.url });
-      }
+      const ipRecord = await DailyIp.findOne({ ip: clientIp });
+      if (
+        ipRecord &&
+        ipRecord.updatedAt > new Date(Date.now() - 24 * 60 * 60 * 1000)
+      )
+        return res.status(200).json({ dailyUrl: ipRecord.url });
       const code = generateCode();
       const shortUrl = await generateShortURL(`${host}?dailyCode=${code}`);
       const redisClient = await getRedisClient();
@@ -132,7 +125,8 @@ router.get(
       const { dailyCode } = req.query;
       const { clientIp } = req;
       const entry = JSON.parse(await redisClient.get(`tempCode:${clientIp}`));
-      if (!entry) return res.status(400).json({ error: 'لا توجد هدايا' });
+      if (!entry)
+        return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
       await redisClient.del(`tempCode:${clientIp}`);
       if (entry.code !== dailyCode)
         return res.status(400).json({ error: 'رمز غير صحيح' });

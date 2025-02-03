@@ -1,14 +1,10 @@
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from '../../../components/ui/card';
-import CoinIcon from '../../../components/ui/CoinIcon';
-import { useEffect, useState } from 'react';
+// app/src/pages/dashboard/finance/tasks.jsx
+import Confetti from 'react-confetti';
 import { toast } from 'react-hot-toast';
-import api from '../../../utils/api';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import CoinIcon from '../../../components/ui/CoinIcon';
+import api from '../../../utils/api';
 import {
   Dialog,
   DialogTrigger,
@@ -16,7 +12,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../../components/ui/dialog';
-import Confetti from 'react-confetti';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from '../../../components/ui/card';
 
 const TasksPage = () => {
   const [size, setSize] = useState({
@@ -36,17 +37,15 @@ const TasksPage = () => {
   useEffect(() => {
     const dailyCode = searchParams.get('dailyCode');
     navigate(window.location.pathname);
-    if (dailyCode) {
-      const verifyDaily = async () => {
-        try {
-          const { message, daily } = await api.tasks.verifyDaily(dailyCode);
-          setDialogData({ open: true, message, daily });
-        } catch (error) {
-          toast.error(error.data?.error || 'حدث خطأ ما');
-        }
-      };
-      verifyDaily();
-    }
+    const verifyDaily = async () => {
+      try {
+        const { message, daily } = await api.tasks.verifyDaily(dailyCode);
+        setDialogData({ open: true, message, daily });
+      } catch (error) {
+        toast.error(error.data?.error || 'حدث خطأ ما');
+      }
+    };
+    if (dailyCode) verifyDaily();
     function handleResize() {
       setSize({
         width: window.innerWidth,

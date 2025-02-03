@@ -62,11 +62,8 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
     return baseCost + (baseCost * fee) / 100;
   };
 
-  const canAfford = () => {
-    return (
-      user?.balance >= calculateTotal() * (action === 'generate' ? quantity : 1)
-    );
-  };
+  const canAfford = () =>
+    user?.balance >= calculateTotal() * (action === 'generate' ? quantity : 1);
 
   useEffect(() => {
     if (!user) navigate('/login');
@@ -171,46 +168,26 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid grid-cols-2 gap-4">
-            <button
-              type="button"
-              onClick={() => setAction('subscribe')}
-              className={`rounded-lg p-3 font-semibold transition-colors ${
-                action === 'subscribe'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-muted/80 bg-muted'
-              }`}>
-              اشتراك جديد
-            </button>
-            <button
-              type="button"
-              onClick={() => setAction('code')}
-              className={`rounded-lg p-3 font-semibold transition-colors ${
-                action === 'code'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-muted/80 bg-muted'
-              }`}>
-              استخدام كود
-            </button>
-            <button
-              type="button"
-              onClick={() => setAction('generate')}
-              className={`rounded-lg p-3 font-semibold transition-colors ${
-                action === 'generate'
-                  ? 'bg-primary text-primary-foreground'
-                  : 'hover:bg-muted/80 bg-muted'
-              }`}>
-              إنشاء كود
-            </button>
-            <button
-              type="button"
-              onClick={() => setAction('cancel')}
-              className={`rounded-lg p-3 font-semibold transition-colors ${
-                action === 'cancel'
-                  ? 'bg-red-600 text-foreground'
-                  : 'bg-muted hover:bg-opacity-80'
-              }`}>
-              إلغاء الاشتراك
-            </button>
+            {[
+              { key: 'subscribe', label: 'اشتراك جديد' },
+              { key: 'code', label: 'استخدام كود' },
+              { key: 'generate', label: 'إنشاء كود' },
+              { key: 'cancel', label: 'إلغاء الاشتراك', danger: true },
+            ].map(({ key, label, danger }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setAction(key)}
+                className={`rounded-lg p-3 font-semibold transition-colors ${
+                  action === key
+                    ? danger
+                      ? 'bg-red-600 text-foreground'
+                      : 'bg-primary text-primary-foreground'
+                    : 'hover:bg-muted/80 bg-muted'
+                }`}>
+                {label}
+              </button>
+            ))}
           </div>
 
           {action === 'code' && (
@@ -256,11 +233,13 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
 
           <button
             type="submit"
-            disabled={loading || !canAfford()}
-            className={`w-full rounded-lg p-6 text-lg font-bold transition-all duration-300 disabled:opacity-50 ${
+            disabled={
+              loading || !['code', 'cancel'].includes(action) & !canAfford()
+            }
+            className={`w-full rounded-lg p-6 text-lg font-bold transition-all duration-300 hover:opacity-80 disabled:opacity-50 ${
               action === 'cancel'
-                ? 'bg-red text-foreground'
-                : 'bg-primary text-primary-foreground hover:opacity-80'
+                ? 'text-foreground'
+                : 'bg-primary text-primary-foreground'
             }`}>
             {loading ? 'جاري التنفيذ...' : 'تأكيد'}
           </button>
