@@ -174,8 +174,13 @@ const Wallet = () => {
               className="rounded bg-background text-foreground text-primary focus:ring-primary"
             />
             <label htmlFor="payFee" className="text-sm">
-              دفع الرسوم ({formData.amount ? calculateFee(formData.amount) : 0}{' '}
-              عملة)
+              سيتم سحب (
+              {parseInt(formData.amount) +
+                (formData.payFee ? calculateFee(formData.amount) : 0)}
+              ) من رصيدك وإرسال (
+              {parseInt(formData.amount) -
+                (formData.payFee ? 0 : calculateFee(formData.amount))}
+              ) للمستلم
             </label>
             <div className="rounded-lg bg-background p-4 text-sm text-foreground">
               الرسوم: {fee}% ={' '}

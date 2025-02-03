@@ -92,7 +92,7 @@ const menuItems = [
     title: 'ملوك المنصة 👑',
     items: [
       {
-        name: 'أغنى الأشخاص',
+        name: 'أغنى الأثرياء',
         icon: TrendingUp,
         path: '/explore/richest',
         component: React.lazy(
