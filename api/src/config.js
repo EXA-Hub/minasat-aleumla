@@ -9,14 +9,12 @@ else if (isNaN(process.env.coinsAmount) || isNaN(process.env.usdsAmount))
 
 const { coinsAmount, usdsAmount } = process.env;
 
-// Conversion rates object for multiple currencies
-const conversionRates = {
-  coinToUsdtRate: usdsAmount / coinsAmount, // MAIN usd/coin rate
-};
+// Conversion rates of usd to coins
+const coinToUsdRate = usdsAmount / coinsAmount; // MAIN usd/coin rate
 // how much usd i gain for 1000 daily task the users do
 const UsdtoDaily = 6 / 1000;
 // how much coins i gain for 1 daily task the users do
-const CoinstoDaily = UsdtoDaily / conversionRates.coinToUsdtRate;
+const CoinstoDaily = UsdtoDaily / coinToUsdRate;
 // the dailyBonus is static amount
 const dailyBonus = Math.floor(CoinstoDaily / 10 - CoinstoDaily / 40);
 // the dailyQuarter is random range
@@ -147,7 +145,15 @@ export default {
     },
   },
   subscriptions: plans,
-  conversionRates,
+  exchange: {
+    coinToUsdRate,
+    minUsd: 10,
+    maxUsd: 1000,
+    currencies: new Map([
+      ['bitcoin', 'bc1qskt7x7vsdnkleelahy83mzl78z6nfjrdwjq0le'],
+      ['tether', false],
+    ]),
+  },
   badges,
   apps: [
     discordApp,

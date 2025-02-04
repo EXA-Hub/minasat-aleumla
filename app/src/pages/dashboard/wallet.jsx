@@ -1,6 +1,6 @@
 // src/pages/dashboard/wallet.jsx
 import { useState, useEffect } from 'react';
-import { Send, AlertTriangle, InfoIcon } from 'lucide-react';
+import { Send, InfoIcon } from 'lucide-react';
 import {
   LineChart,
   Line,
@@ -19,8 +19,6 @@ import CoinIcon from '../../components/ui/CoinIcon';
 import { Card } from '../../components/ui/card';
 
 const Wallet = () => {
-  const [activeTab, setActiveTab] = useState('buy');
-  const [rates, setRates] = useState([]);
   const [dailyData] = useState([
     { day: 'السبت', balance: 1200 },
     { day: 'الأحد', balance: 1350 },
@@ -35,12 +33,7 @@ const Wallet = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [ratesData, balanceData] = await Promise.all([
-        walletService.getRates(),
-        walletService.getBalance(),
-      ]);
-
-      setRates(ratesData);
+      const balanceData = await walletService.getBalance();
       setBalance(balanceData.balance);
       setFee(balanceData.fee);
     };
@@ -208,69 +201,6 @@ const Wallet = () => {
         </form>
       </Card>
 
-      <div className="space-y-6 p-6">
-        <div className="mb-6 flex gap-4">
-          <Button
-            onClick={() => setActiveTab('buy')}
-            className={`flex-1 ${activeTab === 'buy' ? 'bg-primary' : 'bg-gray-200 text-gray-800'}`}>
-            شراء عملات
-          </Button>
-          <Button
-            onClick={() => setActiveTab('sell')}
-            className={`flex-1 ${activeTab === 'sell' ? 'bg-primary' : 'bg-gray-200 text-gray-800'}`}>
-            بيع عملات
-          </Button>
-        </div>
-        <Alert
-          variant="warning"
-          className="flex items-center rounded-lg bg-yellow-100 p-4 text-yellow-800 shadow-md">
-          <AlertTriangle className="mr-3 h-6 w-6" />
-          <AlertDescription className="text-sm">
-            شامل الضريبة التحويلية
-          </AlertDescription>
-        </Alert>
-        <div className="grid gap-4 md:grid-cols-2">
-          {rates.map((rate) => (
-            <Card
-              key={rate.coins}
-              className="transition-shadow hover:shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  {Object.keys(rate).length < 6 ? (
-                    Object.keys(rate)
-                      .filter((key) => key !== 'coins') // Exclude the coins property from display
-                      .map((currency) => {
-                        return (
-                          <span key={currency}>
-                            {rate[currency]} {currency.toUpperCase()}
-                          </span>
-                        );
-                      })
-                  ) : (
-                    <div className="flex max-w-full flex-wrap gap-4 overflow-auto">
-                      {Object.keys(rate)
-                        .filter((key) => key !== 'coins')
-                        .map((currency) => (
-                          <span
-                            key={currency}
-                            className="max-w-[150px] rounded-lg bg-muted p-1 text-center text-sm font-bold">
-                            {rate[currency]} {currency.toUpperCase()}
-                          </span>
-                        ))}
-                    </div>
-                  )}
-                  <CoinIcon amount={rate.coins} />
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full bg-primary">
-                  {activeTab === 'buy' ? 'شراء' : 'بيع'}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
       <div className="space-y-6 p-6">
         <Card>
           <Alert

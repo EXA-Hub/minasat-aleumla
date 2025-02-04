@@ -1,10 +1,41 @@
 import { useState, useRef } from 'react';
 import HCaptcha from '@hcaptcha/react-hcaptcha';
 import { useNavigate, Link } from 'react-router-dom';
-import { ArrowRight, Eye, EyeOff } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
 import { Card } from '../components/ui/card';
 import api from '../utils/api';
+
+function generatePassword(length = 12) {
+  const lowerCaseChars = 'abcdefghijklmnopqrstuvwxyz';
+  const upperCaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const numbers = '0123456789';
+  const symbols = '!@#$%^&*()-_=+[]{}|;:,.<>?/';
+
+  const allChars = lowerCaseChars + upperCaseChars + numbers + symbols;
+
+  let password = '';
+
+  // Ensure the password has at least one of each type
+  password += lowerCaseChars[Math.floor(Math.random() * lowerCaseChars.length)];
+  password += upperCaseChars[Math.floor(Math.random() * upperCaseChars.length)];
+  password += numbers[Math.floor(Math.random() * numbers.length)];
+  password += symbols[Math.floor(Math.random() * symbols.length)];
+
+  // Add remaining random characters to meet the length requirement (minimum 8 characters)
+  for (let i = password.length; i < length; i++) {
+    password += allChars[Math.floor(Math.random() * allChars.length)];
+  }
+
+  // Shuffle the password to ensure randomness
+  password = password
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('');
+
+  return password;
+}
 
 const LoginPage = () => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -147,7 +178,7 @@ const LoginPage = () => {
             <label className="mb-2 block text-sm font-medium">
               اسم المستخدم
             </label>
-            <input
+            <Input
               type="text"
               name="username"
               value={formData.username}
@@ -160,11 +191,43 @@ const LoginPage = () => {
           </div>
 
           <div className="relative">
-            <label className="mb-2 block text-sm font-medium">
+            <label className="mb-2 block flex items-center gap-2 text-sm font-medium">
               كلمة المرور
+              {!isLogin && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const length =
+                        parseInt(
+                          document.getElementById('passwordLength').value
+                        ) || 12;
+                      const newPassword = generatePassword(
+                        Math.max(8, Math.min(32, length))
+                      );
+                      setFormData((prev) => ({
+                        ...prev,
+                        password: newPassword,
+                        confirmPassword: newPassword,
+                      }));
+                    }}
+                    className="inline-flex items-center text-primary hover:text-80primary">
+                    <RefreshCw size={16} className="mx-1" />
+                    توليد كلمة مرور:
+                  </button>
+                  <Input
+                    type="number"
+                    min="8"
+                    max="32"
+                    defaultValue={12}
+                    className="w-16 rounded-none border-none bg-transparent px-0 text-sm focus:outline-none focus:ring-0 focus:ring-offset-0"
+                    id="passwordLength"
+                  />
+                </>
+              )}
             </label>
             <div className="relative">
-              <input
+              <Input
                 type={showPassword ? 'text' : 'password'}
                 name="password"
                 value={formData.password}
@@ -191,7 +254,7 @@ const LoginPage = () => {
                 تأكيد كلمة المرور
               </label>
               <div className="relative">
-                <input
+                <Input
                   type={showConfirmPassword ? 'text' : 'password'}
                   name="confirmPassword"
                   value={formData.confirmPassword}
@@ -224,7 +287,7 @@ const LoginPage = () => {
               <label className="mb-2 block text-sm font-medium">
                 رمز المصادقة الثنائية
               </label>
-              <input
+              <Input
                 type="text"
                 value={tfaCode}
                 onChange={(e) => setTfaCode(e.target.value)}
@@ -250,12 +313,12 @@ const LoginPage = () => {
 
           {!isLogin && (
             <div className="flex items-start space-x-3">
-              <input
+              <Input
                 type="checkbox"
                 id="acceptTerms"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="ml-2 mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
+                className="ml-2 mt-1 h-4 w-4 max-w-fit rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
                 required
               />
               <label

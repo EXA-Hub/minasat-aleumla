@@ -60,6 +60,7 @@ export const configureSecurityMiddleware = (app) => {
   app.use(
     cors({
       origin: [
+        'http://localhost:5173',
         'http://192.168.100.45:5173',
         'https://minasat-aleumla.vercel.app',
       ],

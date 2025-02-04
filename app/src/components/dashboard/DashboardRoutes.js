@@ -19,6 +19,7 @@ import {
   Link2Icon,
   LinkIcon,
   Briefcase,
+  Repeat,
 } from 'lucide-react';
 
 const menuItems = [
@@ -45,6 +46,12 @@ const menuItems = [
         icon: DollarSign,
         path: '/dashboard/wallet',
         component: React.lazy(() => import('../../pages/dashboard/wallet')),
+      },
+      {
+        name: 'المقاصة',
+        icon: Repeat,
+        path: '/dashboard/exchange',
+        component: React.lazy(() => import('../../pages/dashboard/exchange')),
       },
     ],
   },

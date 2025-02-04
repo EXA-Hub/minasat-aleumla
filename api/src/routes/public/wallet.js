@@ -3,37 +3,26 @@ import { Router } from 'express';
 const router = Router();
 
 import config from '../../config.js';
-const { conversionRates } = config;
+const { exchange } = config;
 
 // Use a regex to capture the user parameter correctly
-router.get('/walletRates', (req, res) => {
-  const coins = [
-    1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000,
-  ];
-
-  // Function to convert coins to various currencies
-  const convertCoins = (coins) => {
-    return coins.map((coinAmount) => {
-      const convertedRates = {};
-
-      // Dynamically calculate conversion for each currency in the conversionRates object
-      for (const [currency, rate] of Object.entries(conversionRates)) {
-        const currencyName = currency.replace('coinTo', '').replace('Rate', ''); // Get currency name (e.g. 'usd')
-        convertedRates[currencyName] = parseFloat(
-          (coinAmount * rate).toFixed(
-            currencyName.toLocaleLowerCase() === 'btc' ? 8 : 2
-          )
-        );
-      }
-
-      return {
-        coins: coinAmount,
-        ...convertedRates,
-      };
+router.get('/walletRates', async (req, res) => {
+  try {
+    res.send({
+      exchange,
+      currencies: Object.fromEntries(exchange.currencies.entries()),
+      data: await (
+        await fetch(
+          `https://api.coingecko.com/api/v3/simple/price?ids=${Array.from(
+            exchange.currencies.keys()
+          ).join(',')}&vs_currencies=usd`
+        )
+      ).json(),
     });
-  };
-
-  res.send(convertCoins(coins));
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'خطآ في الخادم' });
+  }
 });
 
 export default router;

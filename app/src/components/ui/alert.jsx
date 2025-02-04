@@ -67,4 +67,23 @@ const AlertDescription = forwardRef(
 
 AlertDescription.displayName = 'AlertDescription';
 
+import PropTypes from 'prop-types';
+
+Alert.propTypes = {
+  className: PropTypes.string,
+  variant: PropTypes.oneOf(['default', 'destructive', 'warning', 'info']),
+  children: PropTypes.node,
+  dir: PropTypes.oneOf(['auto', 'ltr', 'rtl']),
+};
+
+AlertTitle.propTypes = {
+  className: PropTypes.string,
+  dir: PropTypes.oneOf(['auto', 'ltr', 'rtl']),
+};
+
+AlertDescription.propTypes = {
+  className: PropTypes.string,
+  dir: PropTypes.oneOf(['auto', 'ltr', 'rtl']),
+};
+
 export { Alert, AlertTitle, AlertDescription };
