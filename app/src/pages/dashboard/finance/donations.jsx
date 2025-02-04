@@ -44,21 +44,12 @@ const DonationsPage = () => {
   };
 
   const handleCopy = (textToCopy) => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        toast.success('تم النسخ');
-      });
-    } else {
-      const textarea = document.createElement('textarea');
-      textarea.value = textToCopy;
-      document.body.appendChild(textarea);
-      textarea.select();
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textarea);
-
-      if (successful) {
-        toast.success('تم النسخ');
-      }
+    try {
+      navigator.clipboard.writeText(textToCopy);
+      toast.success('تم النسخ');
+    } catch (error) {
+      console.error(error);
+      toast.error('فشل النسخ');
     }
   };
   const copyDonationLink = async () => {

@@ -45,7 +45,7 @@ const CodesPage = () => {
         من فضلك{' '}
         <Link
           to="/login"
-          className="text-primary hover:underline transition-all duration-300">
+          className="text-primary transition-all duration-300 hover:underline">
           سجل دخول
         </Link>{' '}
         للوصول إلى هذه الصفحة.
@@ -53,18 +53,12 @@ const CodesPage = () => {
     );
 
   const copyToClipboard = async (code) => {
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(code).then(() => {
-        toast.success('تم النسخ');
-      });
-    } else {
-      const textarea = document.createElement('textarea');
-      textarea.value = code;
-      document.body.appendChild(textarea);
-      textarea.select();
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textarea);
-      if (successful) toast.success('تم النسخ');
+    try {
+      navigator.clipboard.writeText(code);
+      toast.success('تم النسخ');
+    } catch (error) {
+      console.error(error);
+      toast.error('فشل النسخ');
     }
   };
 
@@ -79,35 +73,35 @@ const CodesPage = () => {
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto" dir="rtl">
-      <div className="flex justify-between items-center mb-4">
+    <div className="mx-auto max-w-4xl p-6" dir="rtl">
+      <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold">الرموز</h1>
         <Button
-          className="p-2 hover:bg-muted rounded-full transition-colors"
+          className="rounded-full p-2 transition-colors hover:bg-muted"
           onClick={() =>
             copyToClipboard(codes.map((code) => code.code).join('\n'))
           }>
-          <Copy className="w-5 h-5 ml-1" />
+          <Copy className="ml-1 h-5 w-5" />
           <span>نسخ كل الرموز</span>
         </Button>
       </div>
 
       {loading && (
-        <div className="text-center p-4 animate-pulse">جاري التحميل...</div>
+        <div className="animate-pulse p-4 text-center">جاري التحميل...</div>
       )}
 
-      {error && <div className="text-red-500 text-center p-4">{error}</div>}
+      {error && <div className="p-4 text-center text-red-500">{error}</div>}
 
       <div className="grid gap-4">
         {codes.map((code, index) => (
           <Card
             key={code.code}
-            className="animate-slideUp hover:shadow-lg transition-all"
+            className="animate-slideUp transition-all hover:shadow-lg"
             style={{ animationDelay: `${index * 50}ms` }}>
             <CardContent className="p-4">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <div className="font-bold text-lg">{code.code}</div>
+                  <div className="text-lg font-bold">{code.code}</div>
                   <div className="text-sm text-muted-foreground">
                     الخطة: {planTranslations[code.plan]}
                   </div>
@@ -117,8 +111,8 @@ const CodesPage = () => {
                 </div>
                 <button
                   onClick={() => copyToClipboard(code.code)}
-                  className="p-2 hover:bg-muted rounded-full transition-colors">
-                  <Copy className="w-5 h-5" />
+                  className="rounded-full p-2 transition-colors hover:bg-muted">
+                  <Copy className="h-5 w-5" />
                 </button>
               </div>
             </CardContent>
@@ -129,13 +123,13 @@ const CodesPage = () => {
       {hasMore && !loading && (
         <button
           onClick={() => setPage((p) => p + 1)}
-          className="w-full mt-4 p-4 bg-muted rounded-lg hover:bg-muted/80 transition-colors">
+          className="hover:bg-muted/80 mt-4 w-full rounded-lg bg-muted p-4 transition-colors">
           تحميل المزيد
         </button>
       )}
 
       {!loading && codes.length === 0 && (
-        <div className="text-center p-8 text-muted-foreground">
+        <div className="p-8 text-center text-muted-foreground">
           لا توجد أكواد متاحة
         </div>
       )}

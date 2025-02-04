@@ -207,18 +207,8 @@ const MarkdownDisplay = ({
         const copyToClipboard = async () => {
           setCopied({ className, children });
           try {
-            if (navigator.clipboard) {
-              await navigator.clipboard.writeText(code);
-              toast.success('تم النسخ');
-            } else {
-              const textarea = document.createElement('textarea');
-              textarea.value = code;
-              document.body.appendChild(textarea);
-              textarea.select();
-              document.execCommand('copy');
-              document.body.removeChild(textarea);
-              toast.success('تم النسخ');
-            }
+            await navigator.clipboard.writeText(code);
+            toast.success('تم النسخ');
           } catch (error) {
             console.error('Failed to copy:', error);
             toast.error('فشل النسخ');

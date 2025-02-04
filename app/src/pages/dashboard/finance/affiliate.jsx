@@ -52,32 +52,14 @@ const AffiliatePage = () => {
   }
 
   const handleCopy = (textToCopy) => {
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(textToCopy)
-        .then(() => {
-          setCopyStatus('success');
-          setTimeout(() => setCopyStatus(null), 1000); // Reset after 1 second
-        })
-        .catch(() => {
-          setCopyStatus('failure');
-          setTimeout(() => setCopyStatus(null), 1000); // Reset after 1 second
-        });
-    } else {
-      const textarea = document.createElement('textarea');
-      textarea.value = textToCopy;
-      document.body.appendChild(textarea);
-      textarea.select();
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textarea);
-
-      if (successful) {
-        setCopyStatus('success');
-        setTimeout(() => setCopyStatus(null), 1000);
-      } else {
-        setCopyStatus('failure');
-        setTimeout(() => setCopyStatus(null), 1000);
-      }
+    try {
+      navigator.clipboard.writeText(textToCopy);
+      setCopyStatus('success');
+    } catch (error) {
+      setCopyStatus('failure');
+      console.error(error);
+    } finally {
+      setTimeout(() => setCopyStatus(null), 1000); // Reset after 1 second
     }
   };
 

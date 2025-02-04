@@ -104,29 +104,12 @@ const BackupCodesModal = ({ isOpen, onClose, codes }) => {
       ...codes,
     ].join('\n');
 
-    if (navigator.clipboard) {
-      navigator.clipboard
-        .writeText(textToCopy)
-        .then(() => {
-          toast.success('تم نسخ الرموز');
-        })
-        .catch((err) => {
-          toast.error('فشل النسخ: ' + err.message);
-        });
-    } else {
-      // Fallback for unsupported environments
-      const textarea = document.createElement('textarea');
-      textarea.value = textToCopy;
-      document.body.appendChild(textarea);
-      textarea.select();
-      try {
-        document.execCommand('copy');
-        toast.success('تم نسخ الرموز');
-      } catch (err) {
-        toast.error('فشل النسخ: ' + err.message);
-      } finally {
-        document.body.removeChild(textarea);
-      }
+    try {
+      navigator.clipboard.writeText(textToCopy);
+      toast.success('تم نسخ الرموز');
+    } catch (error) {
+      console.error(error);
+      toast.error('فشل النسخ');
     }
   };
 

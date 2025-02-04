@@ -22,14 +22,14 @@ function requireAppWs(app, ws) {
   const router = Router();
 
   // Get all products
-  router.get('/products/', async (req, res) => {
+  router.get('/products', async (req, res) => {
     try {
       const products = await Product.find({ userId: req.user._id }).select(
         '-commentsAndRatings'
       );
       const { slots, maxCoins } =
         subscriptions[req.user.tier].features.products;
-      res.json({ products, plan: { slots, maxCoins } });
+      res.status(200).json({ products, plan: { slots, maxCoins } });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'فشل في جلب المنتجات.' });
@@ -38,7 +38,7 @@ function requireAppWs(app, ws) {
 
   // Create a product
   router.post(
-    '/products/',
+    '/products',
     [
       body('name').trim().notEmpty().withMessage(validateMessages.name),
       body('description')
