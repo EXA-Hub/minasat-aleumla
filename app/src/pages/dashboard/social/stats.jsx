@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy } from 'react';
 import {
   DollarSign,
   Package,
@@ -6,18 +6,38 @@ import {
   TrendingUp,
   Loader2,
 } from 'lucide-react';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Area,
-  AreaChart,
-  Legend,
-} from 'recharts';
+
+const BarChart = lazy(() =>
+  import('recharts').then((module) => ({ default: module.BarChart }))
+);
+const Bar = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Bar }))
+);
+const XAxis = lazy(() =>
+  import('recharts').then((module) => ({ default: module.XAxis }))
+);
+const YAxis = lazy(() =>
+  import('recharts').then((module) => ({ default: module.YAxis }))
+);
+const CartesianGrid = lazy(() =>
+  import('recharts').then((module) => ({ default: module.CartesianGrid }))
+);
+const Tooltip = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Tooltip }))
+);
+const ResponsiveContainer = lazy(() =>
+  import('recharts').then((module) => ({ default: module.ResponsiveContainer }))
+);
+const Area = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Area }))
+);
+const AreaChart = lazy(() =>
+  import('recharts').then((module) => ({ default: module.AreaChart }))
+);
+const Legend = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Legend }))
+);
+
 import {
   PageTitle,
   SectionTitle,
@@ -31,8 +51,8 @@ import CoinIcon from '../../../components/ui/CoinIcon';
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload) return null;
   return (
-    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg p-4">
-      <p className="font-medium text-sm text-gray-900 dark:text-gray-100 mb-2">
+    <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+      <p className="mb-2 text-sm font-medium text-gray-900 dark:text-gray-100">
         {label}
       </p>
       <div className="space-y-1">
@@ -59,7 +79,7 @@ CustomTooltip.propTypes = {
 };
 
 const LoadingState = () => (
-  <div className="h-[50vh] flex flex-col items-center justify-center gap-4">
+  <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
     <Loader2 className="h-8 w-8 animate-spin text-primary" />
     <p className="text-muted-foreground">جاري تحميل البيانات...</p>
   </div>
@@ -127,8 +147,7 @@ const StatsPage = () => {
               : row.growth > 0
                 ? 'text-yellow-600'
                 : 'text-red-600'
-          }
-        >
+          }>
           {Math.abs(row.growth)}%{row.growth > 0 ? '+' : row.growth < 0 && '-'}
         </span>
       ),
@@ -137,12 +156,11 @@ const StatsPage = () => {
       header: 'الحالة',
       cell: (row) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-medium ${
+          className={`rounded-full px-2 py-1 text-xs font-medium ${
             row.status === 'نشط'
               ? 'bg-green-100 text-green-800'
               : 'bg-gray-100 text-gray-800'
-          }`}
-        >
+          }`}>
           {row.status}
         </span>
       ),
@@ -157,10 +175,10 @@ const StatsPage = () => {
   );
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
+    <div className="animate-in fade-in space-y-8 duration-500">
       <PageTitle>إحصائيات المبيعات</PageTitle>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
         <StatsCard
           icon={DollarSign}
           title="إجمالي الإيرادات"
@@ -187,14 +205,13 @@ const StatsPage = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <ChartContainer className="w-full h-full p-4 rounded-lg">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <ChartContainer className="h-full w-full rounded-lg p-4">
           <SectionTitle>تحليل الإيرادات</SectionTitle>
           <ResponsiveContainer width="100%" height={400}>
             <AreaChart
               data={salesData}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            >
+              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <defs>
                 {/* Gradient for Revenue */}
                 <linearGradient
@@ -202,8 +219,7 @@ const StatsPage = () => {
                   x1="0"
                   y1="0"
                   x2="0"
-                  y2="1"
-                >
+                  y2="1">
                   <stop offset="5%" stopColor="#1d4ed8" stopOpacity={0.1} />
                   <stop offset="95%" stopColor="#1d4ed8" stopOpacity={0} />
                 </linearGradient>
@@ -272,14 +288,13 @@ const StatsPage = () => {
           </ResponsiveContainer>
         </ChartContainer>
 
-        <ChartContainer className="w-full h-full p-4 rounded-lg">
+        <ChartContainer className="h-full w-full rounded-lg p-4">
           <SectionTitle>المبيعات حسب المنتج</SectionTitle>
           <ResponsiveContainer width="100%" height={400}>
             <BarChart
               data={productStats}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              barSize={40}
-            >
+              barSize={40}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis
                 dataKey="name"
@@ -305,7 +320,7 @@ const StatsPage = () => {
         </ChartContainer>
       </div>
 
-      <ChartContainer className="w-full h-full p-4 rounded-lg">
+      <ChartContainer className="h-full w-full rounded-lg p-4">
         <SectionTitle>أداء المنتجات</SectionTitle>
         <DataTable columns={columns} data={productStats} />
       </ChartContainer>

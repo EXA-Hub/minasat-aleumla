@@ -1,23 +1,9 @@
 // app/src/context/ThemeContext.jsx
-import { prefixer } from 'stylis';
 import PropTypes from 'prop-types';
-import createCache from '@emotion/cache';
-import rtlPlugin from 'stylis-plugin-rtl';
-import { CacheProvider } from '@emotion/react';
-import { createContext, useContext, useEffect, useState, useMemo } from 'react';
-import {
-  createTheme,
-  ThemeProvider as MUIThemeProvider,
-} from '@mui/material/styles';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useColors } from './ColorContext';
 
 const ThemeContext = createContext();
-
-// RTL cache configuration
-const cacheRtl = createCache({
-  key: 'muirtl',
-  stylisPlugins: [prefixer, rtlPlugin],
-});
 
 export function ThemeProvider({ children }) {
   const { templates } = useColors();
@@ -26,75 +12,6 @@ export function ThemeProvider({ children }) {
       return localStorage.getItem('theme') || 'light';
     return 'light';
   });
-
-  // Create MUI theme based on current mode and color templates
-  const theme = useMemo(() => {
-    const activeTemplate = templates[mode];
-
-    return createTheme({
-      direction: 'rtl',
-      palette: {
-        mode,
-        primary: {
-          main: activeTemplate.primary || '#1976d2',
-          light: activeTemplate.primaryLight || '#42a5f5',
-          dark: activeTemplate.primaryDark || '#1565c0',
-        },
-        secondary: {
-          main: activeTemplate.secondary || '#9c27b0',
-          light: activeTemplate.secondaryLight || '#ba68c8',
-          dark: activeTemplate.secondaryDark || '#7b1fa2',
-        },
-        background: {
-          default: mode === 'light' ? '#ffffff' : '#121212',
-          paper: mode === 'light' ? '#ffffff' : '#1e1e1e',
-        },
-        text: {
-          primary:
-            mode === 'light'
-              ? 'rgba(0, 0, 0, 0.87)'
-              : 'rgba(255, 255, 255, 0.87)',
-          secondary:
-            mode === 'light'
-              ? 'rgba(0, 0, 0, 0.6)'
-              : 'rgba(255, 255, 255, 0.6)',
-        },
-        error: {
-          main: activeTemplate.error || '#d32f2f',
-        },
-        warning: {
-          main: activeTemplate.warning || '#ed6c02',
-        },
-        info: {
-          main: activeTemplate.info || '#0288d1',
-        },
-        success: {
-          main: activeTemplate.success || '#2e7d32',
-        },
-      },
-      // Add custom typography settings
-      typography: {
-        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-      },
-      // Add custom component overrides
-      components: {
-        MuiButton: {
-          styleOverrides: {
-            root: {
-              textTransform: 'none',
-            },
-          },
-        },
-        MuiPaper: {
-          styleOverrides: {
-            root: {
-              backgroundImage: 'none',
-            },
-          },
-        },
-      },
-    });
-  }, [mode, templates]);
 
   // Update CSS variables and handle theme switching
   useEffect(() => {
@@ -130,9 +47,7 @@ export function ThemeProvider({ children }) {
 
   return (
     <ThemeContext.Provider value={{ theme: mode, toggleTheme }}>
-      <CacheProvider value={cacheRtl}>
-        <MUIThemeProvider theme={theme}>{children}</MUIThemeProvider>
-      </CacheProvider>
+      {children}
     </ThemeContext.Provider>
   );
 }

@@ -1,16 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy } from 'react';
 import { Card } from '../../../components/ui/card';
 import { Loader2, Eye, TrendingUp, Users, TrendingDown } from 'lucide-react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from 'recharts';
+
+const AreaChart = lazy(() =>
+  import('recharts').then((module) => ({ default: module.AreaChart }))
+);
+const Area = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Area }))
+);
+const XAxis = lazy(() =>
+  import('recharts').then((module) => ({ default: module.XAxis }))
+);
+const YAxis = lazy(() =>
+  import('recharts').then((module) => ({ default: module.YAxis }))
+);
+const CartesianGrid = lazy(() =>
+  import('recharts').then((module) => ({ default: module.CartesianGrid }))
+);
+const Tooltip = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Tooltip }))
+);
+const ResponsiveContainer = lazy(() =>
+  import('recharts').then((module) => ({ default: module.ResponsiveContainer }))
+);
+const Legend = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Legend }))
+);
+
 import { PageTitle, SectionTitle } from '../../../components/ui/shared-styles';
 import api from '../../../utils/api';
 import PropTypes from 'prop-types';

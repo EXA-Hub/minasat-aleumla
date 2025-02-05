@@ -1,5 +1,4 @@
-'use client';
-
+// app/src/pages/explore/transfers/market.jsx
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import { ar } from 'date-fns/locale';
@@ -44,7 +43,7 @@ function ProductCard({ product, user }) {
         <div className="flex flex-col gap-4">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <h3 className="text-xl font-semibold tracking-tight transition-colors group-hover:text-primary">
+              <h3 className="group-hover:text-primary text-xl font-semibold tracking-tight transition-colors">
                 {product.name}
               </h3>
               {product.avgRating && !Number.isNaN(product.avgRating) && (
@@ -60,14 +59,14 @@ function ProductCard({ product, user }) {
               )}
             </div>
             <div className="flex flex-wrap items-center gap-4 text-sm">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-10primary px-3 py-1 font-medium text-primary">
+              <span className="bg-10primary text-primary inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-medium">
                 <CoinIcon amount={product.price} />
               </span>
-              <span className="inline-flex items-center gap-1.5 text-muted-foreground">
+              <span className="text-muted-foreground inline-flex items-center gap-1.5">
                 💼 {product.openTrades} صفقات مفتوحة
               </span>
             </div>
-            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex flex-wrap gap-4 text-sm">
               <span className="inline-flex items-center gap-1.5">
                 <CalendarIcon className="h-4 w-4" />
                 تاريخ الإنشاء:{' '}
@@ -94,7 +93,7 @@ function ProductCard({ product, user }) {
         {user && (
           <div className="mt-6 flex items-center justify-between gap-4 border-t pt-6">
             <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10 border-2 border-background">
+              <Avatar className="border-background h-10 w-10 border-2">
                 <AvatarImage src={user.profilePicture} />
                 <AvatarFallback>{user.username}</AvatarFallback>
               </Avatar>
@@ -103,7 +102,7 @@ function ProductCard({ product, user }) {
             <Button
               onClick={() => navigate(`/product/${product._id}`)}
               variant="ghost"
-              className="w-full border border-border text-muted-foreground transition-all hover:bg-primary hover:text-primary-foreground">
+              className="border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground w-full border transition-all">
               فتح صفقة
             </Button>
           </div>
@@ -185,12 +184,12 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-lg border bg-card p-6 shadow-sm">
+      className="bg-card rounded-lg border p-6 shadow-sm">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div className="space-y-2">
           <Label>البحث</Label>
           <div className="relative">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
             <Input
               placeholder="اسم المنتج..."
               value={searchParams.searchTerm}
@@ -418,7 +417,7 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
         </div>
 
         <div className="space-y-2">
-          <div className="rounded-md border bg-background p-4">
+          <div className="bg-background rounded-md border p-4">
             <div className="flex items-center justify-between">
               <Rating
                 name="rating"
@@ -436,11 +435,11 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
                   },
                 }}
               />
-              <span className="text-sm text-muted-foreground">
+              <span className="text-muted-foreground text-sm">
                 {searchParams.rating} / 5
               </span>
             </div>
-            <p className="mt-2 text-xs text-muted-foreground">
+            <p className="text-muted-foreground mt-2 text-xs">
               تصفية حسب تقييم المنتج
             </p>
           </div>
@@ -450,7 +449,7 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
           <Button
             type="submit"
             variant="ghost"
-            className="flex-1 border border-border text-muted-foreground transition-all hover:bg-primary hover:text-primary-foreground">
+            className="border-border text-muted-foreground hover:bg-primary hover:text-primary-foreground flex-1 border transition-all">
             <Search className="ml-2 h-4 w-4" />
             بحث
           </Button>
@@ -458,7 +457,7 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
             type="button"
             variant="ghost"
             onClick={handleReset}
-            className="border border-border text-muted-foreground">
+            className="border-border text-muted-foreground border">
             <RotateCcw className="h-4 w-4" />
           </Button>
         </div>
@@ -537,7 +536,7 @@ export default function Market() {
 
       {loading ? (
         <div className="flex min-h-[400px] items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -549,7 +548,7 @@ export default function Market() {
             />
           ))}
           {products.length === 0 && (
-            <div className="col-span-full rounded-lg border border-dashed py-12 text-center text-muted-foreground">
+            <div className="text-muted-foreground col-span-full rounded-lg border border-dashed py-12 text-center">
               لا توجد منتجات متاحة
             </div>
           )}

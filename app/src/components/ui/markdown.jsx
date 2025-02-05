@@ -1,16 +1,32 @@
 // app/src/components/ui/markdown.jsx
 import React from 'react';
+
+const ReactMarkdown = React.lazy(() => import('react-markdown'));
+const remarkGfm = React.lazy(() => import('remark-gfm'));
+
 import DOMPurify from 'dompurify';
-import remarkGfm from 'remark-gfm';
 import PropTypes from 'prop-types';
 import { toast } from 'react-hot-toast';
-import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {
-  oneDark,
-  oneLight,
-} from 'react-syntax-highlighter/dist/esm/styles/prism';
+
+const SyntaxHighlighter = React.lazy(() =>
+  import('react-syntax-highlighter').then((module) => ({
+    default: module.Prism,
+  }))
+);
+
+const oneDark = React.lazy(() =>
+  import('react-syntax-highlighter/dist/esm/styles/prism').then((module) => ({
+    default: module.oneDark,
+  }))
+);
+
+const oneLight = React.lazy(() =>
+  import('react-syntax-highlighter/dist/esm/styles/prism').then((module) => ({
+    default: module.oneLight,
+  }))
+);
+
 import {
   Loader2,
   AlertCircle,
@@ -164,23 +180,23 @@ const MarkdownDisplay = ({
             }
             return '';
           })
-          .join('')
-          .trim();
+          .join('');
 
         const admonitionMatch = text.match(
           /^\[!(info|warning|success)\]\s*(.*)/s
         );
 
         if (admonitionMatch) {
-          const [, type, content] = admonitionMatch;
+          const [, type, subContent] = admonitionMatch;
           const { icon: Icon, styles } = ADMONITION_TYPES[type];
+
           return (
             <div className={cn('my-3 flex gap-2 border-r-2 p-3', styles)}>
               <Icon className="h-4 w-4 shrink-0 self-center" />
               <ReactMarkdown
                 components={markdownComponents}
                 className="text-sm leading-tight [&>p]:m-0">
-                {content.trim()}
+                {subContent.trim()}
               </ReactMarkdown>
             </div>
           );

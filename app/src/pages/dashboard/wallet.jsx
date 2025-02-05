@@ -1,15 +1,30 @@
 // src/pages/dashboard/wallet.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy } from 'react';
 import { Send, InfoIcon } from 'lucide-react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from 'recharts';
+
+// Dynamically import Recharts components
+const LineChart = lazy(() =>
+  import('recharts').then((module) => ({ default: module.LineChart }))
+);
+const Line = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Line }))
+);
+const XAxis = lazy(() =>
+  import('recharts').then((module) => ({ default: module.XAxis }))
+);
+const YAxis = lazy(() =>
+  import('recharts').then((module) => ({ default: module.YAxis }))
+);
+const CartesianGrid = lazy(() =>
+  import('recharts').then((module) => ({ default: module.CartesianGrid }))
+);
+const Tooltip = lazy(() =>
+  import('recharts').then((module) => ({ default: module.Tooltip }))
+);
+const ResponsiveContainer = lazy(() =>
+  import('recharts').then((module) => ({ default: module.ResponsiveContainer }))
+);
+
 import { CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import BalanceCard from '../../components/dashboard/widgets/BalanceCard';
 import { Alert, AlertDescription } from '@/components/ui/alert';
