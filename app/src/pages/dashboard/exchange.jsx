@@ -292,7 +292,7 @@ const Exchange = () => {
             ) : (
               <div className="flex flex-col gap-y-2">
                 <Label>قم بالتحويل على هذه المحفظة</Label>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center gap-2 space-x-2">
                   <Input
                     readOnly
                     value={textToCopy}

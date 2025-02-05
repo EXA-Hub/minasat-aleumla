@@ -84,13 +84,13 @@ const TasksPage = () => {
             </DialogHeader>
             <div className="mt-4 text-center text-gray-700 dark:text-gray-300">
               <p className="text-lg">{dialogData.message}</p>
-              <div className="mt-3 flex items-center justify-center space-x-2">
+              <div className="mt-3 flex items-center justify-center gap-2 space-x-2">
                 <CoinIcon amount={dialogData.daily} />
               </div>
             </div>
             <div className="mt-6 flex justify-center">
               <DialogTrigger
-                className="focus:ring-primary-light rounded-md bg-primary px-6 py-2 text-white shadow-lg hover:bg-primary focus:outline-hidden focus:ring-3"
+                className="focus:ring-primary-light bg-primary hover:bg-primary rounded-md px-6 py-2 text-white shadow-lg focus:ring-3 focus:outline-hidden"
                 onClick={() => setDialogData({ open: false })}>
                 إغلاق
               </DialogTrigger>
@@ -118,7 +118,7 @@ const TasksPage = () => {
               <button
                 onClick={handleGetDaily}
                 disabled={dailyButton}
-                className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary disabled:opacity-50">
+                className="bg-primary hover:bg-primary rounded-md px-4 py-2 text-white disabled:opacity-50">
                 {dailyButton ? 'جاري التحميل...' : 'الحصول على الهدية اليومية'}
               </button>
             </CardTitle>
@@ -147,7 +147,7 @@ const TasksPage = () => {
               <button
                 onClick={handleGetDaily}
                 disabled={dailyButton}
-                className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary disabled:opacity-50">
+                className="bg-primary hover:bg-primary rounded-md px-4 py-2 text-white disabled:opacity-50">
                 {dailyButton ? 'جاري التحميل...' : 'الحصول على المهمة'}
               </button>
             </CardTitle>

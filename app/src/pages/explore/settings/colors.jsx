@@ -110,7 +110,7 @@ const ColorCustomizationPage = () => {
       </div>
 
       {/* Save and Reset Buttons */}
-      <div className="mt-6 flex space-x-4">
+      <div className="mt-6 flex gap-4 space-x-4">
         <Button
           onClick={saveTemplates}
           className="bg-primary text-primary-foreground rounded-sm px-4 py-2">

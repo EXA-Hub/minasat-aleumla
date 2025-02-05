@@ -53,7 +53,7 @@ const HelpPage = () => {
               سنقوم بالرد عليك في أقرب وقت ممكن عن طريق البريد الإلكتروني الذي
               قمت بإدخاله.
               <DialogTrigger
-                className="focus:ring-primary-light rounded-md bg-primary px-6 py-2 text-white shadow-lg hover:bg-primary focus:outline-hidden focus:ring-3"
+                className="focus:ring-primary-light bg-primary hover:bg-primary rounded-md px-6 py-2 text-white shadow-lg focus:ring-3 focus:outline-hidden"
                 onClick={() => setDialogData(false)}>
                 إغلاق
               </DialogTrigger>
@@ -69,7 +69,7 @@ const HelpPage = () => {
         style={{
           display: 'ruby-base',
         }}>
-        <AlertTriangle className="ml-2 h-5 w-5 rtl:ml-2 rtl:mr-2" />
+        <AlertTriangle className="mr-2 ml-2 h-5 w-5" />
         <AlertDescription>
           البريد الإلكتروني الرسمي للدعم: {officialEmails.join('، ')}. احذر من
           المحتالين الذين ينتحلون هوية فريق الدعم لدينا.
@@ -83,7 +83,7 @@ const HelpPage = () => {
               نوع الطلب
               {formData.type === 'bug' && (
                 <div
-                  className="mx-2 flex border-primary bg-primary text-primary dark:border-30primary dark:bg-10primary dark:text-primary"
+                  className="border-primary bg-primary text-primary dark:border-30primary dark:bg-10primary dark:text-primary mx-2 flex"
                   style={{
                     display: 'ruby-base',
                   }}>
@@ -95,7 +95,7 @@ const HelpPage = () => {
               )}
             </label>
             <select
-              className="w-full rounded-md border bg-background p-2 text-foreground"
+              className="bg-background text-foreground w-full rounded-md border p-2"
               value={formData.type}
               name="type"
               onChange={(e) =>
@@ -114,7 +114,7 @@ const HelpPage = () => {
               name="subject"
               minLength={3}
               maxLength={25}
-              className="w-full rounded-md border bg-background p-2 text-foreground"
+              className="bg-background text-foreground w-full rounded-md border p-2"
               value={formData.subject}
               onChange={(e) =>
                 setFormData({ ...formData, subject: e.target.value })
@@ -129,7 +129,7 @@ const HelpPage = () => {
               name="message"
               minLength={3}
               maxLength={1000}
-              className="h-32 w-full rounded-md border bg-background p-2 text-foreground"
+              className="bg-background text-foreground h-32 w-full rounded-md border p-2"
               value={formData.message}
               onChange={(e) =>
                 setFormData({ ...formData, message: e.target.value })
@@ -145,7 +145,7 @@ const HelpPage = () => {
             <input
               type="email"
               name="email"
-              className="w-full rounded-md border bg-background p-2 text-foreground"
+              className="bg-background text-foreground w-full rounded-md border p-2"
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })
@@ -157,7 +157,7 @@ const HelpPage = () => {
           <button
             type="submit"
             disabled={dialogData}
-            className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+            className="bg-primary hover:bg-primary w-full rounded-md px-4 py-2 text-white">
             إرسال
           </button>
         </form>

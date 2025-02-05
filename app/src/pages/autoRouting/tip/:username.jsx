@@ -91,14 +91,14 @@ const TipPage = () => {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        <div className="border-primary h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="transform rounded-lg bg-[var(--background)] p-6 shadow-lg transition duration-500">
-      <h2 className="animate__animated animate__fadeIn mb-6 text-center text-3xl font-bold text-primary">
+    <div className="bg-background transform rounded-lg p-6 shadow-lg transition duration-500">
+      <h2 className="animate__animated animate__fadeIn text-primary mb-6 text-center text-3xl font-bold">
         {data.donationPage.title}
       </h2>
 
@@ -110,9 +110,9 @@ const TipPage = () => {
             <button
               key={amount}
               type="button"
-              className={`rounded-lg border-2 border-transparent p-4 transition-all duration-300 ease-in-out hover:border-primary ${
+              className={`hover:border-primary rounded-lg border-2 border-transparent p-4 transition-all duration-300 ease-in-out ${
                 selectedAmount === amount && !showCustomAmount
-                  ? 'scale-105 transform bg-primary ease-in'
+                  ? 'bg-primary scale-105 transform ease-in'
                   : ''
               }`}
               onClick={() => handleAmountSelect(amount)}>
@@ -123,9 +123,9 @@ const TipPage = () => {
           ))}
           <button
             type="button"
-            className={`rounded-lg border-2 border-transparent p-4 transition-all duration-300 ease-in-out hover:border-primary ${
+            className={`hover:border-primary rounded-lg border-2 border-transparent p-4 transition-all duration-300 ease-in-out ${
               showCustomAmount || selectedAmount === null
-                ? 'scale-105 transform bg-primary ease-in'
+                ? 'bg-primary scale-105 transform ease-in'
                 : ''
             }`}
             onClick={() => setShowCustomAmount(true)} // Show custom input when clicked
@@ -138,7 +138,7 @@ const TipPage = () => {
           <div className="animate__animated animate__fadeIn mb-4">
             <label
               htmlFor="custom-amount"
-              className="block text-sm font-medium text-primary">
+              className="text-primary block text-sm font-medium">
               مبلغ تبرع مخصص
             </label>
             <input
@@ -148,7 +148,7 @@ const TipPage = () => {
               onChange={handleCustomAmountChange}
               min={data.donationPage.minAmount}
               placeholder="أدخل مبلغ مخصص"
-              className="w-full rounded-lg border-2 border-primary bg-background p-3 transition-all duration-300 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-primary"
+              className="border-primary bg-background focus:ring-primary w-full rounded-lg border-2 p-3 transition-all duration-300 ease-in-out focus:ring-2 focus:outline-hidden"
             />
           </div>
         )}
@@ -159,13 +159,13 @@ const TipPage = () => {
           onChange={(e) => setMessage(e.target.value)}
           maxLength={250}
           placeholder="رسالة دعم (اختياري)"
-          className="mb-4 w-full rounded-lg border-2 border-primary bg-background p-3 transition-all duration-300 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-primary"
+          className="border-primary bg-background focus:ring-primary mb-4 w-full rounded-lg border-2 p-3 transition-all duration-300 ease-in-out focus:ring-2 focus:outline-hidden"
         />
 
         <button
           type="submit"
           disabled={!selectedAmount || loading}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary p-3 text-white transition-all duration-300 ease-in-out hover:bg-primary">
+          className="bg-primary hover:bg-primary flex w-full items-center justify-center gap-2 rounded-lg p-3 text-white transition-all duration-300 ease-in-out">
           <Heart className="animate__animated animate__tada h-5 w-5" />
           ادعم الآن
         </button>

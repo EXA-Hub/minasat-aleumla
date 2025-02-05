@@ -156,10 +156,10 @@ const LoginPage = () => {
   return (
     <div
       dir="rtl"
-      className="flex min-h-screen items-center justify-center bg-background p-4">
+      className="bg-background flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md p-8">
         <div className="mb-8 text-center">
-          <h1 className="mb-2 text-2xl font-bold text-foreground">
+          <h1 className="text-foreground mb-2 text-2xl font-bold">
             {isLogin ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
           </h1>
           <p className="text-gray-600 dark:text-gray-300">
@@ -183,7 +183,7 @@ const LoginPage = () => {
               name="username"
               value={formData.username}
               onChange={handleInputChange}
-              className="w-full rounded-md border border-gray-300 bg-background p-2 text-foreground dark:border-gray-600"
+              className="bg-background text-foreground w-full rounded-md border border-gray-300 p-2 dark:border-gray-600"
               required
               pattern="[A-Za-z0-9]+"
               title="فقط الأحرف والأرقام مسموح بها"
@@ -211,7 +211,7 @@ const LoginPage = () => {
                         confirmPassword: newPassword,
                       }));
                     }}
-                    className="inline-flex items-center text-primary hover:text-80primary">
+                    className="text-primary hover:text-80primary inline-flex items-center">
                     <RefreshCw size={16} className="mx-1" />
                     توليد كلمة مرور:
                   </button>
@@ -220,7 +220,7 @@ const LoginPage = () => {
                     min="8"
                     max="32"
                     defaultValue={12}
-                    className="w-16 rounded-none border-none bg-transparent px-0 text-sm focus:outline-hidden focus:ring-0 focus:ring-offset-0"
+                    className="w-16 rounded-none border-none bg-transparent px-0 text-sm focus:ring-0 focus:ring-offset-0 focus:outline-hidden"
                     id="passwordLength"
                   />
                 </>
@@ -232,14 +232,14 @@ const LoginPage = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full rounded-md border border-gray-300 bg-background p-2 pr-10 text-foreground dark:border-gray-600"
+                className="bg-background text-foreground w-full rounded-md border border-gray-300 p-2 pr-10 dark:border-gray-600"
                 required
                 minLength={8}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="absolute top-1/2 left-2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                 aria-label={
                   showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'
                 }>
@@ -259,14 +259,14 @@ const LoginPage = () => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="w-full rounded-md border border-gray-300 bg-background p-2 pr-10 text-foreground dark:border-gray-600"
+                  className="bg-background text-foreground w-full rounded-md border border-gray-300 p-2 pr-10 dark:border-gray-600"
                   required
                   minLength={8}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  className="absolute top-1/2 left-2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                   aria-label={
                     showConfirmPassword
                       ? 'إخفاء تأكيد كلمة المرور'
@@ -291,7 +291,7 @@ const LoginPage = () => {
                 type="text"
                 value={tfaCode}
                 onChange={(e) => setTfaCode(e.target.value)}
-                className="w-full rounded-md border border-gray-300 bg-background p-2 text-foreground dark:border-gray-600"
+                className="bg-background text-foreground w-full rounded-md border border-gray-300 p-2 dark:border-gray-600"
                 required
                 pattern="[0-9]{6}"
               />
@@ -312,13 +312,13 @@ const LoginPage = () => {
           </div>
 
           {!isLogin && (
-            <div className="flex items-start space-x-3">
+            <div className="flex items-start gap-3 space-x-3">
               <Input
                 type="checkbox"
                 id="acceptTerms"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="ml-2 mt-1 h-4 w-4 max-w-fit rounded-sm border-gray-300 text-primary focus:ring-2 focus:ring-primary"
+                className="text-primary focus:ring-primary mt-1 ml-2 h-4 w-4 max-w-fit rounded-sm border-gray-300 focus:ring-2"
                 required
               />
               <label
@@ -329,7 +329,7 @@ const LoginPage = () => {
                   to="/terms"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:text-primary hover:underline dark:text-primary dark:hover:text-primary">
+                  className="text-primary hover:text-primary dark:text-primary dark:hover:text-primary hover:underline">
                   الشروط والأحكام
                 </Link>{' '}
                 و{' '}
@@ -337,7 +337,7 @@ const LoginPage = () => {
                   to="/privacy-policy"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary hover:text-primary hover:underline dark:text-primary dark:hover:text-primary">
+                  className="text-primary hover:text-primary dark:text-primary dark:hover:text-primary hover:underline">
                   سياسة الخصوصية
                 </Link>
               </label>
@@ -346,7 +346,7 @@ const LoginPage = () => {
 
           <Button
             type="submit"
-            className="w-full bg-primary hover:bg-primary"
+            className="bg-primary hover:bg-primary w-full"
             disabled={isLoading}>
             {isLoading
               ? 'جاري التحميل...'

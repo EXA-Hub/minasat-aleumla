@@ -29,7 +29,7 @@ const PrivacyToggle = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3 space-x-reverse">
+          <div className="flex items-center gap-4">
             <div
               className={`rounded-full p-2 transition-colors ${
                 isEnabled ? 'bg-primary' : 'bg-gray-200'
@@ -53,7 +53,7 @@ const PrivacyToggle = ({
               isEnabled ? 'bg-primary' : 'bg-gray-200'
             }`}>
             <span
-              className={`absolute left-1 top-1 h-5 w-5 transform rounded-full bg-white transition-transform duration-300 ${
+              className={`absolute top-1 left-1 h-5 w-5 transform rounded-full bg-white transition-transform duration-300 ${
                 isEnabled ? 'translate-x-7' : 'translate-x-0'
               }`}
             />
@@ -61,8 +61,8 @@ const PrivacyToggle = ({
         </div>
 
         {isHovered && (
-          <div className="animate-fadeIn mt-4 text-sm text-gray-500 rtl:text-right">
-            <div className="flex items-start space-x-2 space-x-reverse">
+          <div className="animate-fadeIn mt-4 text-right text-sm text-gray-500">
+            <div className="flex items-start gap-2 space-x-2 space-x-reverse">
               <Info className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
                 عند التفعيل، تساعدك هذه الإعدادات في حماية معلوماتك من خلال
@@ -147,12 +147,12 @@ const PrivacyPage = () => {
         <Button
           onClick={savePrivacySettings}
           disabled={disabled}
-          className="mr-6 bg-primary text-white hover:bg-primary">
+          className="bg-primary hover:bg-primary mr-6 text-white">
           حفظ التغييرات
           {disabled ? (
             // spinner
             <svg
-              className="-ml-1 mr-3 h-5 w-5 animate-spin text-white"
+              className="mr-3 -ml-1 h-5 w-5 animate-spin text-white"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24">
@@ -213,14 +213,14 @@ const PrivacyPage = () => {
       )}
 
       <Card className="bg-gray-50 p-6 dark:bg-gray-800/50">
-        <div className="flex items-start space-x-4 space-x-reverse">
-          <div className="rounded-full bg-primary p-2">
+        <div className="flex items-start gap-4 space-x-4 space-x-reverse">
+          <div className="bg-primary rounded-full p-2">
             {privacySettings.length > 0 ? (
-              <Shield className="h-6 w-6 text-primary-foreground" />
+              <Shield className="text-primary-foreground h-6 w-6" />
             ) : (
               // spinner
               <svg
-                className="h-5 w-5 animate-spin text-primary-foreground"
+                className="text-primary-foreground h-5 w-5 animate-spin"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24">

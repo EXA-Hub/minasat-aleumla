@@ -23,7 +23,7 @@ const Alert = forwardRef(
               variant === 'info', // New informational alert style
           },
           // Add RTL-specific padding adjustments
-          'ltr:text-left rtl:text-right',
+          'text-right ltr:text-left',
           className
         )}
         {...props}>
@@ -40,8 +40,8 @@ const AlertTitle = forwardRef(({ className, dir = 'auto', ...props }, ref) => (
     ref={ref}
     dir={dir}
     className={cn(
-      'mb-1 font-medium leading-none tracking-tight',
-      'ltr:text-left rtl:text-right',
+      'mb-1 leading-none font-medium tracking-tight',
+      'text-right ltr:text-left',
       className
     )}
     {...props}
@@ -57,7 +57,7 @@ const AlertDescription = forwardRef(
       dir={dir}
       className={cn(
         'text-sm [&_p]:leading-relaxed',
-        'ltr:text-left rtl:text-right',
+        'text-right ltr:text-left',
         className
       )}
       {...props}

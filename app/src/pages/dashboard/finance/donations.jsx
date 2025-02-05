@@ -59,7 +59,7 @@ const DonationsPage = () => {
   };
 
   const PreviewDonation = () => (
-    <div className={`rounded-lg bg-[var(--background)] p-6`}>
+    <div className={`bg-background rounded-lg p-6`}>
       <h2 className="mb-6 text-center text-2xl font-bold">
         {donationPage.title}
       </h2>
@@ -68,7 +68,7 @@ const DonationsPage = () => {
         {donationPage.customAmounts.map((amount) => (
           <button
             key={amount}
-            className="rounded-sm border p-3 hover:bg-primary dark:hover:bg-gray-700">
+            className="hover:bg-primary rounded-sm border p-3 dark:hover:bg-gray-700">
             <div className="flex items-center justify-center">
               <CoinIcon amount={amount} />
             </div>
@@ -79,10 +79,10 @@ const DonationsPage = () => {
       <input
         type="text"
         placeholder="رسالة دعم (اختياري)"
-        className="mb-4 w-full rounded-sm border bg-[var(--background)] p-3"
+        className="bg-background mb-4 w-full rounded-sm border p-3"
       />
 
-      <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary p-3 text-white">
+      <button className="bg-primary flex w-full items-center justify-center gap-2 rounded-lg p-3 text-white">
         <Heart className="h-5 w-5" />
         ادعم الآن
       </button>
@@ -92,7 +92,7 @@ const DonationsPage = () => {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
       </div>
     );
   }
@@ -104,7 +104,7 @@ const DonationsPage = () => {
         <div className="flex gap-2">
           <button
             onClick={copyDonationLink}
-            className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+            className="bg-primary hover:bg-primary flex items-center gap-2 rounded-md px-4 py-2 text-white">
             <Link2 className="h-5 w-5" />
             نسخ الرابط
           </button>
@@ -124,7 +124,7 @@ const DonationsPage = () => {
                   onChange={(e) =>
                     setDonationPage({ ...donationPage, title: e.target.value })
                   }
-                  className="w-full rounded-sm border bg-[var(--background)] p-2"
+                  className="bg-background w-full rounded-sm border p-2"
                 />
               </div>
 
@@ -140,7 +140,7 @@ const DonationsPage = () => {
                     })
                   }
                   min={1}
-                  className="w-full rounded-sm border bg-[var(--background)] p-2"
+                  className="bg-background w-full rounded-sm border p-2"
                 />
               </div>
 
@@ -158,14 +158,14 @@ const DonationsPage = () => {
                         .filter((n) => !isNaN(n)),
                     })
                   }
-                  className="w-full rounded-sm border bg-[var(--background)] p-2"
+                  className="bg-background w-full rounded-sm border p-2"
                 />
               </div>
 
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full rounded-md bg-primary p-2 text-white hover:bg-primary disabled:opacity-50">
+                className="bg-primary hover:bg-primary w-full rounded-md p-2 text-white disabled:opacity-50">
                 {saving ? 'جاري الحفظ...' : 'حفظ الإعدادات'}
               </button>
             </div>

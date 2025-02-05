@@ -344,15 +344,6 @@ body {
   color: var(--foreground);
 }
 
-.dark\:bg-green-900\/10:is(.dark *) {
-  background-color: rgb(20 83 45 / 0.1);
-}
-
-.bg-green-50 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
-}
-
 /* width */
 ::-webkit-scrollbar {
   width: 10px;

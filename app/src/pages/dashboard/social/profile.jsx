@@ -242,7 +242,7 @@ const ProfilePage = () => {
                   name="username"
                   type="text"
                   defaultValue={profile.username}
-                  className="w-full rounded-md border bg-[var(--background)] p-2"
+                  className="bg-background w-full rounded-md border p-2"
                 />
               </div>
 
@@ -252,7 +252,7 @@ const ProfilePage = () => {
                   name="title"
                   type="text"
                   defaultValue={profile.title}
-                  className="w-full rounded-md border bg-[var(--background)] p-2"
+                  className="bg-background w-full rounded-md border p-2"
                 />
               </div>
 
@@ -261,7 +261,7 @@ const ProfilePage = () => {
                 <textarea
                   name="description"
                   defaultValue={profile.description}
-                  className="h-32 w-full rounded-md border bg-[var(--background)] p-2"
+                  className="bg-background h-32 w-full rounded-md border p-2"
                 />
               </div>
 
@@ -274,7 +274,7 @@ const ProfilePage = () => {
                     name="age"
                     type="number"
                     defaultValue={profile.age}
-                    className="w-full rounded-md border bg-[var(--background)] p-2"
+                    className="bg-background w-full rounded-md border p-2"
                     min="0"
                   />
                 </div>
@@ -286,17 +286,17 @@ const ProfilePage = () => {
                   <select
                     name="sex"
                     defaultValue={profile.sex}
-                    className="w-full rounded-md border bg-[var(--background)] p-2">
+                    className="bg-background w-full rounded-md border p-2">
                     <option value="ذكر">ذكر</option>
                     <option value="أنثى">أنثى</option>
                   </select>
                 </div>
               </div>
 
-              <div className="flex space-x-4 rtl:space-x-reverse">
+              <div className="flex gap-4 space-x-4 space-x-reverse">
                 <button
                   type="submit"
-                  className="bg-primary hover:bg-primary flex-1 rounded-md px-4 py-2 text-white">
+                  className="bg-primary hover:bg-primary m-0 flex-1 rounded-md px-4 py-2 text-white">
                   حفظ التغييرات
                 </button>
                 <button

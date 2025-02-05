@@ -55,7 +55,18 @@ CustomTooltip.propTypes = {
 
 // StatCard Component
 const StatCard = ({ icon: Icon, label, value, trend = 0, color }) => (
-  <div className={`rounded-xl p-4 bg-${color}-50 dark:bg-${color}-900/10`}>
+  <div
+    className="rounded-xl p-4"
+    style={{
+      backgroundColor:
+        color === 'green'
+          ? `rgba(76, 175, 80, 0.1)` // Material Green 500
+          : color === 'yellow'
+            ? `rgba(255, 235, 59, 0.1)` // Material Yellow 500
+            : color === 'blue'
+              ? `rgba(33, 150, 243, 0.1)` // Material Blue 500
+              : `rgba(76, 175, 80, 0.1)`,
+    }}>
     <div className="flex items-center justify-between">
       <Icon className={`h-5 w-5 text-${color}-600`} />
       <span className="text-muted-foreground text-sm">{label}</span>

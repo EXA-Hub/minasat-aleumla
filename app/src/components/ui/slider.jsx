@@ -21,15 +21,15 @@ const Slider = React.forwardRef(
         defaultValue={sliderDefaultValue}
         dir="rtl"
         {...props}>
-        <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-slate-200">
-          <SliderPrimitive.Range className="absolute start-0 h-full bg-blue-600" />
+        <SliderPrimitive.Track className="bg-50mutedforeground relative h-1.5 w-full grow overflow-hidden rounded-full">
+          <SliderPrimitive.Range className="bg-primary absolute start-0 h-full" />
         </SliderPrimitive.Track>
         {sliderValue.map((_value, i) => (
           <SliderPrimitive.Thumb
             key={i}
             className={cn(
-              'block h-4 w-4 rounded-full border border-blue-500/50 bg-white shadow transition-colors',
-              'focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:outline-none',
+              'border-50primary bg-foreground block h-4 w-4 rounded-full border shadow transition-colors',
+              'focus-visible:ring-accent focus-visible:ring-1 focus-visible:outline-none',
               'disabled:pointer-events-none disabled:opacity-50',
               'hover:cursor-grab active:cursor-grabbing'
             )}

@@ -26,7 +26,7 @@ const ProductForm = ({ product, onSubmit, onCancel }) => (
         type="text"
         name="name"
         defaultValue={product?.name}
-        className="w-full rounded-md border bg-[var(--background)] p-2"
+        className="bg-background w-full rounded-md border p-2"
         required
       />
     </div>
@@ -40,7 +40,7 @@ const ProductForm = ({ product, onSubmit, onCancel }) => (
       <textarea
         name="description"
         defaultValue={product?.description}
-        className="h-64 w-full rounded-md border bg-[var(--background)] p-2 font-mono"
+        className="bg-background h-64 w-full rounded-md border p-2 font-mono"
         required
       />
     </div>
@@ -50,7 +50,7 @@ const ProductForm = ({ product, onSubmit, onCancel }) => (
         type="number"
         name="price"
         defaultValue={product?.price}
-        className="w-full rounded-md border bg-[var(--background)] p-2"
+        className="bg-background w-full rounded-md border p-2"
         required
         min="0"
       />
@@ -58,7 +58,7 @@ const ProductForm = ({ product, onSubmit, onCancel }) => (
     <div className="flex gap-4">
       <button
         type="submit"
-        className="flex-1 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+        className="bg-primary hover:bg-primary flex-1 rounded-md px-4 py-2 text-white">
         {product?.isNew ? 'إضافة منتج' : 'تحديث المنتج'}
       </button>
       <button
@@ -219,7 +219,7 @@ const ProductsPage = () => {
   if (loading)
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="text-primary h-8 w-8 animate-spin" />
       </div>
     );
 
@@ -232,7 +232,7 @@ const ProductsPage = () => {
         <button
           onClick={() => setSelectedProduct({ isNew: true })}
           disabled={products.length >= plan.slots}
-          className="flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary disabled:opacity-50">
+          className="bg-primary hover:bg-primary flex items-center gap-2 rounded-md px-4 py-2 text-white disabled:opacity-50">
           <Plus className="h-5 w-5" />
           <span>إضافة منتج</span>
         </button>
@@ -248,7 +248,7 @@ const ProductsPage = () => {
           {products.map((product) => (
             <div
               key={product._id}
-              className={`flex cursor-pointer flex-col gap-4 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800 sm:flex-row sm:items-center ${
+              className={`flex cursor-pointer flex-col gap-4 p-4 transition-colors hover:bg-gray-50 sm:flex-row sm:items-center dark:hover:bg-gray-800 ${
                 selectedProduct?._id === product._id
                   ? 'bg-primary dark:bg-primary'
                   : ''

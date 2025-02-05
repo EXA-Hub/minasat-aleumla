@@ -35,7 +35,7 @@ const VerificationModal = ({
       style={{
         marginTop: '-calc(1.5rem * calc(1 - var(--tw-space-y-reverse)))',
       }}>
-      <div className="relative w-96 rounded-lg bg-[var(--background)] p-6">
+      <div className="bg-background relative w-96 rounded-lg p-6">
         <button
           onClick={() => {
             setCode('');
@@ -135,7 +135,7 @@ const BackupCodesModal = ({ isOpen, onClose, codes }) => {
         marginTop: '-calc(1.5rem * calc(1 - var(--tw-space-y-reverse)))',
       }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs">
-      <div className="relative w-96 rounded-lg bg-[var(--background)] p-6">
+      <div className="bg-background relative w-96 rounded-lg p-6">
         <button onClick={onClose} className="absolute top-4 left-4">
           <X className="h-5 w-5" />
         </button>
@@ -149,7 +149,7 @@ const BackupCodesModal = ({ isOpen, onClose, codes }) => {
             {codes.map((code, index) => (
               <div
                 key={index}
-                className="rounded-sm bg-[var(--background)] p-2 font-mono">
+                className="bg-background rounded-sm p-2 font-mono">
                 {code}
               </div>
             ))}
@@ -406,7 +406,7 @@ const AccountSecurity = () => {
       <h2 className="text-3xl font-bold">أمان الحساب</h2>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <Card className="bg-[var(--background)] p-6 text-[var(--foreground)]">
+        <Card className="bg-background text-foreground p-6">
           <h3 className="mb-4 text-xl font-semibold">تغيير كلمة المرور</h3>
           <form onSubmit={handlePasswordChange} className="space-y-4">
             <div>
@@ -416,7 +416,7 @@ const AccountSecurity = () => {
               <input
                 name="currentPassword"
                 type="password"
-                className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                className="bg-background text-foreground w-full rounded-md border p-2"
                 required
               />
             </div>
@@ -427,7 +427,7 @@ const AccountSecurity = () => {
               <input
                 name="newPassword"
                 type="password"
-                className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                className="bg-background text-foreground w-full rounded-md border p-2"
                 required
               />
             </div>
@@ -438,7 +438,7 @@ const AccountSecurity = () => {
               <input
                 name="confirmPassword"
                 type="password"
-                className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                className="bg-background text-foreground w-full rounded-md border p-2"
                 required
               />
             </div>
@@ -451,7 +451,7 @@ const AccountSecurity = () => {
           </form>
         </Card>
 
-        <Card className="bg-[var(--background)] p-6 text-[var(--foreground)]">
+        <Card className="bg-background text-foreground p-6">
           <h3 className="mb-4 text-xl font-semibold">تغيير اسم المستخدم</h3>
           <form onSubmit={handleUsernameChange} className="space-y-4">
             <div>
@@ -461,7 +461,7 @@ const AccountSecurity = () => {
               <input
                 name="username"
                 type="text"
-                className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                className="bg-background text-foreground w-full rounded-md border p-2"
                 required
               />
             </div>
@@ -472,7 +472,7 @@ const AccountSecurity = () => {
               <input
                 name="password"
                 type="password"
-                className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                className="bg-background text-foreground w-full rounded-md border p-2"
                 required
               />
             </div>
@@ -485,7 +485,7 @@ const AccountSecurity = () => {
           </form>
         </Card>
 
-        <Card className="bg-[var(--background)] p-6 text-[var(--foreground)]">
+        <Card className="bg-background text-foreground p-6">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-xl font-semibold">المصادقة الثنائية</h3>
             <Shield
@@ -511,15 +511,15 @@ const AccountSecurity = () => {
           </div>
         </Card>
 
-        <Card className="bg-[var(--background)] p-6 text-[var(--foreground)]">
+        <Card className="bg-background text-foreground p-6">
           <h3 className="mb-4 text-xl font-semibold">خيارات الاسترداد</h3>
           <div className="space-y-4">
-            <div className="flex items-center space-x-4 space-x-reverse">
+            <div className="flex items-center gap-4 space-x-4 space-x-reverse">
               <Mail className="h-6 w-6" />
               <div className="flex-1">
                 <form
                   onSubmit={handleEmailRecovery}
-                  className="flex space-x-2 space-x-reverse">
+                  className="flex gap-2 space-x-2 space-x-reverse">
                   <input
                     name="email"
                     type="email"
@@ -527,7 +527,7 @@ const AccountSecurity = () => {
                     onChange={(e) => setRecoveryEmail(e.target.value)}
                     style={{ width: '100%' }}
                     placeholder="البريد الإلكتروني للاسترداد"
-                    className="flex-1 rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                    className="bg-background text-foreground m-0 flex-1 rounded-md border p-2"
                   />
                   <LoadingButton
                     type="submit"
@@ -538,12 +538,12 @@ const AccountSecurity = () => {
                 </form>
               </div>
             </div>
-            <div className="flex items-center space-x-4 space-x-reverse">
+            <div className="flex items-center gap-4 space-x-4 space-x-reverse">
               <Smartphone className="h-6 w-6" />
               <div className="flex-1">
                 <form
                   onSubmit={handlePhoneRecovery}
-                  className="flex space-x-2 space-x-reverse">
+                  className="flex gap-2 space-x-2 space-x-reverse">
                   <input
                     name="phone"
                     type="tel"
@@ -551,7 +551,7 @@ const AccountSecurity = () => {
                     value={recoveryPhone}
                     onChange={(e) => setRecoveryPhone(e.target.value)}
                     placeholder="رقم الهاتف للاسترداد"
-                    className="flex-1 rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                    className="bg-background text-foreground m-0 flex-1 rounded-md border p-2"
                   />
                   <LoadingButton
                     type="submit"
@@ -565,7 +565,7 @@ const AccountSecurity = () => {
           </div>
         </Card>
 
-        <Card className="bg-[var(--background)] p-6 text-[var(--foreground)]">
+        <Card className="bg-background text-foreground p-6">
           <h3 className="mb-4 text-xl font-semibold">الرموز الإحتياطية</h3>
           <Alert
             variant="warning"
@@ -573,7 +573,7 @@ const AccountSecurity = () => {
             style={{
               display: 'flex',
             }}>
-            <AlertTriangle className="ml-2 h-5 w-5 rtl:mr-0 rtl:ml-2" />
+            <AlertTriangle className="mr-0 ml-2 h-5 w-5" />
             <AlertDescription className="ml-1">
               سيتم تجديد الرمز الإحتياطية عند كل طلب (إحتفظ بها في مكان آمن)
             </AlertDescription>
@@ -606,7 +606,7 @@ const AccountSecurity = () => {
                 <input
                   name="twoFactorCode"
                   type="password"
-                  className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                  className="bg-background text-foreground w-full rounded-md border p-2"
                 />
               </div>
             )}
@@ -618,7 +618,7 @@ const AccountSecurity = () => {
               <input
                 name="currentPassword"
                 type="password"
-                className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                className="bg-background text-foreground w-full rounded-md border p-2"
                 required
               />
             </div>
@@ -632,7 +632,7 @@ const AccountSecurity = () => {
           </form>
         </Card>
 
-        <Card className="bg-[var(--background)] p-6 text-[var(--foreground)]">
+        <Card className="bg-background text-foreground p-6">
           <h3 className="mb-4 text-xl font-semibold">حذف خيارات الاسترداد</h3>
           <form
             onSubmit={async (e) => {
@@ -679,7 +679,7 @@ const AccountSecurity = () => {
                 <input
                   name="twoFactorCode"
                   type="password"
-                  className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                  className="bg-background text-foreground w-full rounded-md border p-2"
                 />
               </div>
             )}
@@ -691,7 +691,7 @@ const AccountSecurity = () => {
               <input
                 name="currentPassword"
                 type="password"
-                className="w-full rounded-md border bg-[var(--background)] p-2 text-[var(--foreground)]"
+                className="bg-background text-foreground w-full rounded-md border p-2"
                 required
               />
             </div>
