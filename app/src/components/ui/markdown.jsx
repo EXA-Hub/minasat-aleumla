@@ -164,7 +164,8 @@ const MarkdownDisplay = ({
             }
             return '';
           })
-          .join('');
+          .join('')
+          .trim();
 
         const admonitionMatch = text.match(
           /^\[!(info|warning|success)\]\s*(.*)/s
