@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
-  plugins: [react(), visualizer()],
+  plugins: [react(), ...(import.meta.env.DEV ? [visualizer()] : [])],
   resolve: {
     alias: {
       '@': resolve(new URL('./src', import.meta.url).pathname),
