@@ -122,7 +122,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
             <div className="mb-4 rounded-lg bg-muted p-4">
               <h4 className="mb-4 text-lg font-bold">تفاصيل الخطة</h4>
               <div className="flex flex-col space-y-3">
-                <div className="border-border/30 flex items-center justify-between border-b pb-2">
+                <div className="flex items-center justify-between border-b border-30border pb-2">
                   <span className="text-sm text-muted-foreground">
                     التكلفة الأساسية
                   </span>
@@ -133,7 +133,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
 
                 {user && (
                   <>
-                    <div className="border-border/30 flex items-center justify-between border-b pb-2">
+                    <div className="flex items-center justify-between border-b border-30border pb-2">
                       <span className="text-sm text-muted-foreground">
                         الرسوم ({calculateFee()}%)
                       </span>
@@ -144,7 +144,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                       </span>
                     </div>
 
-                    <div className="border-border/30 flex items-center justify-between border-b pb-2">
+                    <div className="flex items-center justify-between border-b border-30border pb-2">
                       <span className="text-sm text-muted-foreground">
                         رصيدك الحالي
                       </span>
@@ -183,7 +183,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                     ? danger
                       ? 'bg-red-600 text-foreground'
                       : 'bg-primary text-primary-foreground'
-                    : 'hover:bg-muted/80 bg-muted'
+                    : 'bg-muted hover:bg-80muted'
                 }`}>
                 {label}
               </button>

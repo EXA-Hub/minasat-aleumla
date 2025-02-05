@@ -247,7 +247,7 @@ const EngagementPage = () => {
                   {currentViewers.map((viewerId, index) => (
                     <TableRow
                       key={index}
-                      className="hover:bg-muted/50 transition-colors">
+                      className="transition-colors hover:bg-50muted">
                       <TableCell className="font-medium">
                         {indexOfFirstViewer + index + 1}
                       </TableCell>

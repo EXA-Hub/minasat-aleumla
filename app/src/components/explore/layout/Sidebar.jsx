@@ -24,7 +24,7 @@ const SidebarContent = () => {
             <button
               onClick={() => toggleSection(section.id)}
               className="flex w-full items-center justify-between rounded-lg p-3 text-right transition-all duration-300 hover:bg-5primary">
-              <span className="text-foreground/90 font-medium">
+              <span className="font-medium text-90foreground">
                 {section.title}
               </span>
               <ChevronDown
@@ -47,7 +47,7 @@ const SidebarContent = () => {
                     className={`flex items-center gap-3 rounded-lg px-4 py-2.5 transition-all duration-300 ${
                       isActive(item.path)
                         ? 'bg-10primary text-primary shadow-lg shadow-20primary'
-                        : 'text-foreground/70 hover:bg-5primary hover:text-foreground'
+                        : 'text-70foreground hover:bg-5primary hover:text-foreground'
                     }`}>
                     <item.icon
                       className={`h-5 w-5 transition-transform duration-300 ${
@@ -69,7 +69,7 @@ const SidebarContent = () => {
 const Sidebar = () => {
   return (
     <div className="fixed right-4 top-4 h-[calc(100vh-2rem)] w-72">
-      <div className="bg-background/30 h-full overflow-hidden rounded-2xl border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-xl">
+      <div className="h-full overflow-hidden rounded-2xl border border-white/20 bg-30background shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-xl">
         <SidebarContent />
       </div>
     </div>

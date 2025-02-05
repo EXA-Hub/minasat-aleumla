@@ -123,7 +123,7 @@ const CodesPage = () => {
       {hasMore && !loading && (
         <button
           onClick={() => setPage((p) => p + 1)}
-          className="hover:bg-muted/80 mt-4 w-full rounded-lg bg-muted p-4 transition-colors">
+          className="mt-4 w-full rounded-lg bg-muted p-4 transition-colors hover:bg-80muted">
           تحميل المزيد
         </button>
       )}

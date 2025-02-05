@@ -1,7 +1,17 @@
+// app/src/pages/autoRouting/error/not-found.jsx
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = '404 - Not Found';
+    const meta = document.createElement('meta');
+    meta.name = 'prerender-status-code';
+    meta.content = '404';
+    document.head.appendChild(meta);
+  }, []);
 
   return (
     <div

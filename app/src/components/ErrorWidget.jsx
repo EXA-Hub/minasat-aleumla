@@ -108,7 +108,7 @@ const ErrorWidget = ({ error, onClose, response }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="bg-muted/50 border-t px-6 py-4">
+          <div className="border-t bg-50muted px-6 py-4">
             <button
               onClick={handleClose}
               className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-90primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">

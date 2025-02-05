@@ -2,7 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 
 const Table = React.forwardRef(({ className, ...props }, ref) => (
-  <div dir="rtl" className="relative w-full overflow-auto z-10">
+  <div dir="rtl" className="relative z-10 w-full overflow-auto">
     <table
       ref={ref}
       dir="rtl"
@@ -49,7 +49,7 @@ const TableRow = React.forwardRef(({ className, ...props }, ref) => (
   <tr
     ref={ref}
     dir="rtl"
-    className={`border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted ${className}`}
+    className={`border-b transition-colors hover:bg-50muted data-[state=selected]:bg-muted ${className}`}
     {...props}
   />
 ));

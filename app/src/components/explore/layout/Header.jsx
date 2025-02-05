@@ -39,7 +39,7 @@ const Header = ({ user, onToggleSidebar }) => {
   return (
     <>
       <header
-        className={`bg-background/30 fixed left-0 top-0 z-30 w-full border-b border-white/10 backdrop-blur-xl transition-transform duration-300 ease-in-out ${shouldHideHeader ? '-translate-y-full' : 'translate-y-0'}`}>
+        className={`fixed left-0 top-0 z-30 w-full border-b border-white/10 bg-30background backdrop-blur-xl transition-transform duration-300 ease-in-out ${shouldHideHeader ? '-translate-y-full' : 'translate-y-0'}`}>
         <div className="flex h-16 items-center justify-between px-6">
           {user ? (
             <div className="flex items-center gap-4">
@@ -51,7 +51,7 @@ const Header = ({ user, onToggleSidebar }) => {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <div className="bg-background/50 rounded-xl border border-white/10 p-2 shadow-sm backdrop-blur-sm">
+              <div className="rounded-xl border border-white/10 bg-50background p-2 shadow-sm backdrop-blur-sm">
                 <ThemeToggle />
               </div>
               <Button

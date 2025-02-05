@@ -48,7 +48,7 @@ const menuItems = [
         component: React.lazy(() => import('../../pages/dashboard/wallet')),
       },
       {
-        name: 'المقاصة',
+        name: 'الحوالة',
         icon: Repeat,
         path: '/dashboard/exchange',
         component: React.lazy(() => import('../../pages/dashboard/exchange')),

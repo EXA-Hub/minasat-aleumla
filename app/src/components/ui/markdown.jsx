@@ -1,7 +1,16 @@
 // app/src/components/ui/markdown.jsx
-
 import React from 'react';
+import DOMPurify from 'dompurify';
+import remarkGfm from 'remark-gfm';
+import PropTypes from 'prop-types';
+import { toast } from 'react-hot-toast';
 import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import {
+  oneDark,
+  oneLight,
+} from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
   Loader2,
   AlertCircle,
@@ -10,18 +19,8 @@ import {
   Copy,
   Check,
 } from 'lucide-react';
-import remarkGfm from 'remark-gfm';
-import DOMPurify from 'dompurify';
-import PropTypes from 'prop-types';
-import { cn } from '@/lib/utils';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {
-  oneDark,
-  oneLight,
-} from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { toast } from 'react-hot-toast';
 import { useTheme } from '../../context/ThemeContext';
-import { useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 // Define constants
 const EMOJI_STYLES = {
@@ -55,6 +54,7 @@ const MarkdownDisplay = ({
   content,
   loading = false,
   className = '',
+  trusted = false,
 }) => {
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -71,7 +71,8 @@ const MarkdownDisplay = ({
           href={href}
           onClick={(e) => {
             // if link is inside the app, open it in the same tab
-            if (href.startsWith('/')) return navigate(href);
+            if (href.startsWith('/') || href.startsWith('#') || trusted)
+              return navigate(href);
             // alert user of outgoing link
             e.preventDefault();
             const confirmed = window.confirm(
@@ -292,7 +293,7 @@ const MarkdownDisplay = ({
         </td>
       ),
     }),
-    [copied.children, copied.className, isDark, navigate] // Add any dependencies affecting component behavior
+    [copied.children, copied.className, isDark, navigate, trusted] // Add any dependencies affecting component behavior
   );
 
   if (loading)
@@ -319,7 +320,7 @@ const MarkdownDisplay = ({
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={markdownComponents}>
-          {sanitizedContent}
+          {trusted ? content : sanitizedContent}
         </ReactMarkdown>
       </div>
     </div>
@@ -332,7 +333,8 @@ MarkdownDisplay.propTypes = {
   content: PropTypes.string.isRequired,
   loading: PropTypes.bool,
   className: PropTypes.string,
-  children: PropTypes.node, // Add children prop-type
+  trusted: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 export default MarkdownDisplay;

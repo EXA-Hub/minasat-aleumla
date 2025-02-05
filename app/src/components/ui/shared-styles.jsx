@@ -116,7 +116,7 @@ StatsCard.propTypes = {
 export const DataTable = ({ columns, data }) => (
   <div className="overflow-x-auto rounded-lg border">
     <table className="w-full">
-      <thead className="bg-muted/50">
+      <thead className="bg-50muted">
         <tr>
           {columns.map((column, i) => (
             <th
@@ -133,7 +133,7 @@ export const DataTable = ({ columns, data }) => (
             key={i}
             className={cn(
               'border-t border-border',
-              'hover:bg-muted/50 transition-colors duration-200'
+              'transition-colors duration-200 hover:bg-50muted'
             )}>
             {columns.map((column, j) => (
               <td key={j} className="px-4 py-3 text-right">
@@ -250,7 +250,7 @@ const buttonVariants = cva(
       variant: {
         primary: 'bg-primary hover:bg-90primary text-primary-foreground',
         secondary:
-          'bg-secondary hover:bg-secondary/90 text-secondary-foreground',
+          'bg-secondary hover:bg-90secondary text-secondary-foreground',
         outline:
           'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         ghost: 'hover:bg-accent hover:text-accent-foreground',

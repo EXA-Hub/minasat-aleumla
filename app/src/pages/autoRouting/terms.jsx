@@ -9,14 +9,14 @@ const TermsPage = () => {
   const [content, setContent] = useState('');
 
   useEffect(() => {
-    fetch('/docs/terms.txt')
+    fetch('/docs/terms.md')
       .then((response) => response.text())
       .then((text) => {
         setContent(text);
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error loading markdown:', error);
+        console.error(error);
         setLoading(false);
       });
   }, []);

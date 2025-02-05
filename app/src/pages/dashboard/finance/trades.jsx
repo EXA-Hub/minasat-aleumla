@@ -197,7 +197,7 @@ const RenderTradeChat = ({
         </p>
         <header className="flex items-center justify-between border-b border-border p-4">
           {/* Left Section: Avatar & Username */}
-          <div className="hover:bg-muted/50 flex items-center gap-3 rounded-lg p-2 transition-colors duration-200">
+          <div className="flex items-center gap-3 rounded-lg p-2 transition-colors duration-200 hover:bg-50muted">
             <Avatar className="h-8 w-8 border-2 border-border shadow-sm ring-2 ring-background md:h-10 md:w-10">
               <AvatarImage
                 src={otherUser.profilePicture || '/avatar.jpg'}
