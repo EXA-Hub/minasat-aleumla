@@ -49,7 +49,7 @@ const PrivacyToggle = ({
           <button
             onClick={onClick}
             disabled={disabled}
-            className={`relative h-7 w-14 rounded-full transition-all duration-300 focus:outline-none ${
+            className={`relative h-7 w-14 rounded-full transition-all duration-300 focus:outline-hidden ${
               isEnabled ? 'bg-primary' : 'bg-gray-200'
             }`}>
             <span
@@ -63,7 +63,7 @@ const PrivacyToggle = ({
         {isHovered && (
           <div className="animate-fadeIn mt-4 text-sm text-gray-500 rtl:text-right">
             <div className="flex items-start space-x-2 space-x-reverse">
-              <Info className="mt-0.5 h-4 w-4 flex-shrink-0" />
+              <Info className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
                 عند التفعيل، تساعدك هذه الإعدادات في حماية معلوماتك من خلال
                 {isEnabled ? ' تقييد ' : ' السماح بـ'}الوصول إلى ميزات محددة.

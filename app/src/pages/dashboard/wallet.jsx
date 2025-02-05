@@ -1,29 +1,15 @@
 // src/pages/dashboard/wallet.jsx
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect } from 'react';
 import { Send, InfoIcon } from 'lucide-react';
-
-// Dynamically import Recharts components
-const LineChart = lazy(() =>
-  import('recharts').then((module) => ({ default: module.LineChart }))
-);
-const Line = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Line }))
-);
-const XAxis = lazy(() =>
-  import('recharts').then((module) => ({ default: module.XAxis }))
-);
-const YAxis = lazy(() =>
-  import('recharts').then((module) => ({ default: module.YAxis }))
-);
-const CartesianGrid = lazy(() =>
-  import('recharts').then((module) => ({ default: module.CartesianGrid }))
-);
-const Tooltip = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Tooltip }))
-);
-const ResponsiveContainer = lazy(() =>
-  import('recharts').then((module) => ({ default: module.ResponsiveContainer }))
-);
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 import { CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import BalanceCard from '../../components/dashboard/widgets/BalanceCard';
@@ -101,12 +87,12 @@ const Wallet = () => {
       <BalanceCard balance={{ amount: balance }} />
       <Card className="p-6">
         <div className="mb-6 flex items-center gap-4">
-          <div className="rounded-full bg-primary p-3">
-            <Send className="h-6 w-6 text-primary-foreground" />
+          <div className="bg-primary rounded-full p-3">
+            <Send className="text-primary-foreground h-6 w-6" />
           </div>
           <div>
             <h3 className="text-xl font-semibold">تحويل العملات</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               قم بتحويل العملات إلى مستخدم آخر
             </p>
           </div>
@@ -132,7 +118,7 @@ const Wallet = () => {
               onChange={(e) =>
                 setFormData({ ...formData, recipient: e.target.value })
               }
-              className="w-full rounded-md border bg-background p-2"
+              className="bg-background w-full rounded-md border p-2"
               required
               placeholder="أدخل اسم المستخدم"
             />
@@ -147,7 +133,7 @@ const Wallet = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, amount: e.target.value })
                 }
-                className="w-full rounded-md border bg-background p-2"
+                className="bg-background w-full rounded-md border p-2"
                 required
                 min="1"
                 placeholder="0"
@@ -165,13 +151,13 @@ const Wallet = () => {
               onChange={(e) =>
                 setFormData({ ...formData, description: e.target.value })
               }
-              className="w-full rounded-md border bg-background p-2"
+              className="bg-background w-full rounded-md border p-2"
               rows="3"
               placeholder="اكتب وصفاً للتحويل (اختياري)"
             />
           </div>
 
-          <div className="flex items-center gap-2 rounded-lg bg-background p-3 text-foreground">
+          <div className="bg-background text-foreground flex items-center gap-2 rounded-lg p-3">
             <input
               type="checkbox"
               id="payFee"
@@ -179,7 +165,7 @@ const Wallet = () => {
               onChange={(e) =>
                 setFormData({ ...formData, payFee: e.target.checked })
               }
-              className="rounded bg-background text-foreground text-primary focus:ring-primary"
+              className="bg-background text-foreground text-primary focus:ring-primary rounded-sm"
             />
             <label htmlFor="payFee" className="text-sm">
               سيتم سحب (
@@ -190,7 +176,7 @@ const Wallet = () => {
                 (formData.payFee ? 0 : calculateFee(formData.amount))}
               ) للمستلم
             </label>
-            <div className="rounded-lg bg-background p-4 text-sm text-foreground">
+            <div className="bg-background text-foreground rounded-lg p-4 text-sm">
               الرسوم: {fee}% ={' '}
               {formData.amount ? calculateFee(formData.amount) : 0} عملة
             </div>
@@ -199,7 +185,7 @@ const Wallet = () => {
           <div className="flex gap-4">
             <Button
               type="submit"
-              className="flex items-center gap-2 bg-90primary dark:bg-90primary"
+              className="bg-90primary dark:bg-90primary flex items-center gap-2"
               disabled={loading}>
               <Send className="h-4 w-4" />
               {loading ? 'جاري التحويل...' : 'تحويل'}
@@ -228,7 +214,7 @@ const Wallet = () => {
           </Alert>
 
           <CardHeader>
-            <CardTitle className="text-center text-xl font-bold text-foreground">
+            <CardTitle className="text-foreground text-center text-xl font-bold">
               الرصيد اليومي
             </CardTitle>
           </CardHeader>
@@ -256,7 +242,7 @@ const Wallet = () => {
                   />
                   <Tooltip
                     content={({ payload }) => (
-                      <div className="rounded border bg-background p-2 text-foreground shadow">
+                      <div className="bg-background text-foreground rounded-sm border p-2 shadow-sm">
                         {payload?.[0]?.value && (
                           <>
                             <p className="text-sm font-medium">الرصيد:</p>

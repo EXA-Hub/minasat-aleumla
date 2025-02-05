@@ -53,7 +53,7 @@ const HelpPage = () => {
               سنقوم بالرد عليك في أقرب وقت ممكن عن طريق البريد الإلكتروني الذي
               قمت بإدخاله.
               <DialogTrigger
-                className="focus:ring-primary-light rounded-md bg-primary px-6 py-2 text-white shadow-lg hover:bg-primary focus:outline-none focus:ring"
+                className="focus:ring-primary-light rounded-md bg-primary px-6 py-2 text-white shadow-lg hover:bg-primary focus:outline-hidden focus:ring-3"
                 onClick={() => setDialogData(false)}>
                 إغلاق
               </DialogTrigger>

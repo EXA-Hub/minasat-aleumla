@@ -68,7 +68,7 @@ const DonationsPage = () => {
         {donationPage.customAmounts.map((amount) => (
           <button
             key={amount}
-            className="rounded border p-3 hover:bg-primary dark:hover:bg-gray-700">
+            className="rounded-sm border p-3 hover:bg-primary dark:hover:bg-gray-700">
             <div className="flex items-center justify-center">
               <CoinIcon amount={amount} />
             </div>
@@ -79,7 +79,7 @@ const DonationsPage = () => {
       <input
         type="text"
         placeholder="رسالة دعم (اختياري)"
-        className="mb-4 w-full rounded border bg-[var(--background)] p-3"
+        className="mb-4 w-full rounded-sm border bg-[var(--background)] p-3"
       />
 
       <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary p-3 text-white">
@@ -124,7 +124,7 @@ const DonationsPage = () => {
                   onChange={(e) =>
                     setDonationPage({ ...donationPage, title: e.target.value })
                   }
-                  className="w-full rounded border bg-[var(--background)] p-2"
+                  className="w-full rounded-sm border bg-[var(--background)] p-2"
                 />
               </div>
 
@@ -140,7 +140,7 @@ const DonationsPage = () => {
                     })
                   }
                   min={1}
-                  className="w-full rounded border bg-[var(--background)] p-2"
+                  className="w-full rounded-sm border bg-[var(--background)] p-2"
                 />
               </div>
 
@@ -158,7 +158,7 @@ const DonationsPage = () => {
                         .filter((n) => !isNaN(n)),
                     })
                   }
-                  className="w-full rounded border bg-[var(--background)] p-2"
+                  className="w-full rounded-sm border bg-[var(--background)] p-2"
                 />
               </div>
 

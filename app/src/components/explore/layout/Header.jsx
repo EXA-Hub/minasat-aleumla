@@ -51,18 +51,18 @@ const Header = ({ user, onToggleSidebar }) => {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <div className="rounded-xl border border-white/10 bg-50background p-2 shadow-sm backdrop-blur-sm">
+              <div className="rounded-xl border border-white/10 bg-50background p-2 shadow-xs backdrop-blur-xs">
                 <ThemeToggle />
               </div>
               <Button
                 onClick={() => navigate('/login')}
-                className="relative overflow-hidden rounded-xl bg-gradient-to-r from-primary to-primary px-6 py-2 text-white transition-all duration-300 hover:shadow-lg hover:shadow-30primary">
+                className="relative overflow-hidden rounded-xl bg-linear-to-r from-primary to-primary px-6 py-2 text-white transition-all duration-300 hover:shadow-lg hover:shadow-30primary">
                 تسجيل الدخول
               </Button>
             </div>
           )}
 
-          <h1 className="mr-4 bg-gradient-to-r from-primary to-primary bg-clip-text text-xl font-bold text-transparent">
+          <h1 className="mr-4 bg-linear-to-r from-primary to-primary bg-clip-text text-xl font-bold text-transparent">
             منصة العملة
           </h1>
 

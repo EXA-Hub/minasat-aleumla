@@ -90,7 +90,7 @@ const TasksPage = () => {
             </div>
             <div className="mt-6 flex justify-center">
               <DialogTrigger
-                className="focus:ring-primary-light rounded-md bg-primary px-6 py-2 text-white shadow-lg hover:bg-primary focus:outline-none focus:ring"
+                className="focus:ring-primary-light rounded-md bg-primary px-6 py-2 text-white shadow-lg hover:bg-primary focus:outline-hidden focus:ring-3"
                 onClick={() => setDialogData({ open: false })}>
                 إغلاق
               </DialogTrigger>

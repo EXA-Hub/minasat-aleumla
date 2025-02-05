@@ -115,7 +115,7 @@ const Exchange = () => {
     <div className="space-y-4">
       <h2 className="text-3xl font-bold">
         الحوالة{' '}
-        <span className="text-xs text-muted-foreground">
+        <span className="text-muted-foreground text-xs">
           (لتبديل العملات الرقمية)
         </span>
       </h2>
@@ -166,11 +166,11 @@ const Exchange = () => {
 
       {formData.currency && (
         <Card>
-          <CardHeader className="m-3 overflow-x-auto whitespace-nowrap rounded-md bg-background px-3 py-2 sm:px-6 sm:py-4">
+          <CardHeader className="bg-background m-3 overflow-x-auto rounded-md px-3 py-2 whitespace-nowrap sm:px-6 sm:py-4">
             <CardTitle className="text-base sm:text-lg">
               معلومات العملية
             </CardTitle>
-            <div className="space-y-2 text-xs sm:text-sm">
+            <div className="flex flex-col gap-y-2 text-xs sm:text-sm">
               {/* Price Row */}
               <div className="flex items-center gap-1 sm:gap-2">
                 <span className="whitespace-nowrap">
@@ -236,7 +236,7 @@ const Exchange = () => {
           </CardHeader>
 
           <CardContent className="space-y-4">
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Label htmlFor="amount">المبلغ</Label>
               <Input
                 id="amount"
@@ -250,10 +250,10 @@ const Exchange = () => {
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Label htmlFor="wallet" className="flex items-center gap-2">
                 معلومات التحويل
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   (الرجاء التأكد من المعلومات قبل إدخالها)
                 </span>
               </Label>
@@ -270,7 +270,7 @@ const Exchange = () => {
             </div>
 
             {formData.action === 'sell_coins' ? (
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label htmlFor="fee">الرسوم</Label>
                 <Select
                   value={formData.feePriority}
@@ -290,7 +290,7 @@ const Exchange = () => {
                 </Select>
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>قم بالتحويل على هذه المحفظة</Label>
                 <div className="flex items-center space-x-2">
                   <Input
@@ -302,7 +302,7 @@ const Exchange = () => {
                     size="icon"
                     variant="outline"
                     onClick={copyToClipboard}
-                    className="shrink-0 rounded-none border border-border">
+                    className="border-border shrink-0 rounded-none border">
                     <CopyIcon className="h-4 w-4" />
                   </Button>
                 </div>

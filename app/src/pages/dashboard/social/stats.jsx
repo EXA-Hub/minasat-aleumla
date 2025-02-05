@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect } from 'react';
 import {
   DollarSign,
   Package,
@@ -6,38 +6,18 @@ import {
   TrendingUp,
   Loader2,
 } from 'lucide-react';
-
-const BarChart = lazy(() =>
-  import('recharts').then((module) => ({ default: module.BarChart }))
-);
-const Bar = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Bar }))
-);
-const XAxis = lazy(() =>
-  import('recharts').then((module) => ({ default: module.XAxis }))
-);
-const YAxis = lazy(() =>
-  import('recharts').then((module) => ({ default: module.YAxis }))
-);
-const CartesianGrid = lazy(() =>
-  import('recharts').then((module) => ({ default: module.CartesianGrid }))
-);
-const Tooltip = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Tooltip }))
-);
-const ResponsiveContainer = lazy(() =>
-  import('recharts').then((module) => ({ default: module.ResponsiveContainer }))
-);
-const Area = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Area }))
-);
-const AreaChart = lazy(() =>
-  import('recharts').then((module) => ({ default: module.AreaChart }))
-);
-const Legend = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Legend }))
-);
-
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  AreaChart,
+  Legend,
+} from 'recharts';
 import {
   PageTitle,
   SectionTitle,
@@ -80,7 +60,7 @@ CustomTooltip.propTypes = {
 
 const LoadingState = () => (
   <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
-    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+    <Loader2 className="text-primary h-8 w-8 animate-spin" />
     <p className="text-muted-foreground">جاري تحميل البيانات...</p>
   </div>
 );

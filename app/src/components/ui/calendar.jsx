@@ -53,7 +53,7 @@ function Calendar({ selected, onSelect, mode = 'single' }) {
           range_end: 'my-range_end',
           range_middle: 'my-range_middle',
         }}
-        className="rounded-lg border bg-background p-5 shadow-sm transition-shadow duration-200 hover:shadow-md"
+        className="rounded-lg border bg-background p-5 shadow-xs transition-shadow duration-200 hover:shadow-md"
       />
     </>
   );

@@ -69,10 +69,10 @@ const ImageSelector = ({ type, close }) => {
   return (
     <Dialog>
       {loading ? (
-        <div className="flex rounded-lg border border-border bg-card p-4 text-center">
+        <div className="border-border bg-card flex rounded-lg border p-4 text-center">
           جارٍ التحميل...
           <div className="flex items-center justify-center pr-4">
-            <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
+            <div className="border-primary h-8 w-8 animate-spin rounded-full border-t-2 border-b-2"></div>
           </div>
         </div>
       ) : (
@@ -80,7 +80,7 @@ const ImageSelector = ({ type, close }) => {
           <button
             onClick={close}
             aria-label="close"
-            className="absolute left-2 top-2 cursor-pointer rounded-full border-none bg-transparent hover:bg-gray-600/60">
+            className="absolute top-2 left-2 cursor-pointer rounded-full border-none bg-transparent hover:bg-gray-600/60">
             <XCircleIcon size={24} />
           </button>
           <DialogHeader>
@@ -96,7 +96,7 @@ const ImageSelector = ({ type, close }) => {
                 if (images.length === 0) return null;
 
                 return (
-                  <div key={app.id} className="space-y-2">
+                  <div key={app.id} className="flex flex-col gap-y-2">
                     <div className="flex items-center gap-2">
                       <div
                         className="flex h-8 w-8 items-center justify-center"
@@ -206,7 +206,7 @@ const ProfilePage = () => {
               setImageType('wallpaper');
               setShowImageSelector(true);
             }}
-            className="absolute bottom-4 right-4 rounded-md bg-black/50 p-2 text-white hover:bg-black/70">
+            className="absolute right-4 bottom-4 rounded-md bg-black/50 p-2 text-white hover:bg-black/70">
             <Upload className="h-5 w-5" />
           </Link>
         </div>
@@ -223,7 +223,7 @@ const ProfilePage = () => {
                 setImageType('profilePicture');
                 setShowImageSelector(true);
               }}
-              className="absolute bottom-0 right-0 rounded-full bg-primary p-2 text-white hover:bg-primary">
+              className="bg-primary hover:bg-primary absolute right-0 bottom-0 rounded-full p-2 text-white">
               <Camera className="h-5 w-5" />
             </Link>
           </div>
@@ -296,7 +296,7 @@ const ProfilePage = () => {
               <div className="flex space-x-4 rtl:space-x-reverse">
                 <button
                   type="submit"
-                  className="flex-1 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+                  className="bg-primary hover:bg-primary flex-1 rounded-md px-4 py-2 text-white">
                   حفظ التغييرات
                 </button>
                 <button
@@ -316,7 +316,7 @@ const ProfilePage = () => {
                 </div>
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+                  className="bg-primary hover:bg-primary rounded-md px-4 py-2 text-white">
                   تعديل الملف
                 </button>
               </div>

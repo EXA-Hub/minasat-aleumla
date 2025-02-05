@@ -74,36 +74,36 @@ const ColorCustomizationPage = () => {
   };
 
   return (
-    <div className="p-6 bg-background text-foreground" dir="rtl">
-      <h1 className="text-2xl font-bold mb-6">تخصيص الألوان</h1>
+    <div className="bg-background text-foreground p-6" dir="rtl">
+      <h1 className="mb-6 text-2xl font-bold">تخصيص الألوان</h1>
 
       {/* Light Theme Color Inputs */}
-      <h2 className="text-xl font-bold mb-4">الوضع الفاتح</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <h2 className="mb-4 text-xl font-bold">الوضع الفاتح</h2>
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Object.entries(templates.light).map(([key, value]) => (
-          <div key={key} className="flex flex-col space-y-2">
+          <div key={key} className="flex flex-col gap-y-2">
             <label className="text-sm font-medium">{key}</label>
             <input
               type="color"
               value={value}
               onChange={(e) => handleColorChange('light', key, e.target.value)}
-              className="w-full h-10"
+              className="h-10 w-full"
             />
           </div>
         ))}
       </div>
 
       {/* Dark Theme Color Inputs */}
-      <h2 className="text-xl font-bold mb-4">الوضع الداكن</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+      <h2 className="mb-4 text-xl font-bold">الوضع الداكن</h2>
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {Object.entries(templates.dark).map(([key, value]) => (
-          <div key={key} className="flex flex-col space-y-2">
+          <div key={key} className="flex flex-col gap-y-2">
             <label className="text-sm font-medium">{key}</label>
             <input
               type="color"
               value={value}
               onChange={(e) => handleColorChange('dark', key, e.target.value)}
-              className="w-full h-10"
+              className="h-10 w-full"
             />
           </div>
         ))}
@@ -113,14 +113,12 @@ const ColorCustomizationPage = () => {
       <div className="mt-6 flex space-x-4">
         <Button
           onClick={saveTemplates}
-          className="px-4 py-2 bg-primary text-primary-foreground rounded"
-        >
+          className="bg-primary text-primary-foreground rounded-sm px-4 py-2">
           حفظ القوالب
         </Button>
         <Button
           onClick={resetTemplates}
-          className="px-4 py-2 bg-secondary text-secondary-foreground rounded"
-        >
+          className="bg-secondary text-secondary-foreground rounded-sm px-4 py-2">
           استعادة الافتراضي
         </Button>
       </div>

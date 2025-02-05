@@ -19,11 +19,11 @@ const ProductList = ({ username, products }) => {
       {products.map((product) => (
         <div
           key={product._id}
-          className="cursor-pointer rounded-lg border border-border bg-secondary p-4 shadow-sm hover:rounded hover:bg-muted-light"
+          className="border-border bg-secondary hover:bg-muted-light cursor-pointer rounded-lg border p-4 shadow-xs hover:rounded-sm"
           onClick={() => handleProductClick(product._id)}>
           {/* Existing product card content */}
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-foreground">
+            <h3 className="text-foreground text-lg font-semibold">
               {product.name}
             </h3>
             <span
@@ -35,14 +35,14 @@ const ProductList = ({ username, products }) => {
               {product.isLocked ? 'مقفل' : 'مفتوح'}
             </span>
           </div>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             {product.description}
           </p>
           <div className="mt-4 flex items-center justify-between">
-            <span className="text-sm text-foreground">
+            <span className="text-foreground text-sm">
               السعر: <span className="font-semibold">{product.price}</span>
             </span>
-            <span className="text-sm text-foreground">
+            <span className="text-foreground text-sm">
               الصفقات المفتوحة:{' '}
               <span className="font-semibold">{product.openTrades}</span>
             </span>
@@ -133,14 +133,14 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
 
   if (loading)
     return (
-      <div className="flex h-screen items-center justify-center bg-background">
-        <div className="text-xl text-primary">جارٍ التحميل...</div>
+      <div className="bg-background flex h-screen items-center justify-center">
+        <div className="text-primary text-xl">جارٍ التحميل...</div>
       </div>
     );
 
   if (err)
     return (
-      <div className="flex h-screen items-center justify-center rounded-lg bg-background p-6 shadow-md">
+      <div className="bg-background flex h-screen items-center justify-center rounded-lg p-6 shadow-md">
         <div className="bg-red-100/30 text-xl text-red-500">{err}</div>
       </div>
     );
@@ -158,16 +158,16 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-background p-4 text-foreground"
+      className="bg-background text-foreground flex min-h-screen items-center justify-center p-4"
       dir="ltr">
-      <div className="w-full max-w-4xl overflow-hidden rounded-3xl border border-border bg-card shadow-2xl">
+      <div className="border-border bg-card w-full max-w-4xl overflow-hidden rounded-3xl border shadow-2xl">
         {/* Header Section */}
         <div
           className="relative h-64 bg-cover bg-center"
           style={{
             backgroundImage: `url(${profile?.wallpaper || '/wallpaper.jpg'})`,
           }}>
-          <div className="absolute inset-0 bg-black bg-opacity-60">
+          <div className="absolute inset-0 bg-black/60">
             {/* Badges container moved to top left */}
             <Badges BadgesArray={badges} />
 
@@ -176,13 +176,13 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
               <img
                 src={profile?.profilePicture || '/avatar.jpg'}
                 alt={`${profile?.username}'s profile`}
-                className="h-24 w-24 rounded-full border-4 border-card shadow-lg"
+                className="border-card h-24 w-24 rounded-full border-4 shadow-lg"
               />
               <div className="ml-6">
                 <h1 className="text-2xl font-bold text-white">
                   {profile?.username}
                 </h1>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   {profile?.title}
                 </p>
               </div>
@@ -194,7 +194,7 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
         <div className="p-6">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 {profile?.description}
               </p>
             </div>
@@ -214,7 +214,7 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
             </span>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-4 text-sm text-foreground">
+          <div className="text-foreground mt-6 grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="font-semibold">العمر:</span> {profile?.age}
             </div>
@@ -226,9 +226,9 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
 
         {/* Wallet Section */}
         {wallet && (
-          <div className="border-t border-border bg-secondary p-6">
-            <h2 className="mb-4 text-lg font-bold text-foreground">المحفظة</h2>
-            <div className="space-y-2 text-sm text-foreground">
+          <div className="border-border bg-secondary border-t p-6">
+            <h2 className="text-foreground mb-4 text-lg font-bold">المحفظة</h2>
+            <div className="text-foreground flex flex-col gap-y-2 text-sm">
               <div className="flex justify-between">
                 <span>الرصيد:</span>
                 <span className="font-semibold">
@@ -244,8 +244,8 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
         )}
 
         {/* Products Section */}
-        <div className="border-t border-border p-6">
-          <h2 className="mb-4 text-lg font-bold text-foreground">المنتجات</h2>
+        <div className="border-border border-t p-6">
+          <h2 className="text-foreground mb-4 text-lg font-bold">المنتجات</h2>
           <ProductList
             products={products}
             username={username}
@@ -254,11 +254,11 @@ const ProfilePage = ({ username: usernameProp, closeWidget }) => {
         </div>
 
         {/* Back Button */}
-        <div className="border-t border-border p-6">
+        <div className="border-border border-t p-6">
           <Button
             size="sm"
             variant="outline"
-            className="w-full hover:bg-accent hover:text-accent-foreground"
+            className="hover:bg-accent hover:text-accent-foreground w-full"
             onClick={handleBack}>
             العودة للوراء
           </Button>

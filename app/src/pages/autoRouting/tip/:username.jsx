@@ -148,7 +148,7 @@ const TipPage = () => {
               onChange={handleCustomAmountChange}
               min={data.donationPage.minAmount}
               placeholder="أدخل مبلغ مخصص"
-              className="w-full rounded-lg border-2 border-primary bg-background p-3 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full rounded-lg border-2 border-primary bg-background p-3 transition-all duration-300 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-primary"
             />
           </div>
         )}
@@ -159,7 +159,7 @@ const TipPage = () => {
           onChange={(e) => setMessage(e.target.value)}
           maxLength={250}
           placeholder="رسالة دعم (اختياري)"
-          className="mb-4 w-full rounded-lg border-2 border-primary bg-background p-3 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary"
+          className="mb-4 w-full rounded-lg border-2 border-primary bg-background p-3 transition-all duration-300 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-primary"
         />
 
         <button

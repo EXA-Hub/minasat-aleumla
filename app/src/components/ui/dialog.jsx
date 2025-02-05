@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const Dialog = ({ children, ...props }) => (
   <div
     role="dialog"
-    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+    className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs"
     {...props}
     style={{
       marginTop: '-calc(1.5rem * calc(1 - var(--tw-space-y-reverse)))',
@@ -33,7 +33,7 @@ DialogContent.propTypes = {
 
 const DialogHeader = ({ className, ...props }) => (
   <div
-    className={`flex flex-col space-y-2 text-center sm:text-right ${className}`}
+    className={`flex flex-col gap-y-2 text-center sm:text-right ${className}`}
     {...props}
   />
 );
@@ -59,7 +59,7 @@ const DialogTrigger = ({ asChild = false, children, ...props }) => {
   ) : (
     <button
       type="button"
-      className="inline-flex items-center rounded-lg bg-primary px-4 py-2 font-semibold text-white hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary"
+      className="bg-primary hover:bg-primary focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary inline-flex items-center rounded-lg px-4 py-2 font-semibold text-white focus:ring-2 focus:ring-offset-2 focus:outline-hidden"
       {...props}>
       {children}
     </button>

@@ -32,7 +32,7 @@ const Badges = ({ BadgesArray = [] }) => {
       active:scale-95
     `,
       premiumBadge: `
-      bg-gradient-to-br from-yellow-200/10 to-yellow-500/10 
+      bg-linear-to-br from-yellow-200/10 to-yellow-500/10 
       border-2 border-yellow-500/50 
       shadow-[0_0_10px_rgba(234,179,8,0.3)]
     `,

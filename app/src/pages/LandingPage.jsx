@@ -162,7 +162,7 @@ const LandingPage = () => {
       </Helmet>
 
       {/* Header */}
-      <header className="bg-background p-4 shadow-sm">
+      <header className="bg-background p-4 shadow-xs">
         <div className="container mx-auto flex items-center justify-between">
           <h1 className="text-2xl font-bold text-primary">منصة العملة</h1>
           <AuthSection />

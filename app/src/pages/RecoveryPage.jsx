@@ -48,40 +48,38 @@ const RecoveryPage = () => {
   return (
     <div
       dir="rtl"
-      className="min-h-screen bg-background flex items-center justify-center p-4"
-    >
+      className="bg-background flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md p-8">
-        <h1 className="text-2xl font-bold mb-6 text-center">استعادة الحساب</h1>
+        <h1 className="mb-6 text-center text-2xl font-bold">استعادة الحساب</h1>
 
         {error && (
-          <div className="mb-4 p-3 text-red-500 bg-red-100 dark:bg-red-900/20 rounded">
+          <div className="mb-4 rounded-sm bg-red-100 p-3 text-red-500 dark:bg-red-900/20">
             {error}
           </div>
         )}
 
         {step === 'method' && (
           <form onSubmit={handleVerify} className="space-y-4">
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <label className="block text-sm font-medium">
                 طريقة الإستعادة
               </label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value)}
-                className="w-full p-2 rounded-md border bg-background"
-              >
+                className="bg-background w-full rounded-md border p-2">
                 <option value="email">البريد الإلكتروني</option>
                 <option value="phone">رقم الهاتف</option>
                 <option value="backupCode">رمز النسخ الاحتياطي</option>
               </select>
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <label className="block text-sm font-medium">إسم المستخدم</label>
               <input
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-2 rounded-md border bg-background"
+                className="bg-background w-full rounded-md border p-2"
                 required
               />
 
@@ -96,7 +94,7 @@ const RecoveryPage = () => {
                 type={type === 'email' ? 'email' : 'text'}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                className="w-full p-2 rounded-md border bg-background"
+                className="bg-background w-full rounded-md border p-2"
                 required
               />
             </div>
@@ -113,19 +111,19 @@ const RecoveryPage = () => {
 
         {step === 'reset' && type !== 'backupCode' && (
           <form onSubmit={handleReset} className="space-y-4">
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <label className="block text-sm font-medium">رمز التحقق</label>
               <input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                className="w-full p-2 rounded-md border bg-background"
+                className="bg-background w-full rounded-md border p-2"
                 required
                 pattern="[0-9]{6}"
               />
             </div>
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <label className="block text-sm font-medium">
                 كلمة المرور الجديدة
               </label>
@@ -133,7 +131,7 @@ const RecoveryPage = () => {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-2 rounded-md border bg-background"
+                className="bg-background w-full rounded-md border p-2"
                 required
                 minLength={8}
               />
@@ -147,7 +145,7 @@ const RecoveryPage = () => {
 
         {step === 'reset' && type === 'backupCode' && (
           <form onSubmit={handleReset} className="space-y-4">
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <label className="block text-sm font-medium">
                 كلمة المرور الجديدة
               </label>
@@ -155,7 +153,7 @@ const RecoveryPage = () => {
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full p-2 rounded-md border bg-background"
+                className="bg-background w-full rounded-md border p-2"
                 required
                 minLength={8}
               />
@@ -169,8 +167,7 @@ const RecoveryPage = () => {
 
         <button
           onClick={() => navigate('/login')}
-          className="mt-4 text-gray-600 hover:underline text-sm block mx-auto"
-        >
+          className="mx-auto mt-4 block text-sm text-gray-600 hover:underline">
           العودة إلى تسجيل الدخول
         </button>
       </Card>

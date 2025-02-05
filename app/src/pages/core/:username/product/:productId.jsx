@@ -57,7 +57,7 @@ const ProductPage = ({
 
     return (
       <div
-        className={`flex h-screen items-center justify-center bg-gradient-to-br ${bgClass} dark:from-gray-900 dark:to-gray-800`}>
+        className={`flex h-screen items-center justify-center bg-linear-to-br ${bgClass} dark:from-gray-900 dark:to-gray-800`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -96,7 +96,7 @@ const ProductPage = ({
               <AvatarFallback>{user?.username || 'مستخدم'}</AvatarFallback>
             </Avatar>
             <div className="space-y-1">
-              <h2 className="bg-gradient-to-r from-purple-600 to-primary bg-clip-text text-2xl font-bold text-transparent">
+              <h2 className="bg-linear-to-r from-purple-600 to-primary bg-clip-text text-2xl font-bold text-transparent">
                 {product.name}
               </h2>
               <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">

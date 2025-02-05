@@ -16,7 +16,7 @@ function TestMarkdown() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch('/docs/markdown-guide.txt')
+    fetch('/docs/markdown-guide.md')
       .then((response) => response.text())
       .then((text) => {
         setContent(text);
@@ -29,13 +29,13 @@ function TestMarkdown() {
   }, []);
 
   return (
-    <div className="container mx-auto p-4 min-h-screen">
-      <div className="grid md:grid-cols-2 gap-6">
+    <div className="container mx-auto min-h-screen p-4">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Input Section */}
-        <Card className="p-6 space-y-6">
+        <Card className="space-y-6 p-6">
           <h2 className="text-xl font-bold">Markdown حقل تجارب</h2>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             <Label htmlFor="title">العنوان</Label>
             <Input
               id="title"
@@ -45,7 +45,7 @@ function TestMarkdown() {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-y-2">
             <Label htmlFor="content">المحتوى (Markdown)</Label>
             <AutoResizeTextarea
               id="content"
@@ -77,7 +77,7 @@ function TestMarkdown() {
 
         {/* Preview Section */}
         <Card className="p-6">
-          <h2 className="text-xl font-bold mb-6">النتيجة</h2>
+          <h2 className="mb-6 text-xl font-bold">النتيجة</h2>
           <MarkdownDisplay title={title} content={content} loading={loading} />
         </Card>
       </div>

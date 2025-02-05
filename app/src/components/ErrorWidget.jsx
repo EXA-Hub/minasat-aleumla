@@ -26,7 +26,7 @@ const ErrorWidget = ({ error, onClose, response }) => {
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
       onClick={handleClose}>
@@ -38,17 +38,17 @@ const ErrorWidget = ({ error, onClose, response }) => {
         }`}
         onClick={(e) => e.stopPropagation()}>
         {/* Card Container */}
-        <div className="relative overflow-hidden rounded-lg bg-background shadow-2xl">
+        <div className="bg-background relative overflow-hidden rounded-lg shadow-2xl">
           {/* Close Button */}
           <button
             onClick={handleClose}
-            className="absolute left-4 top-4 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+            className="text-muted-foreground hover:bg-muted hover:text-foreground absolute top-4 left-4 rounded-full p-1 transition-colors">
             <X size={20} />
             <span className="sr-only">إغلاق</span>
           </button>
 
           {/* Content */}
-          <div className="px-6 pb-6 pt-12">
+          <div className="px-6 pt-12 pb-6">
             <div className="text-center">
               {/* Error Icon/Image */}
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100/10">
@@ -70,7 +70,7 @@ const ErrorWidget = ({ error, onClose, response }) => {
 
               {/* Error Description */}
               {error.description && (
-                <p className="mb-6 text-muted-foreground">
+                <p className="text-muted-foreground mb-6">
                   {error.description}
                 </p>
               )}
@@ -89,7 +89,9 @@ const ErrorWidget = ({ error, onClose, response }) => {
 
                   {/* Error details list */}
                   {details && details.length > 0 && (
-                    <ul className="space-y-2 text-sm text-red-700" role="alert">
+                    <ul
+                      className="flex flex-col gap-y-2 text-sm text-red-700"
+                      role="alert">
                       {details.map((detail, index) => (
                         <li
                           key={index}
@@ -108,10 +110,10 @@ const ErrorWidget = ({ error, onClose, response }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="border-t bg-50muted px-6 py-4">
+          <div className="bg-50muted border-t px-6 py-4">
             <button
               onClick={handleClose}
-              className="w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-90primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+              className="bg-primary text-primary-foreground hover:bg-90primary focus:ring-primary w-full rounded-md px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-offset-2 focus:outline-hidden">
               حسناً، فهمت
             </button>
           </div>

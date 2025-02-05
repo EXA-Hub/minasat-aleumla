@@ -40,19 +40,19 @@ function DonateForm() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-500 to-indigo-500 p-6 rounded-lg shadow-lg animate-fade-in">
+    <div className="animate-fade-in rounded-lg bg-linear-to-r from-purple-500 to-indigo-500 p-6 shadow-lg">
       {isLoading ? (
         // Loading Card
         <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-          <p className="text-white font-medium">جاري معالجة التبرع...</p>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/30 border-t-white" />
+          <p className="font-medium text-white">جاري معالجة التبرع...</p>
         </div>
       ) : (
         // Donation Form
         <>
-          <h2 className="text-2xl font-bold text-white mb-4">تبرع الآن</h2>
+          <h2 className="mb-4 text-2xl font-bold text-white">تبرع الآن</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <label
                 htmlFor="amount"
                 className="text-sm font-medium text-white">
@@ -60,7 +60,7 @@ function DonateForm() {
                 <img
                   src="/icon.svg"
                   alt="coin"
-                  className="w-5 h-5 inline filter brightness-0 invert mr-1"
+                  className="mr-1 inline h-5 w-5 brightness-0 invert filter"
                 />
               </label>
               <Input
@@ -71,12 +71,12 @@ function DonateForm() {
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="أدخل المبلغ"
                 required
-                className="w-full bg-white/20 backdrop-blur-sm text-white placeholder:text-white/70"
+                className="w-full bg-white/20 text-white backdrop-blur-xs placeholder:text-white/70"
               />
             </div>
             <Button
               type="submit"
-              className="w-full bg-white text-purple-600 hover:bg-white/90 transition-all duration-300 transform hover:scale-105">
+              className="w-full transform bg-white text-purple-600 transition-all duration-300 hover:scale-105 hover:bg-white/90">
               تبرع 💝
             </Button>
           </form>
@@ -106,7 +106,7 @@ function DonatorsListWrapper() {
 
   if (error)
     return (
-      <div className="text-red-500 text-center">
+      <div className="text-center text-red-500">
         {error || 'خطأ في تحميل المتبرعين'}
       </div>
     );
@@ -131,10 +131,10 @@ function DonatorsListWrapper() {
         return (
           <div
             key={username}
-            className={`inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-medium cursor-pointer transition-all duration-300 hover:shadow-md ${
+            className={`inline-flex cursor-pointer items-center justify-center rounded-full px-2 py-1 text-xs font-medium transition-all duration-300 hover:shadow-md ${
               isGoldDonator
-                ? 'border border-primary text-primary bg-10primary hover:bg-20primary'
-                : 'border border-foreground text-foreground bg-10foreground hover:bg-20foreground'
+                ? 'border-primary text-primary bg-10primary hover:bg-20primary border'
+                : 'border-foreground text-foreground bg-10foreground hover:bg-20foreground border'
             }`}>
             <Username username={username} />
           </div>
@@ -146,11 +146,11 @@ function DonatorsListWrapper() {
 
 export default function DonatePage() {
   return (
-    <div className="container mx-auto py-10 space-y-8">
-      <div className="max-w-2xl mx-auto space-y-6">
-        <h1 className="text-3xl font-bold text-center">ادعم مجتمعنا</h1>
+    <div className="container mx-auto space-y-8 py-10">
+      <div className="mx-auto max-w-2xl space-y-6">
+        <h1 className="text-center text-3xl font-bold">ادعم مجتمعنا</h1>
         <DonateForm />
-        <h2 className="text-2xl font-bold text-center">المتبرعين</h2>
+        <h2 className="text-center text-2xl font-bold">المتبرعين</h2>
         <DonatorsListWrapper />
       </div>
     </div>

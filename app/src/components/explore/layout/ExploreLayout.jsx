@@ -118,7 +118,7 @@ const ExploreLayout = () => {
         />
         <main className="p-6">
           {!user && timeout && (
-            <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 opacity-100 backdrop-blur-sm transition-opacity duration-300">
+            <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 opacity-100 backdrop-blur-xs transition-opacity duration-300">
               <Dialog className="z-60 w-full max-w-md rounded-lg bg-white shadow-lg dark:bg-gray-800">
                 <DialogHeader className="z-60 p-6 text-center">
                   <DialogTitle className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -132,7 +132,7 @@ const ExploreLayout = () => {
                   <div className="mt-6 flex justify-center">
                     <DialogTrigger
                       onClick={() => (window.location.pathname = '/login')}
-                      className="z-60 rounded-lg bg-primary px-4 py-2 text-white hover:bg-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+                      className="z-60 rounded-lg bg-primary px-4 py-2 text-white hover:bg-primary focus:outline-hidden focus:ring-2 focus:ring-primary focus:ring-offset-2">
                       تسجيل الدخول
                     </DialogTrigger>
                   </div>
@@ -146,7 +146,7 @@ const ExploreLayout = () => {
 
       {/* Overlay */}
       <div
-        className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/20 backdrop-blur-xs transition-opacity duration-300 ${
           isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
         onClick={() => setIsSidebarOpen(false)}

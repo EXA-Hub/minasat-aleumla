@@ -67,7 +67,7 @@ const ProductPage = () => {
         (openDialog === 'buy' ? (
           <Dialog>
             <DialogContent className="p-4 sm:max-w-[600px] md:p-6">
-              <DialogHeader className="space-y-2">
+              <DialogHeader className="flex flex-col gap-y-2">
                 <DialogTitle className="text-xl md:text-2xl">
                   تأكيد بدء الصفقة
                 </DialogTitle>
@@ -77,9 +77,9 @@ const ProductPage = () => {
               </DialogHeader>
 
               <div className="flex flex-col gap-4 py-4 md:gap-6">
-                <div className="flex flex-col gap-4 rounded-lg bg-10primary p-4 md:flex-row md:items-center">
+                <div className="bg-10primary flex flex-col gap-4 rounded-lg p-4 md:flex-row md:items-center">
                   <div className="flex items-center gap-4">
-                    <Avatar className="h-12 w-12 border-2 border-border md:h-14 md:w-14">
+                    <Avatar className="border-border h-12 w-12 border-2 md:h-14 md:w-14">
                       <AvatarImage
                         src={seller.profilePicture || '/avatar.jpg'}
                       />
@@ -97,10 +97,10 @@ const ProductPage = () => {
                     </div>
                   </div>
 
-                  <ChevronLeftIcon className="mx-2 hidden h-6 w-6 text-muted-foreground md:block" />
+                  <ChevronLeftIcon className="text-muted-foreground mx-2 hidden h-6 w-6 md:block" />
 
                   <div className="mt-4 flex items-center gap-4 md:mt-0">
-                    <Avatar className="h-12 w-12 border-2 border-border md:h-14 md:w-14">
+                    <Avatar className="border-border h-12 w-12 border-2 md:h-14 md:w-14">
                       <AvatarImage
                         src={buyer.profile.profilePicture || '/avatar.jpg'}
                       />
@@ -123,9 +123,9 @@ const ProductPage = () => {
                   <p className="text-lg font-semibold md:text-xl">
                     تفاصيل الصفقة:
                   </p>
-                  <div className="space-y-4 rounded-xl border-2 bg-5muted p-4 shadow-sm md:space-y-6 md:p-6">
+                  <div className="bg-5muted space-y-4 rounded-xl border-2 p-4 shadow-xs md:space-y-6 md:p-6">
                     <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                      <p className="font-medium text-muted-foreground">
+                      <p className="text-muted-foreground font-medium">
                         الكمية المطلوبة:
                       </p>
                       <div className="flex items-center gap-4">
@@ -146,7 +146,7 @@ const ProductPage = () => {
 
                     <div className="flex flex-col gap-4 border-t pt-4">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="font-medium text-muted-foreground">
+                        <p className="text-muted-foreground font-medium">
                           سعر المنتج:
                         </p>
                         <span className="text-base font-semibold md:text-lg">
@@ -154,7 +154,7 @@ const ProductPage = () => {
                         </span>
                       </div>
                       <div className="flex items-center justify-between gap-2">
-                        <p className="font-medium text-muted-foreground">
+                        <p className="text-muted-foreground font-medium">
                           السعر الحالي:
                         </p>
                         <span className="text-base font-semibold md:text-lg">
@@ -163,13 +163,13 @@ const ProductPage = () => {
                       </div>
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <p className="font-medium text-muted-foreground">
+                          <p className="text-muted-foreground font-medium">
                             الضريبة:
                           </p>
                           <span className="font-semibold">{buyer.fee}%</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <ChevronLeftIcon className="h-5 w-5 text-muted-foreground" />
+                          <ChevronLeftIcon className="text-muted-foreground h-5 w-5" />
                           <span className="text-base font-semibold md:text-lg">
                             {Math.ceil(
                               (quantity * product.price * buyer.fee) / 100
@@ -178,10 +178,10 @@ const ProductPage = () => {
                         </div>
                       </div>
                       <div className="flex items-center justify-between gap-2 border-t pt-4">
-                        <p className="font-medium text-muted-foreground">
+                        <p className="text-muted-foreground font-medium">
                           السعر شامل الضريبة:
                         </p>
-                        <span className="text-lg font-bold text-primary md:text-xl">
+                        <span className="text-primary text-lg font-bold md:text-xl">
                           {quantity * product.price +
                             Math.ceil(
                               (quantity * product.price * buyer.fee) / 100
@@ -210,7 +210,7 @@ const ProductPage = () => {
 
                   <DialogTrigger
                     variant="default"
-                    className="min-w-[120px] rounded-lg bg-primary text-white shadow-lg transition duration-200 ease-in hover:bg-60primary"
+                    className="bg-primary hover:bg-60primary min-w-[120px] rounded-lg text-white shadow-lg transition duration-200 ease-in"
                     disabled={
                       quantity * product.price +
                         Math.ceil(
@@ -257,9 +257,9 @@ const ProductPage = () => {
         ))}
 
       <div className="flex flex-col items-stretch justify-center gap-4 md:gap-6">
-        <div className="flex w-full flex-col justify-between gap-4 rounded-xl bg-muted p-4 sm:flex-row sm:items-center md:p-6">
-          <div className="flex items-center rounded-full border-2 border-border bg-background px-3 py-1.5 transition-all duration-200 ease-in-out hover:bg-50accent">
-            <Avatar className="h-10 w-10 border shadow-sm md:h-12 md:w-12">
+        <div className="bg-muted flex w-full flex-col justify-between gap-4 rounded-xl p-4 sm:flex-row sm:items-center md:p-6">
+          <div className="border-border bg-background hover:bg-50accent flex items-center rounded-full border-2 px-3 py-1.5 transition-all duration-200 ease-in-out">
+            <Avatar className="h-10 w-10 border shadow-xs md:h-12 md:w-12">
               <AvatarImage src={seller.profilePicture} />
               <AvatarFallback>{seller.username[0]}</AvatarFallback>
             </Avatar>
@@ -270,7 +270,7 @@ const ProductPage = () => {
 
           <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-medium text-muted-foreground md:text-base">
+              <p className="text-muted-foreground text-sm font-medium md:text-base">
                 السعر:
               </p>
               <CoinIcon amount={product.price} className="scale-110" />
@@ -295,14 +295,14 @@ const ProductPage = () => {
           </div>
         </div>
 
-        <div className="space-y-4 rounded-xl bg-muted p-4 md:space-y-6 md:p-6">
+        <div className="bg-muted space-y-4 rounded-xl p-4 md:space-y-6 md:p-6">
           <MarkdownDisplay
             title={product.name}
             content={product.description}
             className="prose prose-sm md:prose-base max-w-none"
           />
 
-          <div className="flex flex-col flex-wrap gap-x-8 gap-y-2 border-t pt-4 text-xs text-muted-foreground sm:flex-row md:text-sm">
+          <div className="text-muted-foreground flex flex-col flex-wrap gap-x-8 gap-y-2 border-t pt-4 text-xs sm:flex-row md:text-sm">
             <p>
               تاريخ الإنشاء:{' '}
               <span className="font-medium">
@@ -328,15 +328,15 @@ const ProductPage = () => {
       </div>
       {/* comments and ratings */}
       {product.commentsAndRatings ? (
-        <div className="space-y-4 rounded-xl bg-muted p-4 md:space-y-6 md:p-6">
+        <div className="bg-muted space-y-4 rounded-xl p-4 md:space-y-6 md:p-6">
           <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
             <h2 className="text-xl font-bold md:text-2xl">
               التعليقات
-              <span className="font-medium text-muted-foreground">
+              <span className="text-muted-foreground font-medium">
                 ({product.commentsAndRatings.filter((c) => c.comment).length})
               </span>
               {product.commentsAndRatings.length === 0 && (
-                <span className="mt-1 block text-xs text-primary sm:mr-2 sm:mt-0 sm:inline md:text-sm">
+                <span className="text-primary mt-1 block text-xs sm:mt-0 sm:mr-2 sm:inline md:text-sm">
                   لا توجد تعليقات ولا توجد تقييمات
                 </span>
               )}
@@ -371,25 +371,25 @@ const ProductPage = () => {
             <div className="space-y-4 md:space-y-6">
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="flex gap-4">
-                  <Skeleton className="h-8 w-8 rounded-full bg-40accent md:h-10 md:w-10" />
-                  <div className="flex-1 space-y-2">
+                  <Skeleton className="bg-40accent h-8 w-8 rounded-full md:h-10 md:w-10" />
+                  <div className="flex flex-1 flex-col gap-y-2">
                     <div className="flex items-center gap-2">
-                      <Skeleton className="h-3 w-24 bg-40accent md:h-4 md:w-32" />
-                      <Skeleton className="h-3 w-12 bg-40accent md:h-4 md:w-16" />
+                      <Skeleton className="bg-40accent h-3 w-24 md:h-4 md:w-32" />
+                      <Skeleton className="bg-40accent h-3 w-12 md:h-4 md:w-16" />
                     </div>
-                    <Skeleton className="h-3 w-full bg-40accent md:h-4" />
-                    <Skeleton className="h-3 w-3/4 bg-40accent md:h-4" />
+                    <Skeleton className="bg-40accent h-3 w-full md:h-4" />
+                    <Skeleton className="bg-40accent h-3 w-3/4 md:h-4" />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="space-y-4 divide-y divide-border">
+            <div className="divide-border space-y-4 divide-y">
               {product.commentsAndRatings.map((comment) => (
                 <div
                   key={comment._id}
                   className="group flex gap-4 pt-4 first:pt-0">
-                  <Avatar className="h-8 w-8 border-2 border-border shadow-sm md:h-10 md:w-10">
+                  <Avatar className="border-border h-8 w-8 border-2 shadow-xs md:h-10 md:w-10">
                     <AvatarImage
                       src={comment.userId.profilePicture || '/avatar.jpg'}
                     />
@@ -397,11 +397,11 @@ const ProductPage = () => {
                       {comment.userId.username[0]}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 space-y-2">
+                  <div className="flex flex-1 flex-col gap-y-2">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                       <div className="flex items-center gap-2">
                         <Username username={comment.userId.username} />
-                        <span className="text-xs text-muted-foreground md:text-sm">
+                        <span className="text-muted-foreground text-xs md:text-sm">
                           {comment.date &&
                             format(new Date(comment.date), 'd MMMM yyyy', {
                               locale: ar,
@@ -470,14 +470,14 @@ const ProductPage = () => {
         <div className="space-y-4 md:space-y-6">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="flex gap-4">
-              <Skeleton className="h-8 w-8 rounded-full bg-40accent md:h-10 md:w-10" />
-              <div className="flex-1 space-y-2">
+              <Skeleton className="bg-40accent h-8 w-8 rounded-full md:h-10 md:w-10" />
+              <div className="flex flex-1 flex-col gap-y-2">
                 <div className="flex items-center gap-2">
-                  <Skeleton className="h-3 w-24 bg-40accent md:h-4 md:w-32" />
-                  <Skeleton className="h-3 w-12 bg-40accent md:h-4 md:w-16" />
+                  <Skeleton className="bg-40accent h-3 w-24 md:h-4 md:w-32" />
+                  <Skeleton className="bg-40accent h-3 w-12 md:h-4 md:w-16" />
                 </div>
-                <Skeleton className="h-3 w-full bg-40accent md:h-4" />
-                <Skeleton className="h-3 w-3/4 bg-40accent md:h-4" />
+                <Skeleton className="bg-40accent h-3 w-full md:h-4" />
+                <Skeleton className="bg-40accent h-3 w-3/4 md:h-4" />
               </div>
             </div>
           ))}

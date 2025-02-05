@@ -2,9 +2,11 @@
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
 import { ar } from 'date-fns/locale';
+import { Box } from '@/components/ui/box';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Slider, Box, Rating } from '@mui/material';
+import { Slider } from '@/components/ui/slider';
+import { Rating } from '@/components/ui/rating';
 import {
   Loader2,
   CalendarIcon,
@@ -82,11 +84,6 @@ function ProductCard({ product, user }) {
                 })}
               </span>
             </div>
-            {product.rating && (
-              <div className="pt-2">
-                <Rating value={product.rating} readOnly precision={0.5} />
-              </div>
-            )}
           </div>
         </div>
 
@@ -184,9 +181,9 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-card rounded-lg border p-6 shadow-sm">
+      className="bg-card rounded-lg border p-6 shadow-xs">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           <Label>البحث</Label>
           <div className="relative">
             <Search className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
@@ -201,7 +198,7 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           <Label>مدى السعر</Label>
           <Box dir="ltr" className="px-3">
             <Slider
@@ -209,16 +206,16 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
                 searchParams.minPrice || 0,
                 searchParams.maxPrice || maxPriceAvailable,
               ]}
-              onChange={(_e, newValue) => {
+              min={1}
+              max={maxPriceAvailable}
+              step={1}
+              onValueChange={(values) =>
                 setSearchParams({
                   ...searchParams,
-                  minPrice: newValue[0],
-                  maxPrice: newValue[1],
-                });
-              }}
-              valueLabelDisplay="auto"
-              max={maxPriceAvailable}
-              min={1}
+                  minPrice: values[0],
+                  maxPrice: values[1],
+                })
+              }
             />
           </Box>
           <div className="grid grid-cols-2 gap-2">
@@ -253,7 +250,7 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           <Label>نطاق تاريخ الإنشاء</Label>
           <Popover>
             <PopoverTrigger asChild>
@@ -294,7 +291,7 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
           </Popover>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           <Label>نطاق تاريخ التعديل</Label>
           <Popover>
             <PopoverTrigger asChild>
@@ -335,7 +332,7 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
           </Popover>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           <Label>الترتيب</Label>
           <div className="flex flex-col gap-2">
             <Select
@@ -383,22 +380,17 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
           </div>
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           <Label>عدد النتائج في الصفحة</Label>
           <Box dir="ltr" className="px-3">
             <Slider
               value={searchParams.limit}
-              onChange={(_e, value) =>
-                setSearchParams({
-                  ...searchParams,
-                  limit: value,
-                })
-              }
-              step={5}
-              marks
               min={5}
               max={25}
-              valueLabelDisplay="auto"
+              step={5}
+              onValueChange={(value) =>
+                setSearchParams({ ...searchParams, limit: value[0] })
+              }
             />
           </Box>
           <Input
@@ -416,7 +408,7 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="flex flex-col gap-y-2">
           <div className="bg-background rounded-md border p-4">
             <div className="flex items-center justify-between">
               <Rating
@@ -426,14 +418,6 @@ function SearchPanel({ onSearch, maxPriceAvailable = 100000 }) {
                 onChange={(_e, newValue) =>
                   setSearchParams({ ...searchParams, rating: newValue })
                 }
-                sx={{
-                  '& .MuiRating-iconFilled': {
-                    color: 'var(--primary)',
-                  },
-                  '& .MuiRating-iconHover': {
-                    color: 'var(--primary)',
-                  },
-                }}
               />
               <span className="text-muted-foreground text-sm">
                 {searchParams.rating} / 5
@@ -524,7 +508,7 @@ export default function Market() {
   }, []);
 
   return (
-    <div className="container space-y-8 py-10">
+    <div className="container space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">السوق</h1>
       </div>

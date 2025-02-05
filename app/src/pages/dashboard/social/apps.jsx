@@ -67,16 +67,16 @@ const ConnectedApps = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold mb-4">التطبيقات المتصلة</h2>
+        <h2 className="mb-4 text-2xl font-semibold">التطبيقات المتصلة</h2>
         <p className="text-muted-foreground">
           قم بربط حساباتك على وسائل التواصل الاجتماعي
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {apps.map((app) => (
-          <div key={app.id} className="p-4 border rounded-lg bg-card h-full">
-            <div className="flex items-center justify-between mb-4">
+          <div key={app.id} className="bg-card h-full rounded-lg border p-4">
+            <div className="mb-4 flex items-center justify-between">
               <AppIconWithName app={app} />
               {`${app.connectedAccounts.length}/${app.slots}`}
               <Button
@@ -112,15 +112,15 @@ const ConnectedApps = () => {
             </div>
 
             {app.connectedAccounts.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-muted-foreground">
+              <div className="flex flex-col gap-y-2">
+                <h3 className="text-muted-foreground text-sm font-medium">
                   الحسابات المتصلة
                 </h3>
                 <div className="space-y-1">
                   {app.connectedAccounts.map((account) => (
                     <div
                       key={account.id}
-                      className="flex items-center justify-between text-sm bg-muted-light p-2 rounded">
+                      className="bg-muted-light flex items-center justify-between rounded-sm p-2 text-sm">
                       <span>{account.name}</span>
                       <Button
                         disabled={loading}

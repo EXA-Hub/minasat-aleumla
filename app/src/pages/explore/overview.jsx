@@ -10,7 +10,7 @@ const OverviewPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/docs/markdown-guide.txt')
+    fetch('/docs/markdown-guide.md')
       .then((response) => response.text())
       .then((text) => {
         setContent(text);
@@ -24,13 +24,13 @@ const OverviewPage = () => {
 
   return (
     <div>
-      <div className="p-4 bg-20muted rounded-md shadow-md space-y-2">
+      <div className="bg-20muted flex flex-col gap-y-2 rounded-md p-4 shadow-md">
         {user && (
-          <div className="text-lg font-medium text-muted-foreground">
+          <div className="text-muted-foreground text-lg font-medium">
             حسابك: <Username username={user.username} />
           </div>
         )}
-        <div className="text-lg font-medium text-muted-foreground">
+        <div className="text-muted-foreground text-lg font-medium">
           حساب المؤسس: <Username username="zampx" />
         </div>
       </div>
@@ -38,7 +38,7 @@ const OverviewPage = () => {
         title="نشرة إخبارية"
         content={content}
         loading={loading}
-        className="bg-gray-50/10 p-6 rounded-lg shadow-md"
+        className="rounded-lg bg-gray-50/10 p-6 shadow-md"
       />
     </div>
   );

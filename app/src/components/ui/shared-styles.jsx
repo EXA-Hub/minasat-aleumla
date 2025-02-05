@@ -18,7 +18,7 @@ const colorVariants = {
 export const PageTitle = ({ children, className, ...props }) => (
   <h1
     className={cn(
-      'mb-8 text-right text-3xl font-bold text-foreground',
+      'text-foreground mb-8 text-right text-3xl font-bold',
       'md:text-4xl lg:text-5xl',
       'tracking-tight',
       fadeIn,
@@ -37,7 +37,7 @@ PageTitle.propTypes = {
 export const SectionTitle = ({ children, className, ...props }) => (
   <h2
     className={cn(
-      'mb-6 text-right text-xl font-semibold text-foreground',
+      'text-foreground mb-6 text-right text-xl font-semibold',
       'md:text-2xl',
       'tracking-tight',
       fadeIn,
@@ -81,7 +81,7 @@ IconWrapper.propTypes = {
 export const StatsCard = ({ icon: Icon, title, value, color = 'blue' }) => (
   <div
     className={cn(
-      'rounded-xl border bg-card p-6 shadow-sm',
+      'bg-card rounded-xl border p-6 shadow-xs',
       'transition-shadow duration-200 hover:shadow-md',
       'group'
     )}>
@@ -96,9 +96,9 @@ export const StatsCard = ({ icon: Icon, title, value, color = 'blue' }) => (
           )}
         />
       </IconWrapper>
-      <div className="space-y-2 text-right">
-        <div className="text-sm font-medium text-muted-foreground">{title}</div>
-        <div className="text-2xl font-bold tracking-tight text-foreground">
+      <div className="flex flex-col gap-y-2 text-right">
+        <div className="text-muted-foreground text-sm font-medium">{title}</div>
+        <div className="text-foreground text-2xl font-bold tracking-tight">
           {value}
         </div>
       </div>
@@ -121,7 +121,7 @@ export const DataTable = ({ columns, data }) => (
           {columns.map((column, i) => (
             <th
               key={i}
-              className="px-4 py-3 text-right text-sm font-medium text-foreground">
+              className="text-foreground px-4 py-3 text-right text-sm font-medium">
               {column.header}
             </th>
           ))}
@@ -132,8 +132,8 @@ export const DataTable = ({ columns, data }) => (
           <tr
             key={i}
             className={cn(
-              'border-t border-border',
-              'transition-colors duration-200 hover:bg-50muted'
+              'border-border border-t',
+              'hover:bg-50muted transition-colors duration-200'
             )}>
             {columns.map((column, j) => (
               <td key={j} className="px-4 py-3 text-right">
@@ -160,8 +160,8 @@ DataTable.propTypes = {
 export const ChartContainer = ({ children, className, ...props }) => (
   <div
     className={cn(
-      'h-[400px] w-full rounded-xl border bg-card p-6',
-      'shadow-sm transition-shadow duration-200 hover:shadow-md',
+      'bg-card h-[400px] w-full rounded-xl border p-6',
+      'shadow-xs transition-shadow duration-200 hover:shadow-md',
       className
     )}
     {...props}>
@@ -177,7 +177,7 @@ ChartContainer.propTypes = {
 const inputStyles = cva(
   [
     'w-full p-3 rounded-lg border bg-background',
-    'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+    'focus:outline-hidden focus:ring-2 focus:ring-primary focus:border-transparent',
     'placeholder:text-muted-foreground',
     'disabled:opacity-50 disabled:cursor-not-allowed',
     'transition-all duration-200',
@@ -196,9 +196,9 @@ const inputStyles = cva(
 );
 
 export const FormInput = ({ label, error, className, ...props }) => (
-  <div className="space-y-2">
+  <div className="flex flex-col gap-y-2">
     {label && (
-      <label className="block text-right text-sm font-medium text-foreground">
+      <label className="text-foreground block text-right text-sm font-medium">
         {label}
       </label>
     )}
@@ -214,9 +214,9 @@ FormInput.propTypes = {
 };
 
 export const FormTextArea = ({ label, error, className, ...props }) => (
-  <div className="space-y-2">
+  <div className="flex flex-col gap-y-2">
     {label && (
-      <label className="block text-right text-sm font-medium text-foreground">
+      <label className="text-foreground block text-right text-sm font-medium">
         {label}
       </label>
     )}
@@ -242,7 +242,7 @@ const buttonVariants = cva(
   [
     'px-4 py-2 rounded-lg font-medium',
     'transition-all duration-200',
-    'focus:outline-none focus:ring-2 focus:ring-offset-2',
+    'focus:outline-hidden focus:ring-2 focus:ring-offset-2',
     'disabled:opacity-50 disabled:cursor-not-allowed',
   ],
   {

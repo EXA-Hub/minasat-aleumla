@@ -1,31 +1,17 @@
-import { useState, useEffect, lazy } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from '../../../components/ui/card';
 import { Loader2, Eye, TrendingUp, Users, TrendingDown } from 'lucide-react';
 
-const AreaChart = lazy(() =>
-  import('recharts').then((module) => ({ default: module.AreaChart }))
-);
-const Area = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Area }))
-);
-const XAxis = lazy(() =>
-  import('recharts').then((module) => ({ default: module.XAxis }))
-);
-const YAxis = lazy(() =>
-  import('recharts').then((module) => ({ default: module.YAxis }))
-);
-const CartesianGrid = lazy(() =>
-  import('recharts').then((module) => ({ default: module.CartesianGrid }))
-);
-const Tooltip = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Tooltip }))
-);
-const ResponsiveContainer = lazy(() =>
-  import('recharts').then((module) => ({ default: module.ResponsiveContainer }))
-);
-const Legend = lazy(() =>
-  import('recharts').then((module) => ({ default: module.Legend }))
-);
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 
 import { PageTitle, SectionTitle } from '../../../components/ui/shared-styles';
 import api from '../../../utils/api';
@@ -44,7 +30,7 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload) return null;
   return (
-    <div className="rounded-lg border bg-background p-3 shadow-lg">
+    <div className="bg-background rounded-lg border p-3 shadow-lg">
       <p className="mb-1 text-sm font-medium">{label}</p>
       {payload.map((item, index) => (
         <p key={index} className="text-sm" style={{ color: item.color }}>
@@ -72,7 +58,7 @@ const StatCard = ({ icon: Icon, label, value, trend = 0, color }) => (
   <div className={`rounded-xl p-4 bg-${color}-50 dark:bg-${color}-900/10`}>
     <div className="flex items-center justify-between">
       <Icon className={`h-5 w-5 text-${color}-600`} />
-      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-muted-foreground text-sm">{label}</span>
     </div>
     <div className="mt-2 flex items-baseline gap-2">
       <span className="text-2xl font-bold">{value}</span>
@@ -129,7 +115,7 @@ const EngagementPage = () => {
   if (loading) {
     return (
       <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="text-primary h-8 w-8 animate-spin" />
         <p className="text-muted-foreground">جاري تحميل البيانات...</p>
       </div>
     );
@@ -263,7 +249,7 @@ const EngagementPage = () => {
                   {currentViewers.map((viewerId, index) => (
                     <TableRow
                       key={index}
-                      className="transition-colors hover:bg-50muted">
+                      className="hover:bg-50muted transition-colors">
                       <TableCell className="font-medium">
                         {indexOfFirstViewer + index + 1}
                       </TableCell>
@@ -271,7 +257,7 @@ const EngagementPage = () => {
                       <TableCell>
                         <Link
                           to={`/@${viewerId}`}
-                          className="flex items-center gap-2 text-primary hover:text-primary hover:underline dark:hover:text-primary">
+                          className="text-primary hover:text-primary dark:hover:text-primary flex items-center gap-2 hover:underline">
                           <span>عرض الملف</span>
                           <Eye className="h-4 w-4" />
                         </Link>
@@ -283,7 +269,7 @@ const EngagementPage = () => {
 
               {/* Pagination Controls */}
               <div className="mt-6 flex justify-center">
-                <nav className="inline-flex rounded-md shadow-sm">
+                <nav className="inline-flex rounded-md shadow-xs">
                   {Array.from({
                     length: Math.ceil(uniqueViewers.length / viewersPerPage),
                   }).map((_, index) => (
@@ -302,7 +288,7 @@ const EngagementPage = () => {
               </div>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               لا توجد بيانات للزوار.
             </p>
           )}

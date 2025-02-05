@@ -64,13 +64,13 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
           <DialogTitle>إنشاء هدية جديدة</DialogTitle>
           <button
             onClick={() => onOpenChange(false)}
-            className="rounded-full p-2 hover:bg-muted-foreground">
+            className="hover:bg-muted-foreground rounded-full p-2">
             <X className="h-4 w-4" />
           </button>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">
+          <div className="flex flex-col gap-y-2">
+            <label className="text-muted-foreground text-sm">
               عنوان الهدية
             </label>
             <Input
@@ -85,8 +85,8 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
               placeholder="عنوان الهدية"
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">عدد العملات</label>
+          <div className="flex flex-col gap-y-2">
+            <label className="text-muted-foreground text-sm">عدد العملات</label>
             <Input
               required
               type="number"
@@ -99,8 +99,8 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
               placeholder="عدد العملات"
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">
+          <div className="flex flex-col gap-y-2">
+            <label className="text-muted-foreground text-sm">
               الحد الأقصى للمستخدمين
             </label>
             <Input
@@ -115,8 +115,8 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
               placeholder="الحد الأقصى للمستخدمين"
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">
+          <div className="flex flex-col gap-y-2">
+            <label className="text-muted-foreground text-sm">
               الرابط (اختياري)
             </label>
             <Input
@@ -131,7 +131,7 @@ const CreateGiftDialog = ({ onSuccess, open, onOpenChange }) => {
           <button
             type="submit"
             disabled={loading}
-            className="h-10 w-full rounded-md bg-primary text-primary-foreground hover:bg-primary disabled:opacity-50">
+            className="bg-primary text-primary-foreground hover:bg-primary h-10 w-full rounded-md disabled:opacity-50">
             {loading ? 'جاري الإنشاء...' : 'إنشاء الهدية'}
           </button>
           <span className="text-xs text-red-700">سيتم فرض الرسوم</span>
@@ -200,7 +200,7 @@ const AirdropPage = () => {
         <h2 className="text-3xl font-bold">الهدايا المتاحة</h2>
         <button
           onClick={() => setDialogOpen(true)}
-          className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary">
+          className="bg-primary text-primary-foreground hover:bg-primary rounded-md px-4 py-2">
           إنشاء هدية جديدة
         </button>
       </div>
@@ -222,19 +222,19 @@ const AirdropPage = () => {
             </CardHeader>
             <CardContent>
               {gift.url && (
-                <a className="mb-4 block text-primary hover:underline">
+                <a className="text-primary mb-4 block hover:underline">
                   ثمة تفاصيل إضافية
                 </a>
               )}
             </CardContent>
             <CardFooter className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">
+              <span className="text-muted-foreground text-sm">
                 المتبقي: {gift.max - gift.claimedCount} / {gift.max}
               </span>
               <button
                 onClick={() => handleGiftClaim(gift)}
                 disabled={claimingId === gift.id || gift.claimed}
-                className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:bg-primary disabled:opacity-50">
+                className="bg-primary text-primary-foreground hover:bg-primary rounded-md px-4 py-2 disabled:opacity-50">
                 {claimingId === gift.id
                   ? 'جاري تقديم الهدية...'
                   : gift.claimed

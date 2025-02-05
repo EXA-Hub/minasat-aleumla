@@ -31,7 +31,7 @@ const VerificationModal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs transition-opacity duration-200"
       style={{
         marginTop: '-calc(1.5rem * calc(1 - var(--tw-space-y-reverse)))',
       }}>
@@ -41,7 +41,7 @@ const VerificationModal = ({
             setCode('');
             onClose();
           }}
-          className="absolute left-4 top-4 text-gray-500 hover:text-gray-700">
+          className="absolute top-4 left-4 text-gray-500 hover:text-gray-700">
           <X className="h-5 w-5" />
         </button>
 
@@ -51,7 +51,7 @@ const VerificationModal = ({
 
         {type === '2fa' && qrData && (
           <div className="mb-4 flex flex-col items-center">
-            <div className="inline-block rounded-lg border-4 border-foreground p-2">
+            <div className="border-foreground inline-block rounded-lg border-4 p-2">
               <QRCodeSVG
                 value={qrData}
                 size={200}
@@ -60,7 +60,7 @@ const VerificationModal = ({
                 className="rounded-md"
               />
             </div>
-            <p className="mt-2 break-all text-sm text-gray-600">
+            <p className="mt-2 text-sm break-all text-gray-600">
               الرمز السري: {secret}
             </p>
           </div>
@@ -72,7 +72,7 @@ const VerificationModal = ({
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="أدخل رمز التحقق"
-            className="w-full rounded-md border bg-background p-2 text-right text-foreground"
+            className="bg-background text-foreground w-full rounded-md border p-2 text-right"
           />
 
           <button
@@ -81,9 +81,9 @@ const VerificationModal = ({
               onVerify(code);
             }}
             disabled={loading}
-            className="relative w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+            className="bg-primary hover:bg-primary relative w-full rounded-md px-4 py-2 text-white">
             {loading && (
-              <Loader2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform animate-spin" />
+              <Loader2 className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform animate-spin" />
             )}
             تحقق
           </button>
@@ -134,9 +134,9 @@ const BackupCodesModal = ({ isOpen, onClose, codes }) => {
       style={{
         marginTop: '-calc(1.5rem * calc(1 - var(--tw-space-y-reverse)))',
       }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs">
       <div className="relative w-96 rounded-lg bg-[var(--background)] p-6">
-        <button onClick={onClose} className="absolute left-4 top-4">
+        <button onClick={onClose} className="absolute top-4 left-4">
           <X className="h-5 w-5" />
         </button>
 
@@ -149,7 +149,7 @@ const BackupCodesModal = ({ isOpen, onClose, codes }) => {
             {codes.map((code, index) => (
               <div
                 key={index}
-                className="rounded bg-[var(--background)] p-2 font-mono">
+                className="rounded-sm bg-[var(--background)] p-2 font-mono">
                 {code}
               </div>
             ))}
@@ -159,7 +159,7 @@ const BackupCodesModal = ({ isOpen, onClose, codes }) => {
         <div className="flex justify-between gap-2">
           <button
             onClick={handleCopy}
-            className="flex flex-1 items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+            className="bg-primary hover:bg-primary flex flex-1 items-center justify-center gap-2 rounded-md px-4 py-2 text-white">
             <Copy className="h-4 w-4" />
             نسخ
           </button>
@@ -384,7 +384,7 @@ const AccountSecurity = () => {
   if (loadingStates.initial) {
     return (
       <div className="flex h-[50vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="text-primary h-8 w-8 animate-spin" />
       </div>
     );
   }
@@ -395,7 +395,7 @@ const AccountSecurity = () => {
       disabled={loading}
       className={`${props.className || ''} relative`}>
       {loading && (
-        <Loader2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform animate-spin" />
+        <Loader2 className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform animate-spin" />
       )}
       {children}
     </button>
@@ -445,7 +445,7 @@ const AccountSecurity = () => {
             <LoadingButton
               type="submit"
               loading={loadingStates.password}
-              className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+              className="bg-primary hover:bg-primary w-full rounded-md px-4 py-2 text-white">
               تحديث كلمة المرور
             </LoadingButton>
           </form>
@@ -479,7 +479,7 @@ const AccountSecurity = () => {
             <LoadingButton
               type="submit"
               loading={loadingStates.username}
-              className="w-full rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+              className="bg-primary hover:bg-primary w-full rounded-md px-4 py-2 text-white">
               تحديث اسم المستخدم
             </LoadingButton>
           </form>
@@ -532,7 +532,7 @@ const AccountSecurity = () => {
                   <LoadingButton
                     type="submit"
                     loading={loadingStates.email}
-                    className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+                    className="bg-primary hover:bg-primary rounded-md px-4 py-2 text-white">
                     حفظ
                   </LoadingButton>
                 </form>
@@ -556,7 +556,7 @@ const AccountSecurity = () => {
                   <LoadingButton
                     type="submit"
                     loading={loadingStates.phone}
-                    className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+                    className="bg-primary hover:bg-primary rounded-md px-4 py-2 text-white">
                     حفظ
                   </LoadingButton>
                 </form>
@@ -573,7 +573,7 @@ const AccountSecurity = () => {
             style={{
               display: 'flex',
             }}>
-            <AlertTriangle className="ml-2 h-5 w-5 rtl:ml-2 rtl:mr-0" />
+            <AlertTriangle className="ml-2 h-5 w-5 rtl:mr-0 rtl:ml-2" />
             <AlertDescription className="ml-1">
               سيتم تجديد الرمز الإحتياطية عند كل طلب (إحتفظ بها في مكان آمن)
             </AlertDescription>
@@ -658,9 +658,9 @@ const AccountSecurity = () => {
               }
               setLoading('remove', false);
             }}>
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <select
-                className="mb-4 w-full rounded-md border bg-background p-2"
+                className="bg-background mb-4 w-full rounded-md border p-2"
                 name="type"
                 value={type}
                 onChange={(e) => {

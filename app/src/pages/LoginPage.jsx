@@ -168,7 +168,7 @@ const LoginPage = () => {
         </div>
 
         {error && (
-          <div className="mb-4 rounded bg-red-100 p-3 text-sm text-red-500 dark:bg-red-900/20">
+          <div className="mb-4 rounded-sm bg-red-100 p-3 text-sm text-red-500 dark:bg-red-900/20">
             {error}
           </div>
         )}
@@ -220,7 +220,7 @@ const LoginPage = () => {
                     min="8"
                     max="32"
                     defaultValue={12}
-                    className="w-16 rounded-none border-none bg-transparent px-0 text-sm focus:outline-none focus:ring-0 focus:ring-offset-0"
+                    className="w-16 rounded-none border-none bg-transparent px-0 text-sm focus:outline-hidden focus:ring-0 focus:ring-offset-0"
                     id="passwordLength"
                   />
                 </>
@@ -318,7 +318,7 @@ const LoginPage = () => {
                 id="acceptTerms"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="ml-2 mt-1 h-4 w-4 max-w-fit rounded border-gray-300 text-primary focus:ring-2 focus:ring-primary"
+                className="ml-2 mt-1 h-4 w-4 max-w-fit rounded-sm border-gray-300 text-primary focus:ring-2 focus:ring-primary"
                 required
               />
               <label

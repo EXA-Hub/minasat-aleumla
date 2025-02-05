@@ -7,16 +7,16 @@ const ErrorBoundaryPage = ({ error, componentStack, onReset }) => {
       <h2 className="mb-2 text-xl font-bold text-red-700">
         حدث خطأ في التطبيق
       </h2>
-      <div className="space-y-2">
+      <div className="flex flex-col gap-y-2">
         <p className="text-red-600">{error?.message || 'حدث خطأ ما'}</p>
 
         {/* Show error details in development */}
         {import.meta.env.DEV && (
           <details className="mt-2">
-            <summary className="cursor-pointer text-sm text-foreground">
+            <summary className="text-foreground cursor-pointer text-sm">
               تفاصيل الخطأ
             </summary>
-            <pre className="mt-2 max-h-96 overflow-auto rounded bg-red-500/50 p-4 text-sm text-foreground">
+            <pre className="text-foreground mt-2 max-h-96 overflow-auto rounded-sm bg-red-500/50 p-4 text-sm">
               {error?.stack}
               {componentStack && (
                 <>
@@ -34,12 +34,12 @@ const ErrorBoundaryPage = ({ error, componentStack, onReset }) => {
       <div className="mt-4 flex gap-4">
         <button
           onClick={onReset || (() => window.location.reload())}
-          className="rounded bg-red-600 px-4 py-2 text-white hover:bg-red-700">
+          className="rounded-sm bg-red-600 px-4 py-2 text-white hover:bg-red-700">
           اعادة التحميل
         </button>
         <button
           onClick={() => window.history.back()}
-          className="rounded border border-red-600 px-4 py-2 text-red-600 hover:bg-red-500/10">
+          className="rounded-sm border border-red-600 px-4 py-2 text-red-600 hover:bg-red-500/10">
           رجوع
         </button>
       </div>

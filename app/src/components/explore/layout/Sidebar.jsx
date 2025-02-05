@@ -18,13 +18,13 @@ const SidebarContent = () => {
 
   return (
     <nav className="h-full overflow-y-auto">
-      <div className="space-y-2 p-4">
+      <div className="flex flex-col gap-y-2 p-4">
         {menuItems.map((section) => (
-          <div key={section.id} className="rounded-xl backdrop-blur-sm">
+          <div key={section.id} className="rounded-xl backdrop-blur-xs">
             <button
               onClick={() => toggleSection(section.id)}
-              className="flex w-full items-center justify-between rounded-lg p-3 text-right transition-all duration-300 hover:bg-5primary">
-              <span className="font-medium text-90foreground">
+              className="hover:bg-5primary flex w-full items-center justify-between rounded-lg p-3 text-right transition-all duration-300">
+              <span className="text-90foreground font-medium">
                 {section.title}
               </span>
               <ChevronDown
@@ -46,7 +46,7 @@ const SidebarContent = () => {
                     to={item.path}
                     className={`flex items-center gap-3 rounded-lg px-4 py-2.5 transition-all duration-300 ${
                       isActive(item.path)
-                        ? 'bg-10primary text-primary shadow-lg shadow-20primary'
+                        ? 'bg-10primary text-primary shadow-20primary shadow-lg'
                         : 'text-70foreground hover:bg-5primary hover:text-foreground'
                     }`}>
                     <item.icon
@@ -68,8 +68,8 @@ const SidebarContent = () => {
 
 const Sidebar = () => {
   return (
-    <div className="fixed right-4 top-4 h-[calc(100vh-2rem)] w-72">
-      <div className="h-full overflow-hidden rounded-2xl border border-white/20 bg-30background shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-xl">
+    <div className="fixed top-4 right-4 h-[calc(100vh-2rem)] w-72">
+      <div className="bg-30background h-full overflow-hidden rounded-2xl border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)] backdrop-blur-xl">
         <SidebarContent />
       </div>
     </div>

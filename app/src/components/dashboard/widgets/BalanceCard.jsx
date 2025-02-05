@@ -18,7 +18,7 @@ CoinIcon.propTypes = {
 
 const BalanceCard = ({ balance }) => {
   return (
-    <Card className="bg-gradient-to-l from-primary to-accent p-6 text-white">
+    <Card className="bg-linear-to-l from-primary to-accent p-6 text-white">
       <div className="flex flex-col">
         <h3 className="text-lg font-medium opacity-90">الرصيد الحالي</h3>
         <div className="mt-2 text-3xl font-bold">

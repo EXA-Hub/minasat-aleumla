@@ -20,25 +20,59 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (/recharts/.test(id)) return 'recharts';
-          if (/react-markdown|remark-|rehype-/.test(id))
-            return 'markdown-bundle';
-          if (/react-syntax-highlighter/.test(id))
-            return 'react-syntax-highlighter';
-          if (/highlight/.test(id)) return 'highlight';
-          if (/refractor/.test(id)) return 'refractor';
-          if (/lodash/.test(id)) return 'lodash';
-          if (/date-fns/.test(id)) return 'date-fns';
+          // Handle node_modules path variations
+          const nodeModulesPath = /node_modules/;
+          if (!nodeModulesPath.test(id)) return;
+
+          // Extract package name from path
+          const pkg = id.match(/node_modules\/([^/]+)/)?.[1];
+          if (!pkg) return;
+
+          // Core React bundle
           if (
-            /node_modules\/(react|react-dom|react-router|react-router-dom)/.test(
-              id
+            /^(react|react-dom|react-router|react-router-dom|scheduler)$/.test(
+              pkg
             )
-          )
+          ) {
             return 'react-core';
-          if (/node_modules/.test(id)) return 'vendor';
+          }
+
+          // UI/Animation libraries
+          if (/^(@?mui|@emotion|framer-motion|styled-components)/.test(pkg)) {
+            return 'ui-libs';
+          }
+
+          // Data visualization
+          if (/^(recharts|d3|victory)/.test(pkg)) {
+            return 'data-viz';
+          }
+
+          // Markdown processing
+          if (/^(react-markdown|remark-|rehype-|unified|dompurify)/.test(pkg)) {
+            return 'markdown';
+          }
+
+          // Code highlighting
+          if (
+            /^(react-syntax-highlighter|highlight|refractor|prism)/.test(pkg)
+          ) {
+            return 'syntax-highlight';
+          }
+
+          // Utility libraries
+          if (/^(lodash|date-fns|moment|dayjs|react-day-picker)/.test(pkg)) {
+            return 'utils';
+          }
+
+          // Third-party integrations
+          if (/^(@hcaptcha|qrcode.react)/.test(pkg)) {
+            return 'integrations';
+          }
+
+          // Everything else
+          return 'vendor';
         },
       },
     },
-    chunkSizeWarningLimit: 1000,
   },
 });

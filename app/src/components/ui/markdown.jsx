@@ -1,32 +1,16 @@
 // app/src/components/ui/markdown.jsx
 import React from 'react';
-
-const ReactMarkdown = React.lazy(() => import('react-markdown'));
-const remarkGfm = React.lazy(() => import('remark-gfm'));
-
 import DOMPurify from 'dompurify';
 import PropTypes from 'prop-types';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
-
-const SyntaxHighlighter = React.lazy(() =>
-  import('react-syntax-highlighter').then((module) => ({
-    default: module.Prism,
-  }))
-);
-
-const oneDark = React.lazy(() =>
-  import('react-syntax-highlighter/dist/esm/styles/prism').then((module) => ({
-    default: module.oneDark,
-  }))
-);
-
-const oneLight = React.lazy(() =>
-  import('react-syntax-highlighter/dist/esm/styles/prism').then((module) => ({
-    default: module.oneLight,
-  }))
-);
-
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import {
+  oneDark,
+  oneLight,
+} from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
   Loader2,
   AlertCircle,
@@ -43,8 +27,8 @@ const EMOJI_STYLES = {
   '🔴': 'text-red-500',
   '🟡': 'text-yellow-500',
   '🟢': 'text-green-500',
-  '💡': 'bg-yellow-100 dark:bg-yellow-900 px-1 rounded',
-  '✨': 'bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 rounded-full',
+  '💡': 'bg-yellow-100 dark:bg-yellow-900 px-1 rounded-sm',
+  '✨': 'bg-linear-to-r from-purple-500 to-pink-500 text-white px-2 rounded-full',
 };
 
 const ADMONITION_TYPES = {
@@ -109,24 +93,24 @@ const MarkdownDisplay = ({
         </a>
       ),
       h1: ({ children }) => (
-        <h1 className="scroll-m-20 bg-gradient-to-l from-purple-600 to-purple-900 bg-clip-text text-right text-4xl font-bold tracking-tight text-transparent">
+        <h1 className="scroll-m-20 bg-linear-to-l from-purple-600 to-purple-900 bg-clip-text text-right text-4xl font-bold tracking-tight text-transparent">
           {children}
         </h1>
       ),
       h2: ({ children }) => (
-        <h2 className="mb-4 mt-8 scroll-m-20 border-r-4 border-purple-500 pr-4 text-right text-2xl font-semibold tracking-tight">
+        <h2 className="mt-8 mb-4 scroll-m-20 border-r-4 border-purple-500 pr-4 text-right text-2xl font-semibold tracking-tight">
           {children}
         </h2>
       ),
       h3: ({ children }) => (
-        <h3 className="mb-2 mt-6 scroll-m-20 text-right text-xl font-semibold tracking-tight text-purple-600 dark:text-purple-400">
+        <h3 className="mt-6 mb-2 scroll-m-20 text-right text-xl font-semibold tracking-tight text-purple-600 dark:text-purple-400">
           {children}
         </h3>
       ),
       p: ({ children }) => {
         // Remove this check to allow admonitions to render properly
         return (
-          <p className="text-right leading-7 dark:text-slate-300 [&:not(:first-child)]:mt-4">
+          <p className="text-right leading-7 not-first:mt-4 dark:text-slate-300">
             {children}
           </p>
         );
@@ -142,7 +126,7 @@ const MarkdownDisplay = ({
         </li>
       ),
       em: ({ children }) => (
-        <em className="not-italic text-primary dark:text-primary">
+        <em className="text-primary dark:text-primary not-italic">
           {children}
         </em>
       ),
@@ -212,7 +196,7 @@ const MarkdownDisplay = ({
         // Fix inline detection by checking the node type directly
         if (!className)
           return (
-            <code className="relative rounded bg-slate-100 px-[0.3rem] py-[0.2rem] font-mono text-sm text-slate-900 dark:bg-slate-800 dark:text-slate-300">
+            <code className="relative rounded-sm bg-slate-100 px-[0.3rem] py-[0.2rem] font-mono text-sm text-slate-900 dark:bg-slate-800 dark:text-slate-300">
               {children}
             </code>
           );
@@ -259,7 +243,7 @@ const MarkdownDisplay = ({
               </div>
               <button
                 onClick={copyToClipboard}
-                className="rounded p-1 opacity-0 transition-opacity hover:bg-slate-700 group-hover:opacity-100"
+                className="rounded-sm p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-slate-700"
                 aria-label="Copy code">
                 {copied.className === className &&
                 copied.children === children ? (

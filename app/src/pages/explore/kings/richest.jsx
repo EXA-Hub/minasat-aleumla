@@ -43,11 +43,11 @@ const TopUsers = () => {
   const getTopRankStyle = (index) => {
     const baseStyle = 'absolute inset-0 opacity-10 pointer-events-none';
     if (index === 0)
-      return `${baseStyle} bg-gradient-to-r from-yellow-300 to-yellow-500`;
+      return `${baseStyle} bg-linear-to-r from-yellow-300 to-yellow-500`;
     if (index === 1)
-      return `${baseStyle} bg-gradient-to-r from-gray-300 to-gray-500`;
+      return `${baseStyle} bg-linear-to-r from-gray-300 to-gray-500`;
     if (index === 2)
-      return `${baseStyle} bg-gradient-to-r from-orange-400 to-orange-600`;
+      return `${baseStyle} bg-linear-to-r from-orange-400 to-orange-600`;
     return '';
   };
 
@@ -68,11 +68,11 @@ const TopUsers = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <Card className="to-0foreground dark:from-0primary bg-gradient-to-br from-15foreground shadow-xl dark:to-5primary">
+      <Card className="to-0foreground dark:from-0primary bg-linear-to-br from-15foreground shadow-xl dark:to-5primary">
         <CardHeader className="border-b">
           <CardTitle className="flex items-center gap-2 text-2xl">
             <Trophy className="h-8 w-8 text-yellow-500" />
-            <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
               أغنى المستخدمين
             </span>
           </CardTitle>
@@ -138,11 +138,11 @@ const TopUsers = () => {
                               className={cn(
                                 'rounded-full p-1 transition-transform group-hover:scale-110',
                                 index === 0 &&
-                                  'bg-gradient-to-r from-yellow-300 to-yellow-500',
+                                  'bg-linear-to-r from-yellow-300 to-yellow-500',
                                 index === 1 &&
-                                  'bg-gradient-to-r from-gray-300 to-gray-400',
+                                  'bg-linear-to-r from-gray-300 to-gray-400',
                                 index === 2 &&
-                                  'bg-gradient-to-r from-orange-500 to-orange-600'
+                                  'bg-linear-to-r from-orange-500 to-orange-600'
                               )}>
                               <Avatar className="h-12 w-12 border-2 border-white">
                                 <AvatarImage

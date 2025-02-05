@@ -107,20 +107,20 @@ const CommentDialog = ({
       <DialogContent className="max-w-md">
         {action === 'update' && (
           <X
-            className="absolute right-2 top-2 cursor-pointer bg-10primary text-muted-foreground transition-colors duration-300 hover:bg-10foreground hover:text-primary"
+            className="bg-10primary text-muted-foreground hover:bg-10foreground hover:text-primary absolute top-2 right-2 cursor-pointer transition-colors duration-300"
             onClick={() => onSuccess()}
           />
         )}
         {thx ? (
           <>
-            <DialogHeader className="flex !flex-row items-center justify-between gap-4">
+            <DialogHeader className="flex flex-row! items-center justify-between gap-4">
               <DialogTitle className="text-2xl font-bold">
                 شكراً لك!
               </DialogTitle>
               <DialogTrigger
                 asChild
                 onClick={() => onSuccess()}
-                className="cursor-pointer bg-10primary text-muted-foreground transition-colors duration-300 hover:bg-10foreground hover:text-primary">
+                className="bg-10primary text-muted-foreground hover:bg-10foreground hover:text-primary cursor-pointer transition-colors duration-300">
                 <X className="h-4 w-4" />
               </DialogTrigger>
             </DialogHeader>
@@ -149,7 +149,7 @@ const CommentDialog = ({
             </DialogHeader>
 
             <div className="space-y-4">
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label htmlFor="comment">التعليق (اختياري)</Label>
                 <Textarea
                   id="comment"
@@ -164,12 +164,12 @@ const CommentDialog = ({
                   disabled={isSubmitting}
                   aria-describedby={error ? 'comment-error' : undefined}
                 />
-                <div className="flex justify-between text-xs text-muted-foreground">
+                <div className="text-muted-foreground flex justify-between text-xs">
                   <span>{comment?.length}/100</span>
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="flex flex-col gap-y-2">
                 <Label>التقييم (اختياري)</Label>
                 <div
                   className="flex gap-1"
@@ -184,7 +184,7 @@ const CommentDialog = ({
                         setError('');
                       }}
                       disabled={isSubmitting}
-                      className="focus-visible:ring-ring transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                      className="focus-visible:ring-ring transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
                       role="radio"
                       aria-checked={rating === star}
                       aria-label={`Rate ${star} out of 5 stars`}>
@@ -192,7 +192,7 @@ const CommentDialog = ({
                         className={`h-6 w-6 ${
                           star <= rating
                             ? 'fill-yellow-400 text-yellow-400'
-                            : 'fill-none text-muted-foreground'
+                            : 'text-muted-foreground fill-none'
                         }`}
                       />
                     </button>

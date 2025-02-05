@@ -7,7 +7,7 @@ const ProfileModal = ({ username, onClose }) => {
   return (
     <div
       onClick={() => onClose()}
-      className="modal-backdrop fixed inset-0 z-50 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-200">
+      className="modal-backdrop fixed inset-0 z-50 bg-black/50 backdrop-blur-xs transition-opacity duration-200">
       <div
         onClick={(e) => e.stopPropagation()} // Prevent click event from propagating to the backdrop
         className="scrollbar-hide fixed bottom-0 left-1/2 -translate-x-1/2 transform rounded-t-2xl bg-white shadow-lg transition-transform duration-200"
@@ -21,8 +21,8 @@ const ProfileModal = ({ username, onClose }) => {
         }}>
         <Suspense
           fallback={
-            <div className="flex h-screen items-center justify-center bg-background">
-              <div className="text-xl text-primary">جارٍ التحميل...</div>
+            <div className="bg-background flex h-screen items-center justify-center">
+              <div className="text-primary text-xl">جارٍ التحميل...</div>
             </div>
           }>
           <ProfilePage username={username} closeWidget={onClose} />

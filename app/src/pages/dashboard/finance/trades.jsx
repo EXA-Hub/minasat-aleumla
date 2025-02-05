@@ -198,7 +198,7 @@ const RenderTradeChat = ({
         <header className="flex items-center justify-between border-b border-border p-4">
           {/* Left Section: Avatar & Username */}
           <div className="flex items-center gap-3 rounded-lg p-2 transition-colors duration-200 hover:bg-50muted">
-            <Avatar className="h-8 w-8 border-2 border-border shadow-sm ring-2 ring-background md:h-10 md:w-10">
+            <Avatar className="h-8 w-8 border-2 border-border shadow-xs ring-2 ring-background md:h-10 md:w-10">
               <AvatarImage
                 src={otherUser.profilePicture || '/avatar.jpg'}
                 alt={otherUser.username || 'User Avatar'}
@@ -226,7 +226,7 @@ const RenderTradeChat = ({
         {/* Chat Messages */}
         <div
           ref={chatContainerRef}
-          className="scrollbar-thin scrollbar-thumb-primary scrollbar-track-background flex-grow overflow-y-auto p-4">
+          className="scrollbar-thin scrollbar-thumb-primary scrollbar-track-background grow overflow-y-auto p-4">
           <div className="flex flex-col gap-6 px-2 py-4">
             {mergeMessages([...chats[selectedTrade._id]]).map(
               ({ username, content, date, isSpecial }, index) => {
@@ -259,8 +259,8 @@ const RenderTradeChat = ({
                     )}>
                     <Avatar
                       className={cn(
-                        'h-8 w-8 flex-shrink-0 select-none md:h-10 md:w-10',
-                        'border-2 border-border shadow-sm ring-2 ring-background transition-transform duration-200',
+                        'h-8 w-8 shrink-0 select-none md:h-10 md:w-10',
+                        'border-2 border-border shadow-xs ring-2 ring-background transition-transform duration-200',
                         'group-hover:scale-105'
                       )}>
                       <AvatarImage
@@ -311,7 +311,7 @@ const RenderTradeChat = ({
                       <p
                         className={cn(
                           'w-fit rounded-2xl px-4 py-2.5 text-sm',
-                          'shadow-sm transition-colors duration-200',
+                          'shadow-xs transition-colors duration-200',
                           'whitespace-pre-line',
                           isSystem &&
                             !isError &&
@@ -450,7 +450,7 @@ const RenderTradeChat = ({
             ) : (
               <input
                 type="text"
-                className="flex-grow rounded border border-border bg-background p-2 text-foreground"
+                className="grow rounded-sm border border-border bg-background p-2 text-foreground"
                 maxLength={100}
                 max={100}
                 placeholder={`اكتب رسالة إلى ${otherParty}`}
@@ -469,7 +469,7 @@ const RenderTradeChat = ({
                 someMsg.includes('البائع:[تم إرسال المنتج]')
               ) && (
                 <button
-                  className="rounded bg-primary px-4 py-2 text-primary-foreground hover:bg-90primary"
+                  className="rounded-sm bg-primary px-4 py-2 text-primary-foreground hover:bg-90primary"
                   onClick={async () => {
                     setSendingMsg(true);
                     await sendMessage('[تم إرسال المنتج]', ourParty);
@@ -549,7 +549,7 @@ const RenderSellTradesSidebar = ({
 
   return (
     <Card
-      className={` ${activeTab === 'sell' ? 'block' : 'hidden'} w-full flex-shrink-0 rounded-none border-0 md:w-80`}>
+      className={` ${activeTab === 'sell' ? 'block' : 'hidden'} w-full shrink-0 rounded-none border-0 md:w-80`}>
       <CardHeader className="space-y-1.5 p-4">
         <CardTitle className="text-xl font-bold">صفقات منتجاتي</CardTitle>
 
@@ -856,7 +856,7 @@ const TradesPage = () => {
 
   const renderBuyTradesSidebar = () => (
     <div
-      className={`${activeTab === 'buy' ? 'block' : 'hidden'} rtl flex-shrink-0 overflow-y-auto bg-card md:w-80`}>
+      className={`${activeTab === 'buy' ? 'block' : 'hidden'} rtl shrink-0 overflow-y-auto bg-card md:w-80`}>
       <div className="p-4">
         <h2 className="mb-4 text-xl font-bold text-card-foreground">
           الصفقات التي أشتريها

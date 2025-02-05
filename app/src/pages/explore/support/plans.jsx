@@ -112,18 +112,18 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
           </DialogTitle>
           <button
             onClick={onClose}
-            className="rounded-full bg-muted p-2 transition-colors hover:bg-muted-foreground">
+            className="bg-muted hover:bg-muted-foreground rounded-full p-2 transition-colors">
             <X className="h-6 w-6" />
           </button>
         </div>
 
         {action !== 'cancel' && action !== 'code' && (
           <div className="mb-6">
-            <div className="mb-4 rounded-lg bg-muted p-4">
+            <div className="bg-muted mb-4 rounded-lg p-4">
               <h4 className="mb-4 text-lg font-bold">تفاصيل الخطة</h4>
               <div className="flex flex-col space-y-3">
-                <div className="flex items-center justify-between border-b border-30border pb-2">
-                  <span className="text-sm text-muted-foreground">
+                <div className="border-30border flex items-center justify-between border-b pb-2">
+                  <span className="text-muted-foreground text-sm">
                     التكلفة الأساسية
                   </span>
                   <span className="font-bold">
@@ -133,8 +133,8 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
 
                 {user && (
                   <>
-                    <div className="flex items-center justify-between border-b border-30border pb-2">
-                      <span className="text-sm text-muted-foreground">
+                    <div className="border-30border flex items-center justify-between border-b pb-2">
+                      <span className="text-muted-foreground text-sm">
                         الرسوم ({calculateFee()}%)
                       </span>
                       <span className="font-bold">
@@ -144,8 +144,8 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                       </span>
                     </div>
 
-                    <div className="flex items-center justify-between border-b border-30border pb-2">
-                      <span className="text-sm text-muted-foreground">
+                    <div className="border-30border flex items-center justify-between border-b pb-2">
+                      <span className="text-muted-foreground text-sm">
                         رصيدك الحالي
                       </span>
                       <span className="font-bold">
@@ -156,8 +156,8 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                 )}
 
                 <div className="flex items-center justify-between pt-2">
-                  <span className="text-sm text-muted-foreground">المجموع</span>
-                  <span className="text-lg font-bold text-primary">
+                  <span className="text-muted-foreground text-sm">المجموع</span>
+                  <span className="text-primary text-lg font-bold">
                     {calculateTotal()}
                   </span>
                 </div>
@@ -181,7 +181,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                 className={`rounded-lg p-3 font-semibold transition-colors ${
                   action === key
                     ? danger
-                      ? 'bg-red-600 text-foreground'
+                      ? 'text-foreground bg-red-600'
                       : 'bg-primary text-primary-foreground'
                     : 'bg-muted hover:bg-80muted'
                 }`}>
@@ -191,7 +191,7 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
           </div>
 
           {action === 'code' && (
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Input
                 placeholder="ادخل كود الاشتراك"
                 value={code}
@@ -199,14 +199,14 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                 className="p-6 text-lg"
                 required
               />
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 أدخل الكود الذي حصلت عليه لتفعيل الاشتراك
               </p>
             </div>
           )}
 
           {action === 'generate' && (
-            <div className="space-y-2">
+            <div className="flex flex-col gap-y-2">
               <Input
                 type="number"
                 min="1"
@@ -216,17 +216,17 @@ const SubscriptionDialog = ({ plan, plans, user, onClose, onSuccess }) => {
                 className="p-6 text-lg"
                 required
               />
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 سيتم تطبيق رسوم {calculateFee()}% على كل كود يتم إنشاؤه
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 التكلفة الإجمالية: {calculateTotal() * quantity}
               </p>
             </div>
           )}
 
           {error && (
-            <div className="rounded-lg bg-red-900 p-4 text-foreground">
+            <div className="text-foreground rounded-lg bg-red-900 p-4">
               {error}
             </div>
           )}
@@ -284,7 +284,7 @@ const PlansPage = () => {
 
   if (loading)
     return (
-      <div className="animate-pulse p-6 text-center text-foreground">
+      <div className="text-foreground animate-pulse p-6 text-center">
         جاري تحميل الخطط...
       </div>
     );
@@ -292,7 +292,7 @@ const PlansPage = () => {
     return <div className="p-6 text-center text-red-500">خطأ: {error}</div>;
   if (!plans)
     return (
-      <div className="p-6 text-center text-foreground">لا توجد خطط متاحة.</div>
+      <div className="text-foreground p-6 text-center">لا توجد خطط متاحة.</div>
     );
 
   // Update the handlePlanSelection function in plans.jsx
@@ -311,8 +311,8 @@ const PlansPage = () => {
       dark: 'bg-30primary border-foreground', // Dark background for basic plan
     },
     professional: {
-      light: 'bg-gradient-to-tl from-70primary to-background', // Light gradient for professional plan
-      dark: 'bg-gradient-to-br from-30primary to-background', // Dark gradient for professional plan
+      light: 'bg-linear-to-tl from-70primary to-background', // Light gradient for professional plan
+      dark: 'bg-linear-to-br from-30primary to-background', // Dark gradient for professional plan
     },
     elite: {
       light: 'animate-moving-gradient',
@@ -327,7 +327,7 @@ const PlansPage = () => {
 
     if (typeof value === 'object')
       return Object.entries(value).map(([subKey, val]) => (
-        <div key={subKey} className="text-sm text-muted-foreground">
+        <div key={subKey} className="text-muted-foreground text-sm">
           {featureTranslations[subKey]}: {renderFeatureValue(val, subKey)}
         </div>
       ));
@@ -356,13 +356,13 @@ const PlansPage = () => {
 
       {user && (
         <div className="animate-fadeIn text-center">
-          <h2 className="mb-4 text-2xl font-bold text-foreground">
+          <h2 className="text-foreground mb-4 text-2xl font-bold">
             خطتك الحالية: {planTranslations[user.tier]}
           </h2>
         </div>
       )}
 
-      <h1 className="animate-fadeIn mb-12 text-center text-4xl font-bold text-foreground">
+      <h1 className="animate-fadeIn text-foreground mb-12 text-center text-4xl font-bold">
         اختر خطتك المناسبة
       </h1>
 
@@ -371,7 +371,7 @@ const PlansPage = () => {
           <Card
             key={planName}
             className={
-              'hover:scale-5 animate-slideUp border-2 border-border transition-all duration-300 ' +
+              'animate-slideUp border-border border-2 transition-all duration-300 hover:scale-95 ' +
               planStyle[planName][theme]
             }
             style={{
@@ -379,7 +379,7 @@ const PlansPage = () => {
             }}>
             <CardHeader className="relative">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-foreground">
+                <h2 className="text-foreground text-2xl font-bold">
                   {planTranslations[planName]}
                 </h2>
                 <div className="flex items-center gap-2">
@@ -392,7 +392,7 @@ const PlansPage = () => {
               {Object.entries(planDetails.features).map(
                 ([category, features]) => (
                   <div key={category} className="mb-6 last:mb-0">
-                    <h3 className="mb-3 border-b border-border pb-2 text-lg font-semibold text-foreground">
+                    <h3 className="border-border text-foreground mb-3 border-b pb-2 text-lg font-semibold">
                       {featureTranslations[category]}
                     </h3>
                     <div className="space-y-3">
@@ -400,10 +400,10 @@ const PlansPage = () => {
                         <div
                           key={feature}
                           className="flex items-start justify-between">
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-muted-foreground text-sm">
                             {featureTranslations[feature]}
                           </span>
-                          <span className="text-sm font-medium text-foreground">
+                          <span className="text-foreground text-sm font-medium">
                             {renderFeatureValue(value, feature)}
                           </span>
                         </div>
@@ -418,14 +418,14 @@ const PlansPage = () => {
               <CardFooter className="justify-center pt-4">
                 <button
                   onClick={() => handlePlanSelection(planName)}
-                  className="w-full rounded-full bg-40primary px-6 py-3 text-lg font-bold text-foreground transition-all duration-300 hover:bg-primary hover:shadow-lg">
+                  className="bg-40primary text-foreground hover:bg-primary w-full rounded-full px-6 py-3 text-lg font-bold transition-all duration-300 hover:shadow-lg">
                   اختيار الخطة
                 </button>
               </CardFooter>
             ) : (
               <CardFooter className="justify-center pt-4">
                 <button
-                  className="w-full rounded-full bg-red-600 bg-opacity-10 px-6 py-3 text-lg font-bold text-foreground transition-all duration-300 hover:bg-opacity-100 hover:shadow-lg"
+                  className="text-foreground w-full rounded-full bg-red-600/10 px-6 py-3 text-lg font-bold transition-all duration-300 hover:bg-red-600 hover:shadow-lg"
                   onClick={async () => {
                     if (user.tier === 'free')
                       return toast.error('ليس لديك خطة أصلا');

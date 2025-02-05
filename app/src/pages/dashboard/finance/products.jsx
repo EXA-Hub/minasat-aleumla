@@ -201,7 +201,7 @@ const ProductsPage = () => {
   const SortButton = ({ field, children }) => (
     <button
       onClick={() => handleSort(field)}
-      className="flex items-center gap-2 rounded px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800">
+      className="flex items-center gap-2 rounded-sm px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-800">
       {children}
       {sortField === field && (
         <ArrowUpDown
@@ -259,7 +259,7 @@ const ProductsPage = () => {
                   <h3 className="truncate font-semibold">{product.name}</h3>
                   <button
                     disabled={product.openTrades > 0}
-                    className="rounded p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700"
+                    className="rounded-sm p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleToggleLock(product);
@@ -287,7 +287,7 @@ const ProductsPage = () => {
                       setEditingProduct(product._id);
                     }}
                     disabled={!product.isLocked}
-                    className="rounded p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700">
+                    className="rounded-sm p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700">
                     <Edit className="h-5 w-5" />
                   </button>
                   <button
@@ -296,7 +296,7 @@ const ProductsPage = () => {
                       handleDelete(product);
                     }}
                     disabled={!product.isLocked}
-                    className="rounded p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700">
+                    className="rounded-sm p-2 hover:bg-gray-100 disabled:opacity-50 dark:hover:bg-gray-700">
                     <Trash2 className="h-5 w-5" />
                   </button>
                 </div>
