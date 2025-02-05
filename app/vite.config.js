@@ -7,7 +7,13 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    dedupe: ['react', 'react-dom'],
+    dedupe: [
+      'react',
+      'react-dom',
+      'react/jsx-runtime',
+      '@emotion/react',
+      '@emotion/styled',
+    ],
     alias: {
       '@': resolve(new URL('./src', import.meta.url).pathname),
     },
@@ -18,6 +24,7 @@ export default defineConfig({
     historyApiFallback: true,
   },
   build: {
+    sourcemap: true,
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -26,7 +33,7 @@ export default defineConfig({
           const pkg = id.match(/node_modules\/([^/]+)/)?.[1];
           if (!pkg) return;
           if (
-            /^(react|react-dom|react-router|react-router-dom|scheduler)$/.test(
+            /^(react|react-dom|react-router|react-router-dom|scheduler|@react-spring)$/.test(
               pkg
             )
           ) {
