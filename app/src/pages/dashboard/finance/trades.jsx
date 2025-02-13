@@ -74,7 +74,7 @@ const RenderTradeChat = ({
 
   if (!selectedTrade)
     return (
-      <div className="hidden flex-1 items-center justify-center text-card-foreground md:flex">
+      <div className="text-card-foreground hidden flex-1 items-center justify-center md:flex">
         اختر صفقة
       </div>
     );
@@ -188,27 +188,23 @@ const RenderTradeChat = ({
 
   return (
     <div className="rtl relative min-h-[500px] flex-1 overflow-hidden pt-4 md:p-4 md:pt-0">
-      <div className="absolute left-0 top-0 h-full w-1 cursor-ew-resize transition-colors hover:bg-50primary" />
-      <div className="flex h-full flex-col rounded-lg bg-card shadow-md">
+      <div className="hover:bg-50primary absolute top-0 left-0 h-full w-1 cursor-ew-resize transition-colors" />
+      <div className="bg-card flex h-full flex-col rounded-lg shadow-md">
         {/* Header */}
         {/* selectedTrade.quantity */}
-        <p className="absolute flex h-8 w-8 items-center justify-center rounded-full rounded-tr-lg bg-40foreground text-sm font-semibold text-foreground md:right-4">
+        <p className="bg-40foreground text-foreground absolute flex h-8 w-8 items-center justify-center rounded-full rounded-tr-lg text-sm font-semibold md:right-4">
           {selectedTrade.quantity}
         </p>
-        <header className="flex items-center justify-between border-b border-border p-4">
+        <header className="border-border flex items-center justify-between border-b p-4">
           {/* Left Section: Avatar & Username */}
-          <div className="flex items-center gap-3 rounded-lg p-2 transition-colors duration-200 hover:bg-50muted">
-            <Avatar className="h-8 w-8 border-2 border-border shadow-xs ring-2 ring-background md:h-10 md:w-10">
+          <div className="hover:bg-50muted flex items-center gap-3 rounded-lg p-2 transition-colors duration-200">
+            <Avatar className="border-border ring-background h-8 w-8 border-2 ring-2 shadow-xs md:h-10 md:w-10">
               <AvatarImage
                 src={otherUser.profilePicture || '/avatar.jpg'}
                 alt={otherUser.username || 'User Avatar'}
                 className="object-cover"
               />
-              <AvatarFallback
-                src="/avatar.jpg"
-                alt="Default Avatar"
-                className="h-full w-full rounded-full object-cover"
-              />
+              <AvatarFallback>{otherUser.username?.[0] || 'U'}</AvatarFallback>
             </Avatar>
             {otherUser && otherUser.username && (
               <Username username={otherUser.username} />
@@ -219,7 +215,7 @@ const RenderTradeChat = ({
           <XCircle
             onClick={() => setSelectedTrade(null)}
             aria-label="Close Trade"
-            className="cursor-pointer text-muted-foreground transition-colors duration-200 hover:text-red-500"
+            className="text-muted-foreground cursor-pointer transition-colors duration-200 hover:text-red-500"
           />
         </header>
 
@@ -260,7 +256,7 @@ const RenderTradeChat = ({
                     <Avatar
                       className={cn(
                         'h-8 w-8 shrink-0 select-none md:h-10 md:w-10',
-                        'border-2 border-border shadow-xs ring-2 ring-background transition-transform duration-200',
+                        'border-border ring-background border-2 ring-2 shadow-xs transition-transform duration-200',
                         'group-hover:scale-105'
                       )}>
                       <AvatarImage
@@ -273,11 +269,7 @@ const RenderTradeChat = ({
                         className="object-cover"
                       />
                       <AvatarFallback>
-                        <img
-                          src="/avatar.jpg"
-                          alt="Default Avatar"
-                          className="h-full w-full rounded-full object-cover"
-                        />
+                        {msgAuthor.username?.[0] || 'U'}
                       </AvatarFallback>
                     </Avatar>
 
@@ -290,7 +282,7 @@ const RenderTradeChat = ({
                         msgAuthor.username &&
                         (user.username === msgAuthor.username ? (
                           <div className="flex items-center gap-2 px-1">
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-muted-foreground text-xs">
                               {format(parseInt(date) || new Date(), 'p', {
                                 locale: ar,
                               }).toString()}
@@ -300,7 +292,7 @@ const RenderTradeChat = ({
                         ) : (
                           <div className="flex items-center gap-2 px-1">
                             <Username username={msgAuthor.username} />
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-muted-foreground text-xs">
                               {format(parseInt(date) || new Date(), 'p', {
                                 locale: ar,
                               }).toString()}
@@ -369,7 +361,7 @@ const RenderTradeChat = ({
               {[...Array(30)].map((_, index) => (
                 <Skeleton
                   key={index}
-                  className="h-6 bg-accent"
+                  className="bg-accent h-6"
                   style={{
                     borderRadius: '8px',
                     width: `${Math.floor(Math.random() * 51) + 50}%`,
@@ -382,7 +374,7 @@ const RenderTradeChat = ({
 
         {selectedTrade.stage === 'buyer_offered' &&
           (isSeller ? (
-            <div className="flex justify-between border-t border-border p-4">
+            <div className="border-border flex justify-between border-t p-4">
               <Button
                 variant="success"
                 onClick={() => {
@@ -433,24 +425,24 @@ const RenderTradeChat = ({
               </Button>
             </div>
           ) : (
-            <div className="flex justify-between border-t border-border p-4">
+            <div className="border-border flex justify-between border-t p-4">
               <span className="text-muted-foreground">
                 انتظر حتى يتم قبول الصفقة
               </span>
             </div>
           ))}
         {selectedTrade.stage !== 'buyer_offered' && (
-          <div className="flex flex-col gap-2 border-t border-border p-4 sm:flex-row">
+          <div className="border-border flex flex-col gap-2 border-t p-4 sm:flex-row">
             {sendingMsg ? (
-              <div className="flex items-center justify-center bg-card p-4 opacity-50">
-                <span className="text-sm text-card-foreground">
+              <div className="bg-card flex items-center justify-center p-4 opacity-50">
+                <span className="text-card-foreground text-sm">
                   جاري الارسال...
                 </span>
               </div>
             ) : (
               <input
                 type="text"
-                className="grow rounded-sm border border-border bg-background p-2 text-foreground"
+                className="border-border bg-background text-foreground grow rounded-sm border p-2"
                 maxLength={100}
                 max={100}
                 placeholder={`اكتب رسالة إلى ${otherParty}`}
@@ -469,7 +461,7 @@ const RenderTradeChat = ({
                 someMsg.includes('البائع:[تم إرسال المنتج]')
               ) && (
                 <button
-                  className="rounded-sm bg-primary px-4 py-2 text-primary-foreground hover:bg-90primary"
+                  className="bg-primary text-primary-foreground hover:bg-90primary rounded-sm px-4 py-2"
                   onClick={async () => {
                     setSendingMsg(true);
                     await sendMessage('[تم إرسال المنتج]', ourParty);
@@ -611,7 +603,7 @@ const RenderSellTradesSidebar = ({
                   <div
                     key={trade._id}
                     onClick={() => handleTradeSelect(trade, true)}
-                    className={`cursor-pointer p-3 transition-colors hover:bg-primary hover:text-primary-foreground ${
+                    className={`hover:bg-primary hover:text-primary-foreground cursor-pointer p-3 transition-colors ${
                       selectedTrade?._id === trade._id &&
                       selectedTrade?.isSellTrade
                         ? 'bg-10primary text-primary'
@@ -856,25 +848,25 @@ const TradesPage = () => {
 
   const renderBuyTradesSidebar = () => (
     <div
-      className={`${activeTab === 'buy' ? 'block' : 'hidden'} rtl shrink-0 overflow-y-auto bg-card md:w-80`}>
+      className={`${activeTab === 'buy' ? 'block' : 'hidden'} rtl bg-card shrink-0 overflow-y-auto md:w-80`}>
       <div className="p-4">
-        <h2 className="mb-4 text-xl font-bold text-card-foreground">
+        <h2 className="text-card-foreground mb-4 text-xl font-bold">
           الصفقات التي أشتريها
         </h2>
         {buyTrades.map((trade) => (
           <div
             key={trade._id}
             onClick={() => handleTradeSelect(trade, false)}
-            className={`mb-2 cursor-pointer rounded-none border border-border p-3 transition-colors hover:bg-primary hover:text-primary-foreground ${
+            className={`border-border hover:bg-primary hover:text-primary-foreground mb-2 cursor-pointer rounded-none border p-3 transition-colors ${
               selectedTrade?._id === trade._id && !selectedTrade?.isSellTrade
                 ? 'bg-primary text-primary-foreground'
                 : ''
             }`}>
             <h3 className="text-card-foreground">{trade.product?.name}</h3>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               البائع: {trade.seller?.username}
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               الحالة: {translateStage[trade.stage]}
             </p>
           </div>
@@ -885,7 +877,7 @@ const TradesPage = () => {
 
   // Mobile navigation tabs
   const renderMobileTabs = () => (
-    <header className="sticky top-0 z-10 w-full border-b border-border bg-background">
+    <header className="border-border bg-background sticky top-0 z-10 w-full border-b">
       <nav className="flex items-center justify-between">
         <button
           className={`flex-1 px-4 py-2 transition-colors ${
@@ -910,7 +902,7 @@ const TradesPage = () => {
   );
 
   return (
-    <div className="rtl flex h-screen min-h-[50rem] flex-col overflow-hidden bg-background md:flex-row">
+    <div className="rtl bg-background flex h-screen min-h-[50rem] flex-col overflow-hidden md:flex-row">
       {askCommentAndRateDialog && (
         <CommentDialog
           productId={selectedTrade?.productId}

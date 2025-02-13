@@ -2,15 +2,10 @@
 import React from 'react';
 import DOMPurify from 'dompurify';
 import PropTypes from 'prop-types';
-import { toast } from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import {
-  oneDark,
-  oneLight,
-} from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { toast } from 'react-hot-toast';
+import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
 import {
   Loader2,
   AlertCircle,
@@ -20,9 +15,75 @@ import {
   Check,
 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import { Button } from './button';
 import { cn } from '@/lib/utils';
+import { Input } from './input';
+import {
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+} from './select';
 
-// Define constants
+// Dynamic imports for syntax highlighting
+// import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+const SyntaxHighlighter = React.lazy(() =>
+  import('react-syntax-highlighter').then((mod) => ({
+    default: mod.Prism,
+  }))
+);
+
+const themeNames = [
+  'a11yDark',
+  'atomDark',
+  'base16AteliersulphurpoolLight',
+  'cb',
+  'coldarkCold',
+  'coldarkDark',
+  'coyWithoutShadows',
+  'coy',
+  'darcula',
+  'dark',
+  'dracula',
+  'duotoneDark',
+  'duotoneEarth',
+  'duotoneForest',
+  'duotoneLight',
+  'duotoneSea',
+  'duotoneSpace',
+  'funky',
+  'ghcolors',
+  'gruvboxDark',
+  'gruvboxLight',
+  'holiTheme',
+  'hopscotch',
+  'lucario',
+  'materialDark',
+  'materialLight',
+  'materialOceanic',
+  'nightOwl',
+  'nord',
+  'okaidia',
+  'oneDark',
+  'oneLight',
+  'pojoaque',
+  'prism',
+  'shadesOfPurple',
+  'solarizedDarkAtom',
+  'solarizedlight',
+  'synthwave84',
+  'tomorrow',
+  'twilight',
+  'vs',
+  'vscDarkPlus',
+  'xonokai',
+  'zTouch',
+];
+
+// Constants
 const EMOJI_STYLES = {
   '🔴': 'text-red-500',
   '🟡': 'text-yellow-500',
@@ -60,38 +121,255 @@ const MarkdownDisplay = ({
   const { theme } = useTheme();
   const isDark = theme === 'dark';
   const [copied, setCopied] = React.useState(false);
+  const [syntaxTheme, setSyntaxTheme] = React.useState(null);
   const sanitizedContent = React.useMemo(
     () => DOMPurify.sanitize(content),
     [content]
   );
+  const randomTheme =
+    localStorage.getItem('syntaxSettings.styleTheme') ||
+    themeNames[Math.floor(Math.random() * themeNames.length)];
+  const [syntaxSettings, setSyntaxSettings] = React.useState({
+    showLineNumbers: true,
+    styleTheme: randomTheme,
+  });
+  const [isDropdownOpen, setIsDropdownOpen] = React.useState({
+    show: false,
+    type: 'onOpenChange',
+    code: 'code',
+  });
+
+  React.useEffect(() => {
+    import('react-syntax-highlighter/dist/esm/styles/prism').then((module) => {
+      setSyntaxTheme(module[syntaxSettings.styleTheme]);
+    });
+  }, [syntaxSettings.styleTheme]);
+
+  const CodeBlock = React.useCallback(
+    ({ className, children }) => {
+      if (!className)
+        return (
+          <code className="relative rounded-sm bg-slate-100 px-[0.3rem] py-[0.2rem] font-mono text-sm text-slate-900 dark:bg-slate-800 dark:text-slate-300">
+            {children}
+          </code>
+        );
+
+      const match = /language-(\w+)/.exec(className || '');
+      const code = String(children).replace(/\n$/, '');
+      const language = match ? match[1] : '';
+
+      const copyToClipboard = async () => {
+        setCopied({ className, children });
+        try {
+          await navigator.clipboard.writeText(code);
+          toast.success('تم النسخ');
+        } catch (error) {
+          console.error('Failed to copy:', error);
+          toast.error('فشل النسخ');
+        } finally {
+          setTimeout(() => setCopied(false), 2000);
+        }
+      };
+
+      return (
+        <div
+          tabIndex={0}
+          className={cn(
+            'group relative my-4 w-full overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700',
+            isDark ? 'bg-slate-900' : 'bg-white'
+          )}>
+          <div
+            className={cn(
+              'flex items-center justify-between px-4 py-2',
+              isDark ? 'bg-slate-800' : 'bg-slate-100'
+            )}>
+            <div className="flex items-center gap-2">
+              <div className="flex gap-1.5">
+                <div className="h-3 w-3 rounded-full bg-red-500" />
+                <div className="h-3 w-3 rounded-full bg-yellow-500" />
+                <div className="h-3 w-3 rounded-full bg-green-500" />
+              </div>
+              <span className="ml-2 font-mono text-xs text-slate-400 group-hover:hidden">
+                {language}
+              </span>
+              <div
+                onMouseEnter={() =>
+                  setIsDropdownOpen((prev) => {
+                    if (prev.type === 'onOpenChange' && prev.show) return prev;
+                    return {
+                      show: true,
+                      type: 'onMouseEnter',
+                      code,
+                    };
+                  })
+                }
+                onMouseLeave={() =>
+                  setIsDropdownOpen((prev) => {
+                    if (prev.type !== 'onMouseEnter') return prev;
+                    return {
+                      show: false,
+                      type: 'onMouseLeave',
+                      code,
+                    };
+                  })
+                }
+                className={cn(
+                  'items-center gap-2 space-x-2 group-hover:flex in-focus:flex',
+                  isDropdownOpen.show && isDropdownOpen.code === code
+                    ? 'flex'
+                    : 'hidden'
+                )}>
+                <Select
+                  onOpenChange={(open) =>
+                    setIsDropdownOpen(
+                      open
+                        ? {
+                            show: true,
+                            type: 'onOpenChange',
+                            code,
+                          }
+                        : {
+                            show: false,
+                            type: 'onOpenChange',
+                            code,
+                          }
+                    )
+                  }
+                  value={syntaxSettings.styleTheme}
+                  onValueChange={(value) => {
+                    setIsDropdownOpen({
+                      show: false,
+                      type: 'onValueChange',
+                      code,
+                    });
+                    setSyntaxSettings({
+                      ...syntaxSettings,
+                      styleTheme: value,
+                    });
+                    localStorage.setItem('syntaxSettings.styleTheme', value);
+                  }}>
+                  <SelectTrigger className="h-8 py-1 text-sm">
+                    <SelectValue placeholder={syntaxSettings.styleTheme.name} />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-48">
+                    <SelectGroup>
+                      <SelectLabel>الثيمات</SelectLabel>
+                      {themeNames.map((name) => (
+                        <SelectItem
+                          key={name}
+                          value={name}
+                          className="py-1 text-sm">
+                          {name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <Input
+                  type="checkbox"
+                  className="m-0 mr-2 h-4 w-4"
+                  checked={syntaxSettings.showLineNumbers}
+                  onChange={(e) =>
+                    setSyntaxSettings({
+                      ...syntaxSettings,
+                      showLineNumbers: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <Button
+              onClick={copyToClipboard}
+              className="h-8 w-8 rounded-sm p-1 opacity-0 group-hover:opacity-100 hover:bg-slate-700 in-focus:opacity-100"
+              aria-label="نسخ الكود">
+              {copied.className === className &&
+              copied.children === children ? (
+                <Check className="h-4 w-4 text-green-500" />
+              ) : (
+                <Copy className="h-4 w-4 text-slate-400" />
+              )}
+            </Button>
+          </div>
+
+          <React.Suspense fallback={<div>جاري التحميل منظم للكود...</div>}>
+            {syntaxTheme && (
+              <div className="overflow-x-auto">
+                <SyntaxHighlighter
+                  style={syntaxTheme}
+                  dir="ltr"
+                  language={language}
+                  showLineNumbers={syntaxSettings.showLineNumbers}
+                  className="min-w-fit p-4 font-mono text-sm"
+                  codeTagProps={{
+                    style: {
+                      fontFamily: 'inherit',
+                      whiteSpace: 'pre',
+                    },
+                  }}
+                  lineNumberStyle={{
+                    minWidth: '2.25em',
+                    paddingRight: '1em',
+                    position: 'sticky',
+                    left: 0,
+                  }}
+                  customStyle={{
+                    margin: 0,
+                    borderRadius: 0,
+                    minWidth: '100%',
+                    width: 'max-content',
+                  }}>
+                  {code}
+                </SyntaxHighlighter>
+              </div>
+            )}
+          </React.Suspense>
+        </div>
+      );
+    },
+    [
+      copied.children,
+      copied.className,
+      isDark,
+      isDropdownOpen.code,
+      isDropdownOpen.show,
+      syntaxSettings,
+      syntaxTheme,
+    ]
+  );
+
   const markdownComponents = React.useMemo(
     () => ({
-      a: ({ href, children }) => (
-        <a
-          href={href}
-          onClick={(e) => {
-            // if link is inside the app, open it in the same tab
-            if (href.startsWith('/') || href.startsWith('#') || trusted)
-              return navigate(href);
-            // alert user of outgoing link
-            e.preventDefault();
-            const confirmed = window.confirm(
-              'سيتم توجيهك إلى رابط خارجي. هل تريد المتابعة؟\n' + href
-            );
-            if (!confirmed) return false;
-            window.open(href, '_blank', 'noopener,noreferrer');
-            return false;
-          }}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            display: 'inline-block',
-            width: 'max-content',
-          }}
-          className="text-foreground hover:text-purple-400 hover:underline">
-          {children}
-        </a>
-      ),
+      a: ({ href, children }) => {
+        const handleLinkClick = (e) => {
+          e.preventDefault();
+
+          const Ehref = e.currentTarget.getAttribute('href');
+          if (!Ehref) return;
+
+          if (Ehref.startsWith('/') || Ehref.startsWith('#') || trusted) {
+            navigate(Ehref);
+            return;
+          }
+
+          const confirmed = window.confirm(
+            'سيتم توجيهك إلى رابط خارجي. هل تريد المتابعة؟\n' + Ehref
+          );
+          if (confirmed) window.open(Ehref, '_blank', 'noopener,noreferrer');
+        };
+
+        return (
+          <a
+            href={href}
+            onClick={handleLinkClick}
+            style={{
+              display: 'inline-block',
+              width: 'max-content',
+            }}
+            className="text-foreground hover:text-purple-400 hover:underline">
+            {children}
+          </a>
+        );
+      },
       h1: ({ children }) => (
         <h1 className="scroll-m-20 bg-linear-to-l from-purple-600 to-purple-900 bg-clip-text text-right text-4xl font-bold tracking-tight text-transparent">
           {children}
@@ -107,14 +385,11 @@ const MarkdownDisplay = ({
           {children}
         </h3>
       ),
-      p: ({ children }) => {
-        // Remove this check to allow admonitions to render properly
-        return (
-          <p className="text-right leading-7 not-first:mt-4 dark:text-slate-300">
-            {children}
-          </p>
-        );
-      },
+      p: ({ children }) => (
+        <p className="text-right leading-7 not-first:mt-4 dark:text-slate-300">
+          {children}
+        </p>
+      ),
       ul: ({ children }) => (
         <ul className="my-6 mr-6 list-none [&>li]:relative [&>li]:pr-6">
           {children}
@@ -144,7 +419,6 @@ const MarkdownDisplay = ({
         }
         return <strong className="font-bold">{children}</strong>;
       },
-      // Modify blockquote component:
       blockquote: ({ children }) => {
         const text = React.Children.toArray(children)
           .map((child) => {
@@ -193,89 +467,7 @@ const MarkdownDisplay = ({
           </blockquote>
         );
       },
-      code: ({ className, children }) => {
-        // Fix inline detection by checking the node type directly
-        if (!className)
-          return (
-            <code className="relative rounded-sm bg-slate-100 px-[0.3rem] py-[0.2rem] font-mono text-sm text-slate-900 dark:bg-slate-800 dark:text-slate-300">
-              {children}
-            </code>
-          );
-
-        const match = /language-(\w+)/.exec(className || '');
-        const code = String(children).replace(/\n$/, '');
-        const language = match ? match[1] : '';
-
-        const copyToClipboard = async () => {
-          setCopied({ className, children });
-          try {
-            await navigator.clipboard.writeText(code);
-            toast.success('تم النسخ');
-          } catch (error) {
-            console.error('Failed to copy:', error);
-            toast.error('فشل النسخ');
-          } finally {
-            setTimeout(() => setCopied(false), 2000);
-          }
-        };
-
-        return (
-          <div
-            className={cn(
-              'group relative my-4 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700',
-              isDark ? 'bg-slate-900' : 'border border-slate-200 bg-white'
-            )}>
-            <div
-              className={cn(
-                'flex items-center justify-between px-4 py-2',
-                isDark ? 'bg-slate-800' : 'bg-slate-100'
-              )}>
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <div className="h-3 w-3 rounded-full bg-red-500" />
-                  <div className="h-3 w-3 rounded-full bg-yellow-500" />
-                  <div className="h-3 w-3 rounded-full bg-green-500" />
-                </div>
-                {language && (
-                  <span className="ml-2 font-mono text-xs text-slate-400">
-                    {language}
-                  </span>
-                )}
-              </div>
-              <button
-                onClick={copyToClipboard}
-                className="rounded-sm p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-slate-700"
-                aria-label="Copy code">
-                {copied.className === className &&
-                copied.children === children ? (
-                  <Check className="h-4 w-4 text-green-500" />
-                ) : (
-                  <Copy className="h-4 w-4 text-slate-400" />
-                )}
-              </button>
-            </div>
-
-            <div className="p-4">
-              <SyntaxHighlighter
-                language={language}
-                style={isDark ? oneDark : oneLight}
-                customStyle={{
-                  margin: 0,
-                  padding: 0,
-                  background: 'transparent',
-                }}
-                codeTagProps={{
-                  style: {
-                    fontFamily: 'monospace',
-                  },
-                }}
-                useInlineStyles={true}>
-                {code}
-              </SyntaxHighlighter>
-            </div>
-          </div>
-        );
-      },
+      code: CodeBlock,
       table: ({ children }) => (
         <div className="my-6 w-full overflow-y-auto">
           <table className="w-full border-collapse border border-slate-400 dark:border-slate-600">
@@ -294,7 +486,7 @@ const MarkdownDisplay = ({
         </td>
       ),
     }),
-    [copied.children, copied.className, isDark, navigate, trusted] // Add any dependencies affecting component behavior
+    [CodeBlock, navigate, trusted]
   );
 
   if (loading)
@@ -305,11 +497,6 @@ const MarkdownDisplay = ({
       </div>
     );
 
-  // Add PropTypes for children:
-  MarkdownDisplay.propTypes = {
-    children: PropTypes.node,
-  };
-
   return (
     <div className={cn('space-y-6', className)} dir="rtl">
       {title && (
@@ -318,17 +505,18 @@ const MarkdownDisplay = ({
         </h2>
       )}
       <div className="markdown-content prose prose-neutral dark:prose-invert max-w-none">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={markdownComponents}>
-          {trusted ? content : sanitizedContent}
-        </ReactMarkdown>
+        <React.Suspense fallback={<div>Loading markdown...</div>}>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={markdownComponents}>
+            {trusted ? content : sanitizedContent}
+          </ReactMarkdown>
+        </React.Suspense>
       </div>
     </div>
   );
 };
 
-// Move PropTypes declaration outside the component:
 MarkdownDisplay.propTypes = {
   title: PropTypes.string,
   content: PropTypes.string.isRequired,

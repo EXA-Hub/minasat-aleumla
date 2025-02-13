@@ -92,7 +92,7 @@ function ProductCard({ product, user }) {
             <div className="flex items-center gap-3">
               <Avatar className="border-background h-10 w-10 border-2">
                 <AvatarImage src={user.profilePicture} />
-                <AvatarFallback>{user.username}</AvatarFallback>
+                <AvatarFallback>{user.username[0]}</AvatarFallback>
               </Avatar>
               <UserName username={user.username} />
             </div>

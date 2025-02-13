@@ -148,4 +148,104 @@ router.get(
   }
 );
 
+// Helper function to validate environment variables
+function validateEnv(variableName) {
+  const value = process.env[variableName];
+  if (!value) throw new Error(`${variableName} is not set`);
+  return value;
+}
+
+// Helper function to create an invite link
+async function createInviteLink(botToken, channelUsername, memberCount = 1) {
+  const response = await fetch(
+    `https://api.telegram.org/bot${botToken}/createChatInviteLink`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: channelUsername,
+        expire_date: Math.floor(Date.now() / 1000) + 24 * 60 * 60, // 24 hours from now
+        member_limit: memberCount,
+        creates_join_request: false,
+      }),
+    }
+  );
+  const data = await response.json();
+  if (!response.ok)
+    throw new Error(`Failed to create invite link: ${data.description}`);
+  return data.result.invite_link;
+}
+
+// Helper function to check membership status
+async function checkMembership(botToken, channelUsername, userId) {
+  try {
+    const response = await fetch(
+      `https://api.telegram.org/bot${botToken}/getChatMember?chat_id=${channelUsername}&user_id=${userId}`
+    );
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.description);
+    return data.result.status;
+  } catch (error) {
+    console.error(
+      `Error checking membership for user ${userId}:`,
+      error.message
+    );
+    return null; // Indicate failure
+  }
+}
+
+// Route handler
+router.get('/@me/task/telegram', async (req, res) => {
+  try {
+    // Validate environment variables
+    const botToken = validateEnv('TELEGRAM_BOT_TOKEN');
+    const channelUsername = validateEnv('TELEGRAM_CHANNEL_USERNAME');
+
+    // Retrieve Telegram accounts for the user
+    const telegramAccounts = req.user.apps?.Telegram || [];
+
+    // Create invite link
+    const inviteLink = await createInviteLink(
+      botToken,
+      channelUsername,
+      telegramAccounts.length || 1
+    );
+
+    // If no accounts are linked, return early
+    if (telegramAccounts.length === 0)
+      return res.json({
+        message: 'ليس لديك حسابات تليجرام',
+        inviteLink,
+      });
+
+    // Check membership status for each account
+    const accountsWithStatus = await Promise.all(
+      telegramAccounts.map(async (account) => {
+        const status = await checkMembership(
+          botToken,
+          channelUsername,
+          account.id
+        );
+        return {
+          id: account.id,
+          name: account.name,
+          avatar: account.photo_url,
+          status,
+        };
+      })
+    );
+
+    // Return the result
+    res.json({
+      accounts: accountsWithStatus,
+      inviteLink,
+    });
+  } catch (error) {
+    console.error('Telegram API Error:', error);
+    res.status(500).json({
+      error: 'خطأ في الخادم',
+    });
+  }
+});
+
 export default router;

@@ -93,10 +93,10 @@ const ProductPage = ({
           <CardTitle className="flex items-center gap-4">
             <Avatar className="h-16 w-16 ring-2 ring-purple-500/30">
               <AvatarImage src={user?.profilePicture || '/avatar.jpg'} />
-              <AvatarFallback>{user?.username || 'مستخدم'}</AvatarFallback>
+              <AvatarFallback>{(user?.username || 'مستخدم')[0]}</AvatarFallback>
             </Avatar>
             <div className="space-y-1">
-              <h2 className="bg-linear-to-r from-purple-600 to-primary bg-clip-text text-2xl font-bold text-transparent">
+              <h2 className="to-primary bg-linear-to-r from-purple-600 bg-clip-text text-2xl font-bold text-transparent">
                 {product.name}
               </h2>
               <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-300">
@@ -135,7 +135,7 @@ const ProductPage = ({
             </div>
 
             <div className="rounded-lg bg-white/30 p-4 dark:bg-gray-800/30">
-              <div className="flex items-center gap-2 text-primary dark:text-primary">
+              <div className="text-primary dark:text-primary flex items-center gap-2">
                 <Clock size={18} />
                 <span className="font-semibold">الصفقات المفتوحة</span>
               </div>

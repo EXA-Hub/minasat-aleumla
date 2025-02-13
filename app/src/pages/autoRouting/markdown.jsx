@@ -29,7 +29,7 @@ function TestMarkdown() {
   }, []);
 
   return (
-    <div className="container mx-auto min-h-screen p-4">
+    <div className="m-w-screen mx-auto min-h-screen md:container md:p-4">
       <div className="grid gap-6 md:grid-cols-2">
         {/* Input Section */}
         <Card className="space-y-6 p-6">

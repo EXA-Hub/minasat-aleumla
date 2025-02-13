@@ -247,6 +247,9 @@ const api = {
         params: { dailyCode },
       });
     },
+    telegram: async () => {
+      return axiosInstance.get('/api/auth/@me/task/telegram');
+    },
   },
   affiliate: {
     getReferrals: async () => {
