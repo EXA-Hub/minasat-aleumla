@@ -1,24 +1,6 @@
 // my-api/src/config.js
 
-// total amount of coins in the wallets
-// total amount of usds in the wallets
-if (!process.env.coinsAmount || !process.env.usdsAmount)
-  throw new Error('Missing environment variables: coinsAmount, usdsAmount');
-else if (isNaN(process.env.coinsAmount) || isNaN(process.env.usdsAmount))
-  throw new Error('Invalid environment variables: coinsAmount, usdsAmount');
-
-const { coinsAmount, usdsAmount } = process.env;
-
-// Conversion rates of usd to coins
-const coinToUsdRate = usdsAmount / coinsAmount; // MAIN usd/coin rate
-// how much usd i gain for 1000 daily task the users do
-const UsdtoDaily = 6 / 1000;
-// how much coins i gain for 1 daily task the users do
-const CoinstoDaily = UsdtoDaily / coinToUsdRate;
-// the dailyBonus is static amount
-const dailyBonus = Math.floor(CoinstoDaily / 10 - CoinstoDaily / 40);
-// the dailyQuarter is random range
-const dailyQuarter = Math.floor(CoinstoDaily / 4 - dailyBonus);
+const [dailyQuarter, dailyBonus] = [100, 10];
 
 const plans = {
   free: {
@@ -146,7 +128,6 @@ export default {
   },
   subscriptions: plans,
   exchange: {
-    coinToUsdRate,
     minUsd: 10,
     maxUsd: 1000,
     currencies: new Map([

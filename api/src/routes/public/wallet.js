@@ -2,6 +2,7 @@
 import { Router } from 'express';
 const router = Router();
 
+import User from '../../utils/schemas/mongoUserSchema.js';
 import config from '../../config.js';
 const { exchange } = config;
 
@@ -9,7 +10,16 @@ const { exchange } = config;
 router.get('/walletRates', async (req, res) => {
   try {
     res.send({
-      exchange,
+      exchange: {
+        coinToUsdRate:
+          process.env.usdsAmount /
+          (
+            await User.aggregate([
+              { $group: { _id: null, totalBalance: { $sum: '$balance' } } },
+            ])
+          )[0].totalBalance,
+        ...exchange,
+      },
       currencies: Object.fromEntries(exchange.currencies.entries()),
       data: await (
         await fetch(

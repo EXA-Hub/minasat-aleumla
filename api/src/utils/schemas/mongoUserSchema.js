@@ -1,4 +1,4 @@
-// my-api/src/utils/schemas/mongoUserSchema.js
+// api/src/utils/schemas/mongoUserSchema.js
 import mongoose from 'mongoose';
 import config from '../../config.js';
 
