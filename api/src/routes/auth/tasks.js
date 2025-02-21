@@ -93,7 +93,7 @@ router.get(
   ],
   async (req, res) => {
     try {
-      const { host, id } = req.query;
+      const [host, id] = [req.query.host, parseInt(req.query.id)];
       const { clientIp } = req;
       const ipRecord = await DailyIp.findOne({
         identifier: `${id}-${clientIp}`,
