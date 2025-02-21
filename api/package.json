@@ -27,7 +27,7 @@
     "helmet": "^8.0.0",
     "ip": "^2.0.1",
     "moment-timezone": "^0.5.47",
-    "mongoose": "^8.10.0",
+    "mongoose": "^8.10.1",
     "morgan": "^1.10.0",
     "nodemailer": "^6.10.0",
     "otplib": "^12.0.1",
