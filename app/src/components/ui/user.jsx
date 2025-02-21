@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
-import PropTypes from 'prop-types';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import PropTypes from 'prop-types';
 import {
   ArrowRightCircleIcon,
   User as UserIcon,
@@ -11,7 +12,6 @@ import {
   Bell,
   BookMarked,
 } from 'lucide-react';
-
 import dashboardMenuItems from '../dashboard/DashboardRoutes';
 import exploreMenuItems from '../explore/ExploreRoutes';
 import wss from '../../services/wss';
@@ -100,6 +100,7 @@ const useNotificationManager = () => {
 };
 
 export const User = ({ ThemeToggle, user, handleLogout }) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [sectionID, setSectionID] = useState(null);
   const [activeSection, setActiveSection] = useState(SECTIONS.MAIN);
@@ -120,7 +121,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
       {
         icon: <UserIcon className="h-4 w-4" />,
         label: 'الملف الشخصي',
-        action: () => window.location.replace('/@' + user.username),
+        action: () => navigate('/@' + user.username),
       },
       {
         icon: <Globe2 className="h-4 w-4" />,
@@ -135,7 +136,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
       {
         icon: <BookMarked className="h-4 w-4" />,
         label: 'دليل المستخدم',
-        action: () => window.location.replace('/docs'),
+        action: () => navigate('/docs'),
       },
       {
         icon: <LogOut className="h-4 w-4" />,
@@ -146,7 +147,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
         },
       },
     ],
-    [notifications.length, user.username, handleLogout]
+    [notifications.length, user.username, navigate, handleLogout]
   );
 
   // Click outside handler to close dropdown
@@ -282,15 +283,15 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           <span className="mr-2 font-medium">{targetSection?.title}</span>
         </div>
         {targetSection?.items?.map((item) => (
-          <button
+          <Link
+            to={item.path}
             key={item.path}
-            onClick={() => window.location.replace(item.path)}
             className="group hover:bg-accent flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200">
             <span className="transition-transform duration-200 group-hover:translate-x-1">
               {item.name}
             </span>
             <item.icon className="h-4 w-4" />
-          </button>
+          </Link>
         ))}
       </div>
     );
@@ -312,15 +313,15 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           <span className="mr-2 font-medium">{targetSection?.title}</span>
         </div>
         {targetSection?.items?.map((item) => (
-          <button
+          <Link
+            to={item.path}
             key={item.path}
-            onClick={() => window.location.replace(item.path)}
             className="group hover:bg-accent flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200">
             <span className="transition-transform duration-200 group-hover:translate-x-1">
               {item.name}
             </span>
             <item.icon className="h-4 w-4" />
-          </button>
+          </Link>
         ))}
       </div>
     );

@@ -35,9 +35,6 @@ const ProductList = ({ username, products }) => {
               {product.isLocked ? 'مقفل' : 'مفتوح'}
             </span>
           </div>
-          <p className="text-muted-foreground mt-2 text-sm">
-            {product.description}
-          </p>
           <div className="mt-4 flex items-center justify-between">
             <span className="text-foreground text-sm">
               السعر: <span className="font-semibold">{product.price}</span>

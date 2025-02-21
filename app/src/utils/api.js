@@ -237,14 +237,14 @@ const api = {
     },
   },
   tasks: {
-    getDaily: async (host) => {
+    getDaily: async ({ host, id }) => {
       return axiosInstance.get('/api/auth/@me/daily', {
-        params: { host },
+        params: { host, id },
       });
     },
-    verifyDaily: async (dailyCode) => {
+    verifyDaily: async ({ dailyCode, id }) => {
       return axiosInstance.get('/api/auth/verify-daily', {
-        params: { dailyCode },
+        params: { dailyCode, id },
       });
     },
     telegram: async () => {

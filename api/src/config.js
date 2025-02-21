@@ -7,7 +7,10 @@ const plans = {
     coins: 0,
     features: {
       wallet: { maxSend: 2000, fee: 2, maxCoins: 200000 },
-      tasks: { daily: { limit: dailyQuarter, bonus: dailyBonus } },
+      tasks: {
+        '12H': { limit: dailyQuarter / 2, bonus: dailyBonus / 2 },
+        daily: { limit: dailyQuarter, bonus: dailyBonus },
+      },
       products: { slots: 10, maxCoins: 20000 },
       gifts: { slots: 10, maxCoins: 20000, maxUsers: 10 },
       airdrop: { slots: 10, maxCoins: 20000, maxUsers: 10 },
@@ -19,7 +22,10 @@ const plans = {
     coins: 5000,
     features: {
       wallet: { maxSend: 5000, fee: 1, maxCoins: 500000 },
-      tasks: { daily: { limit: dailyQuarter * 2, bonus: dailyBonus * 2 } },
+      tasks: {
+        '12H': { limit: dailyQuarter, bonus: dailyBonus },
+        daily: { limit: dailyQuarter * 2, bonus: dailyBonus * 2 },
+      },
       products: { slots: 15, maxCoins: 30000 },
       gifts: { slots: 15, maxCoins: 30000, maxUsers: 15 },
       airdrop: { slots: 15, maxCoins: 30000, maxUsers: 15 },
@@ -31,7 +37,10 @@ const plans = {
     coins: 25000,
     features: {
       wallet: { maxSend: 100000, fee: 0.5, maxCoins: 1000000 },
-      tasks: { daily: { limit: dailyQuarter * 3, bonus: dailyBonus * 3 } },
+      tasks: {
+        '12H': { limit: dailyQuarter * (3 / 2), bonus: dailyBonus * (3 / 2) },
+        daily: { limit: dailyQuarter * 3, bonus: dailyBonus * 3 },
+      },
       products: { slots: 25, maxCoins: 50000 },
       gifts: { slots: 25, maxCoins: 50000, maxUsers: 25 },
       airdrop: { slots: 25, maxCoins: 50000, maxUsers: 25 },
@@ -43,7 +52,10 @@ const plans = {
     coins: 50000,
     features: {
       wallet: { maxSend: 500000, fee: 0, maxCoins: 5000000 },
-      tasks: { daily: { limit: dailyQuarter * 4, bonus: dailyBonus * 4 } },
+      tasks: {
+        '12H': { limit: dailyQuarter * 2, bonus: dailyBonus * 2 },
+        daily: { limit: dailyQuarter * 4, bonus: dailyBonus * 4 },
+      },
       products: { slots: 50, maxCoins: 100000 },
       gifts: { slots: 50, maxCoins: 100000, maxUsers: 50 },
       airdrop: { slots: 50, maxCoins: 100000, maxUsers: 50 },

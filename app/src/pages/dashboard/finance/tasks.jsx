@@ -197,12 +197,18 @@ const TasksPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const dailyCode = searchParams.get('dailyCode');
+    const [dailyCode, id] = [
+      searchParams.get('dailyCode'),
+      searchParams.get('id'),
+    ];
     navigate(window.location.pathname);
     const verifyDaily = async () => {
       setLoading(true);
       try {
-        const { message, daily } = await api.tasks.verifyDaily(dailyCode);
+        const { message, daily } = await api.tasks.verifyDaily({
+          dailyCode,
+          id,
+        });
         setDialogData({ open: true, message, daily });
       } catch (error) {
         toast.error(error.data?.error || 'حدث خطأ ما');
@@ -226,10 +232,13 @@ const TasksPage = () => {
     };
   }, [navigate, searchParams]);
 
-  const handleGetDaily = async () => {
+  const handleGetDaily = async (id) => {
     setLoading(true);
     try {
-      const { dailyUrl } = await api.tasks.getDaily(window.location.href);
+      const { dailyUrl } = await api.tasks.getDaily({
+        host: window.location.href,
+        id,
+      });
       window.location.href = dailyUrl;
     } catch (error) {
       console.error(error);
@@ -261,11 +270,21 @@ const TasksPage = () => {
       id: 1,
       title: 'الهدية اليومية',
       description:
-        'قم بزيارة موقعنا يومياً لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
+        'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
       buttonLabel: 'الحصول على الهدية اليومية',
       loadingText: 'جاري التحميل...',
       deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
-      onClick: handleGetDaily,
+      onClick: () => handleGetDaily(1),
+    },
+    {
+      id: 2,
+      title: 'الهدية اليومية 2',
+      description:
+        'قم بزيارة موقعنا كل 12 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
+      buttonLabel: 'الحصول على الهدية اليومية',
+      loadingText: 'جاري التحميل...',
+      deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
+      onClick: () => handleGetDaily(2),
     },
   ];
 
@@ -278,7 +297,7 @@ const TasksPage = () => {
       buttonLabel: 'الحصول على رابط البوت',
       loadingText: 'جاري التحميل...',
       deadline: 'يجب الإنضمام لقناة تيليجرام عبر رابط البوت!',
-      onClick: handleTelegram,
+      onClick: () => handleTelegram(),
     },
   ];
 
@@ -336,7 +355,7 @@ const TasksPage = () => {
                     <p className="text-gray-500">{task.description}</p>
                   </div>
                   <Button
-                    onClick={task.onClick}
+                    onClick={() => task.onClick()}
                     disabled={loading}
                     className="bg-primary hover:bg-accent w-full rounded-md px-4 py-2 text-white disabled:opacity-50 sm:w-auto">
                     {loading ? task.loadingText : task.buttonLabel}
@@ -368,7 +387,7 @@ const TasksPage = () => {
                     <p className="text-gray-500">{task.description}</p>
                   </div>
                   <Button
-                    onClick={task.onClick}
+                    onClick={() => task.onClick()}
                     disabled={loading}
                     className="bg-primary hover:bg-accent w-full rounded-md px-4 py-2 text-white disabled:opacity-50 sm:w-auto">
                     {loading ? task.loadingText : task.buttonLabel}

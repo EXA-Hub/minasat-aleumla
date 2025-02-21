@@ -9,7 +9,7 @@ import config from '../../config.js';
 
 const dailyIpSchema = new mongoose.Schema(
   {
-    ip: {
+    identifier: {
       type: String,
       required: true,
       unique: true,
@@ -29,7 +29,7 @@ const dailyIpSchema = new mongoose.Schema(
 
 const DailyIp = mongoose.model('DailyIp', dailyIpSchema);
 
-const generateShortURL = async (url, expirationMinutes = 15) => {
+const generateShortURL = async (url, id, expirationMinutes = 15) => {
   const currentTime = new Date();
   currentTime.setMinutes(currentTime.getMinutes() + expirationMinutes); // Add expiration time
 
@@ -41,8 +41,10 @@ const generateShortURL = async (url, expirationMinutes = 15) => {
     minute: currentTime.getUTCMinutes(),
   };
 
-  const apiUrl = `https://linkjust.com/api?api=${
-    process.env.LINKJUST_API_KEY
+  const apiUrl = `https://${
+    id === 1 ? 'linkjust.com' : 'nitro-link.com'
+  }/api?api=${
+    id === 1 ? process.env.LINKJUST_API_KEY : process.env.NITRO_LINK_API_KEY
   }&url=${encodeURIComponent(url)}&format=json&expiration[year]=${
     expiration.year
   }&expiration[month]=${expiration.month}&expiration[day]=${
@@ -82,29 +84,42 @@ router.get(
       .withMessage('Host is required')
       .isURL()
       .withMessage('Host must be a valid URL'),
+    query('id')
+      .isInt()
+      .withMessage('ID must be an integer')
+      .isIn([1, 2])
+      .withMessage('ID must be 1 or 2'),
     validateRequest,
   ],
   async (req, res) => {
     try {
-      const { host } = req.query;
+      const { host, id } = req.query;
       const { clientIp } = req;
-      const ipRecord = await DailyIp.findOne({ ip: clientIp });
+      const ipRecord = await DailyIp.findOne({
+        identifier: `${id}-${clientIp}`,
+      });
       if (
         ipRecord &&
-        ipRecord.updatedAt > new Date(Date.now() - 24 * 60 * 60 * 1000)
+        ((id === 1 &&
+          ipRecord.updatedAt > new Date(Date.now() - 24 * 60 * 60 * 1000)) ||
+          (id === 2 &&
+            ipRecord.updatedAt > new Date(Date.now() - 12 * 60 * 60 * 1000)))
       )
         return res.status(200).json({ dailyUrl: ipRecord.url });
       const code = generateCode();
-      const shortUrl = await generateShortURL(`${host}?dailyCode=${code}`);
+      const shortUrl = await generateShortURL(
+        `${host}?dailyCode=${code}&id=${id}`,
+        id
+      );
       const redisClient = await getRedisClient();
       await redisClient.set(
-        `tempCode:${clientIp}`,
+        `tempCode:${id}-${clientIp}`,
         JSON.stringify({ code, expireTime: Date.now() + 15 * 60 * 1000 }),
         { EX: 900 } // 15 minutes
       );
       if (!ipRecord)
         await DailyIp.create({
-          ip: clientIp,
+          identifier: `${id}-${clientIp}`,
           url: shortUrl,
         });
       else await ipRecord.updateOne({ url: shortUrl });
@@ -118,21 +133,26 @@ router.get(
 
 router.get(
   '/verify-daily',
-  [query('dailyCode').isInt(), validateRequest],
+  [query('dailyCode').isInt(), query('id').isInt(), validateRequest],
   async (req, res) => {
     try {
       const redisClient = await getRedisClient();
-      const { dailyCode } = req.query;
+      const { dailyCode, id } = req.query;
       const { clientIp } = req;
-      const entry = JSON.parse(await redisClient.get(`tempCode:${clientIp}`));
+      const entry = JSON.parse(
+        await redisClient.get(`tempCode:${id}-${clientIp}`)
+      );
       if (!entry)
         return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
-      await redisClient.del(`tempCode:${clientIp}`);
+      await redisClient.del(`tempCode:${id}-${clientIp}`);
       if (entry.code !== dailyCode)
         return res.status(400).json({ error: 'رمز غير صحيح' });
       if (Date.now() >= entry.expireTime)
         return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
-      const dailyConfig = subscriptions[req.user.tier].features.tasks.daily;
+      const dailyConfig =
+        id === 1
+          ? subscriptions[req.user.tier].features.tasks.daily
+          : subscriptions[req.user.tier].features.tasks['12H'];
       const daily =
         Math.floor(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
       req.user.balance += daily;

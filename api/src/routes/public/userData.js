@@ -58,7 +58,9 @@ function requireAppWs(_app, ws) {
     checkProfilePrivacy,
     async (req, res) => {
       try {
-        const products = await Product.find({ userId: req.user._id });
+        const products = await Product.find({ userId: req.user._id }).select(
+          '_id price name openTrades isLocked'
+        );
         res.json(products);
       } catch (error) {
         console.error(error);
