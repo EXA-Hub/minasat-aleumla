@@ -11,6 +11,8 @@ import { Alert, AlertTitle, AlertDescription } from '../../components/ui/alert';
 import MarkdownDisplay from '../../components/ui/markdown';
 import { Skeleton } from '../../components/ui/skeleton';
 
+const email = import.meta.env.VITE_EMAIL;
+
 // Error content in Markdown format
 const errorContent = `
 # 🚨 حدث خطأ غير متوقع
@@ -113,9 +115,9 @@ const DocsPage = () => {
   });
 
   const renderIndex = () => (
-    <div className="rounded-xl border border-border bg-card p-8 shadow-lg">
+    <div className="border-border bg-card rounded-xl border p-8 shadow-lg">
       <div className="mb-8">
-        <h1 className="mb-6 flex items-center gap-3 text-3xl font-bold text-primary">
+        <h1 className="text-primary mb-6 flex items-center gap-3 text-3xl font-bold">
           <BookOpenIcon className="h-8 w-8" />
           فهرس المستندات
         </h1>
@@ -124,18 +126,18 @@ const DocsPage = () => {
           <input
             type="text"
             placeholder="ابحث في المستندات..."
-            className="w-full rounded-lg border border-border bg-background px-4 py-3 pr-12 text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-20primary"
+            className="border-border bg-background text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-20primary w-full rounded-lg border px-4 py-3 pr-12 focus:ring-2"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <SearchIcon className="absolute right-4 top-4 h-5 w-5 text-muted-foreground" />
+          <SearchIcon className="text-muted-foreground absolute top-4 right-4 h-5 w-5" />
         </div>
       </div>
 
       {isIndexLoading ? (
         <div className="grid gap-4">
           {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-12 bg-muted-foreground" />
+            <Skeleton key={i} className="bg-muted-foreground h-12" />
           ))}
         </div>
       ) : (
@@ -145,20 +147,20 @@ const DocsPage = () => {
               <Link
                 key={doc.slug}
                 to={`/docs?q=${doc.slug}`}
-                className="flex items-center justify-between rounded-lg border border-border p-6 transition-all hover:border-primary hover:shadow-md">
+                className="border-border hover:border-primary flex items-center justify-between rounded-lg border p-6 transition-all hover:shadow-md">
                 <div>
-                  <h3 className="text-xl font-semibold text-foreground">
+                  <h3 className="text-foreground text-xl font-semibold">
                     {doc.title}
                   </h3>
-                  <p className="mt-2 line-clamp-2 text-muted-foreground">
+                  <p className="text-muted-foreground mt-2 line-clamp-2">
                     {doc.excerpt}
                   </p>
                 </div>
-                <ArrowRightSquareIcon className="ml-4 h-6 w-6 text-muted-foreground" />
+                <ArrowRightSquareIcon className="text-muted-foreground ml-4 h-6 w-6" />
               </Link>
             ))
           ) : (
-            <div className="py-12 text-center text-muted-foreground">
+            <div className="text-muted-foreground py-12 text-center">
               لا توجد نتائج بحث.
             </div>
           )}
@@ -168,32 +170,32 @@ const DocsPage = () => {
   );
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="bg-background min-h-screen p-8">
       <div className="mx-auto max-w-6xl">
         <Link
           to={route ? '/docs' : '/'}
-          className="group mb-8 flex items-center gap-2 text-primary transition-colors duration-300 hover:text-accent">
+          className="group text-primary hover:text-accent mb-8 flex items-center gap-2 transition-colors duration-300">
           <ArrowRightSquareIcon className="h-6 w-6 transform transition-transform group-hover:translate-x-1" />
           <span className="text-lg font-semibold">العودة للصفحة الرئيسية</span>
         </Link>
 
         {route ? (
           docs.loading ? (
-            <div className="grid gap-4 rounded-xl bg-card p-8">
+            <div className="bg-card grid gap-4 rounded-xl p-8">
               {[...Array(50)].map((_, i) => (
                 <Skeleton
                   key={i}
-                  className="h-6 bg-muted-foreground"
+                  className="bg-muted-foreground h-6"
                   style={{ width: `${Math.floor(Math.random() * 100)}%` }}
                 />
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-border bg-card p-8 shadow-lg">
+            <div className="border-border bg-card rounded-xl border p-8 shadow-lg">
               {docs.error && (
                 <Alert
                   dir="rtl"
-                  className="mb-6 flex items-center gap-3 rounded-lg border border-20primary bg-10primary p-4 text-primary">
+                  className="border-20primary bg-10primary text-primary mb-6 flex items-center gap-3 rounded-lg border p-4">
                   <AlertCircleIcon className="h-5 w-5" />
                   <AlertTitle dir="rtl">تحذير:</AlertTitle>
                   <AlertDescription dir="rtl">
@@ -204,14 +206,14 @@ const DocsPage = () => {
 
               <MarkdownDisplay
                 title={docs.title}
-                content={docs.content}
+                content={docs.content.replace('${email}', email)}
                 loading={docs.loading}
                 trusted
               />
 
               {!docs.error && (
-                <div className="mt-8 flex items-center justify-between border-t border-border pt-6">
-                  <span className="text-sm text-muted-foreground">
+                <div className="border-border mt-8 flex items-center justify-between border-t pt-6">
+                  <span className="text-muted-foreground text-sm">
                     آخر تحديث: {new Date().toLocaleDateString('ar-EG')}
                   </span>
                 </div>
