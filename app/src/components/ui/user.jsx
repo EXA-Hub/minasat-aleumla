@@ -9,6 +9,7 @@ import {
   LogOut,
   Globe2,
   Bell,
+  BookMarked,
 } from 'lucide-react';
 
 import dashboardMenuItems from '../dashboard/DashboardRoutes';
@@ -132,6 +133,11 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
         action: () => setActiveSection(SECTIONS.SETTINGS),
       },
       {
+        icon: <BookMarked className="h-4 w-4" />,
+        label: 'دليل المستخدم',
+        action: () => window.location.replace('/docs'),
+      },
+      {
         icon: <LogOut className="h-4 w-4" />,
         label: 'تسجيل الخروج',
         action: () => {
@@ -178,10 +184,10 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
   // Render notifications section
   const renderNotificationsSection = () => (
     <div className="translate-x-0 py-2 transition-transform duration-200">
-      <div className="flex items-center border-b border-border px-3 pb-2">
+      <div className="border-border flex items-center border-b px-3 pb-2">
         <button
           onClick={() => setActiveSection(SECTIONS.MAIN)}
-          className="text-sm transition-colors duration-200 hover:text-primary">
+          className="hover:text-primary text-sm transition-colors duration-200">
           <ArrowRightCircleIcon className="h-4 w-4" />
         </button>
         <span className="mr-2 font-medium">الإشعارات</span>
@@ -199,7 +205,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           />
         ))}
       {notifications.length === 0 && (
-        <div className="p-1 pt-1 text-center text-sm text-muted">
+        <div className="text-muted p-1 pt-1 text-center text-sm">
           لا توجد إشعارات جديدة
         </div>
       )}
@@ -209,10 +215,10 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
   // Render explore section
   const renderExploreSection = () => (
     <div className="translate-x-0 py-2 transition-transform duration-200">
-      <div className="flex items-center border-b border-border px-3 pb-2">
+      <div className="border-border flex items-center border-b px-3 pb-2">
         <button
           onClick={() => setActiveSection(SECTIONS.MAIN)}
-          className="text-sm transition-colors duration-200 hover:text-primary">
+          className="hover:text-primary text-sm transition-colors duration-200">
           <ArrowRightCircleIcon className="h-4 w-4" />
         </button>
         <span className="mr-2 font-medium">التصفح</span>
@@ -224,7 +230,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
             setActiveSection(SECTIONS.EXPLORE_PAGES);
             setSectionID(item.id);
           }}
-          className="group flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200 hover:bg-accent">
+          className="group hover:bg-accent flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200">
           <span className="transition-transform duration-200 group-hover:translate-x-1">
             {item.title}
           </span>
@@ -236,10 +242,10 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
   // Render settings section
   const renderSettingsSection = () => (
     <div className="translate-x-0 py-2 transition-transform duration-200">
-      <div className="flex items-center border-b border-border px-3 pb-2">
+      <div className="border-border flex items-center border-b px-3 pb-2">
         <button
           onClick={() => setActiveSection(SECTIONS.MAIN)}
-          className="text-sm transition-colors duration-200 hover:text-primary">
+          className="hover:text-primary text-sm transition-colors duration-200">
           <ArrowRightCircleIcon className="h-4 w-4" />
         </button>
         <span className="mr-2 font-medium">الإعدادات</span>
@@ -251,7 +257,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
             setActiveSection(SECTIONS.SETTINGS_PAGES);
             setSectionID(item.id);
           }}
-          className="group flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200 hover:bg-accent">
+          className="group hover:bg-accent flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200">
           <span className="transition-transform duration-200 group-hover:translate-x-1">
             {item.title}
           </span>
@@ -267,10 +273,10 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
     );
     return (
       <div className="translate-x-0 py-2 transition-transform duration-200">
-        <div className="flex items-center border-b border-border px-3 pb-2">
+        <div className="border-border flex items-center border-b px-3 pb-2">
           <button
             onClick={() => setActiveSection(SECTIONS.EXPLORE)}
-            className="text-sm transition-colors duration-200 hover:text-primary">
+            className="hover:text-primary text-sm transition-colors duration-200">
             <ArrowRightCircleIcon className="h-4 w-4" />
           </button>
           <span className="mr-2 font-medium">{targetSection?.title}</span>
@@ -279,7 +285,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           <button
             key={item.path}
             onClick={() => window.location.replace(item.path)}
-            className="group flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200 hover:bg-accent">
+            className="group hover:bg-accent flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200">
             <span className="transition-transform duration-200 group-hover:translate-x-1">
               {item.name}
             </span>
@@ -297,10 +303,10 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
     );
     return (
       <div className="translate-x-0 py-2 transition-transform duration-200">
-        <div className="flex items-center border-b border-border px-3 pb-2">
+        <div className="border-border flex items-center border-b px-3 pb-2">
           <button
             onClick={() => setActiveSection(SECTIONS.SETTINGS)}
-            className="text-sm transition-colors duration-200 hover:text-primary">
+            className="hover:text-primary text-sm transition-colors duration-200">
             <ArrowRightCircleIcon className="h-4 w-4" />
           </button>
           <span className="mr-2 font-medium">{targetSection?.title}</span>
@@ -309,7 +315,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           <button
             key={item.path}
             onClick={() => window.location.replace(item.path)}
-            className="group flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200 hover:bg-accent">
+            className="group hover:bg-accent flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200">
             <span className="transition-transform duration-200 group-hover:translate-x-1">
               {item.name}
             </span>
@@ -327,9 +333,9 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
         <button
           key={item.label}
           onClick={item.action}
-          className="group flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200 hover:bg-accent">
+          className="group hover:bg-accent flex w-full items-center justify-end gap-3 px-3 py-2.5 text-sm transition-colors duration-200">
           {item.badge && (
-            <span className="mr-auto rounded-full bg-primary bg-red-500 px-2 py-0.5 text-xs text-primary-foreground">
+            <span className="bg-primary text-primary-foreground mr-auto rounded-full bg-red-500 px-2 py-0.5 text-xs">
               {item.badge}
             </span>
           )}
@@ -365,7 +371,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           variant="default"
           aria-haspopup="menu"
           aria-expanded={isOpen}
-          className="flex items-center gap-2 transition-all duration-200 hover:bg-accent hover:text-accent-foreground"
+          className="hover:bg-accent hover:text-accent-foreground flex items-center gap-2 transition-all duration-200"
           onClick={() => setIsOpen(!isOpen)}>
           <img
             src={user.profile?.profilePicture || '/avatar.jpg'}
@@ -374,7 +380,7 @@ export const User = ({ ThemeToggle, user, handleLogout }) => {
           />
           {mainMenuItems.reduce((acc, item) => acc + (item.badge || 0), 0) >
             0 && (
-            <div className="absolute right-4 top-1 h-2 w-2 rounded-full border-2 border-white bg-red-500" />
+            <div className="absolute top-1 right-4 h-2 w-2 rounded-full border-2 border-white bg-red-500" />
           )}
           <span className="text-sm font-medium">{user.username}</span>
           <ChevronDown
