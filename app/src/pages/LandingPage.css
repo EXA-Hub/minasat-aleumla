@@ -1,11 +1,17 @@
-/* app/src/pages/LandingPage.css */
-
+/* ============================== */
+/* 🌈 Base Gradient Background */
+/* ============================== */
 .gradient-background {
   position: relative;
   overflow: hidden;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.5s ease;
 }
 
-/* Light mode gradient */
 .gradient-background.light {
   background: radial-gradient(
     circle at 30% 20%,
@@ -17,25 +23,25 @@
   );
 }
 
-/* Dark mode gradient */
 .gradient-background.dark {
   background: radial-gradient(
     circle at 30% 20%,
-    rgba(152, 68, 183, 0.8) 0%,
-    rgba(72, 38, 120, 0.6) 25%,
-    rgba(30, 22, 89, 0.8) 50%,
-    rgba(16, 12, 48, 0.9) 75%,
-    rgba(10, 8, 36, 1) 100%
+    rgba(21, 16, 45, 0.9) 0%,
+    rgba(12, 8, 32, 0.95) 100%
   );
 }
 
-/* Decorative circles */
+/* ============================== */
+/* 🔵 Decorative Circles */
+/* ============================== */
 .circle {
   position: absolute;
   border-radius: 50%;
-  opacity: 0.5;
+  opacity: 0.4;
   filter: blur(80px);
   z-index: 0;
+  animation: float 15s ease-in-out infinite alternate;
+  will-change: transform, opacity;
 }
 
 .circle-1 {
@@ -43,7 +49,7 @@
   height: 300px;
   top: -50px;
   left: 15%;
-  animation: float 15s ease-in-out infinite;
+  background-color: rgba(139, 92, 246, 0.7);
 }
 
 .circle-2 {
@@ -51,7 +57,9 @@
   height: 250px;
   bottom: 10%;
   right: 20%;
-  animation: float 18s ease-in-out infinite reverse;
+  animation-duration: 18s;
+  animation-direction: reverse;
+  background-color: rgba(236, 72, 153, 0.6);
 }
 
 .circle-3 {
@@ -59,7 +67,8 @@
   height: 180px;
   bottom: 30%;
   left: 5%;
-  animation: float 20s ease-in-out infinite;
+  animation-duration: 20s;
+  background-color: rgba(56, 189, 248, 0.5);
 }
 
 .circle-4 {
@@ -67,60 +76,228 @@
   height: 120px;
   top: 20%;
   right: 10%;
-  animation: float 12s ease-in-out infinite reverse;
-}
-
-/* Light mode circle colors */
-.light .circle-1 {
-  background: rgba(139, 92, 246, 0.6); /* Purple */
-}
-
-.light .circle-2 {
-  background: rgba(56, 189, 248, 0.6); /* Lighter blue */
-}
-
-.light .circle-3 {
-  background: rgba(236, 72, 153, 0.5); /* Pink */
-}
-
-.light .circle-4 {
-  background: rgba(79, 70, 229, 0.6); /* Indigo */
-}
-
-/* Dark mode circle colors */
-.dark .circle-1 {
-  background: rgba(152, 68, 183, 0.6); /* Purple */
-}
-
-.dark .circle-2 {
-  background: rgba(30, 22, 89, 0.6); /* Deep blue */
-}
-
-.dark .circle-3 {
-  background: rgba(72, 38, 120, 0.5); /* Purple */
-}
-
-.dark .circle-4 {
-  background: rgba(16, 12, 48, 0.6); /* Deep navy */
+  animation-duration: 12s;
+  animation-direction: reverse;
+  background-color: rgba(14, 165, 233, 0.5);
 }
 
 @keyframes float {
   0% {
     transform: translate(0, 0) scale(1);
+    opacity: 0.8;
   }
   50% {
-    transform: translate(30px, 30px) scale(1.05);
+    transform: translate(30px, 30px) scale(1.1);
+    opacity: 1;
   }
   100% {
     transform: translate(0, 0) scale(1);
+    opacity: 0.8;
   }
 }
 
-/* Add glassmorphism effect to cards */
-.card {
-  transition: all 0.3s ease;
+/* ============================== */
+/* 🦄 Hero Section */
+/* ============================== */
+.hero-slogan {
+  font-size: 5rem;
+  line-height: 1.2;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
+  font-weight: 800;
+  text-align: center;
+  color: white;
 }
 
-.card:hover {
-  transform: translateY(-5px);
+.sub-slogan {
+  background: linear-gradient(45deg, #00ff87 0%, #60efff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 2rem;
+  font-weight: 600;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  text-align: center;
+}
+
+/* ============================== */
+/* 💰 Profit Grid */
+/* ============================== */
+.profit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  padding: 2rem;
+  counter-reset: profit-counter;
+}
+
+.profit-item {
+  position: relative;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.profit-item:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.profit-item::before {
+  counter-increment: profit-counter;
+  content: counter(profit-counter);
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+  font-size: 2rem;
+  font-weight: bold;
+  background: linear-gradient(45deg, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* ============================== */
+/* 💸 Cashout Methods */
+/* ============================== */
+.cashout-methods {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+
+.cashout-methods div {
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+}
+
+.cashout-methods div:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================== */
+/* 📱 Apps Grid */
+/* ============================== */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.apps-grid div {
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 1rem;
+  transition:
+    transform 0.3s ease,
+    background 0.3s ease;
+  backdrop-filter: blur(15px);
+}
+
+.apps-grid div:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(1.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================== */
+/* 🌟 Buttons */
+/* ============================== */
+.button-primary {
+  background-color: #4f46e5;
+  color: white;
+  border-radius: 999px;
+  padding: 0.75rem 1.5rem;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.button-primary:hover {
+  background-color: #4338ca;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.3),
+    0 0 15px rgba(99, 102, 241, 0.7);
+  transform: scale(1.05);
+}
+
+/* ============================== */
+/* 📏 Responsive Design */
+/* ============================== */
+@media (max-width: 1024px) {
+  .hero-slogan {
+    font-size: 4rem;
+  }
+  .sub-slogan {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-slogan {
+    font-size: 3rem;
+  }
+  .sub-slogan {
+    font-size: 1.3rem;
+  }
+  .cashout-methods {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-slogan {
+    font-size: 2rem;
+  }
+  .sub-slogan {
+    font-size: 1rem;
+  }
+  .cashout-methods,
+  .apps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================== */
+/* 🧾 Footer */
+/* ============================== */
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-links a {
+  padding: 0.5rem 1.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  transition:
+    background 0.3s ease,
+    transform 0.3s ease;
+}
+
+.footer-links a:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

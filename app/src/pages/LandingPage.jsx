@@ -1,28 +1,23 @@
 // app/src/pages/LandingPage.jsx
-
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { motion, useAnimation } from 'framer-motion';
 import { useState, useEffect, Suspense } from 'react';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import {
-  ArrowLeftCircle,
   Wallet,
-  Gift,
-  ShoppingBag,
-  CreditCard,
   Moon,
   Sun,
-  Trophy,
-  DollarSign,
   Globe,
+  Gift,
+  Bitcoin,
+  Chrome,
+  Smartphone,
 } from 'lucide-react';
-import { useInView } from 'react-intersection-observer';
+import { Discord, Telegram, Paypal } from '../components/ui/CustomIcons';
 import { useTheme } from '../context/ThemeContext';
 import { Button } from '../components/ui/button';
-import { Card } from '../components/ui/card';
 import User from '../components/ui/user';
 import api from '../utils/api';
-import './LandingPage.css';
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -46,16 +41,8 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const controls = useAnimation();
-  const [ref, inView] = useInView();
   const { theme } = useTheme();
-
-  // Dynamic website URL
   const { origin } = window.location;
-
-  useEffect(() => {
-    if (inView) controls.start('visible');
-  }, [controls, inView]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -82,18 +69,15 @@ const LandingPage = () => {
 
   const AuthSection = () => {
     if (loading) return null;
-    if (user)
-      return (
-        <Suspense fallback={<div>جاري التحميل...</div>}>
-          <User
-            user={user}
-            handleLogout={handleLogout}
-            ThemeToggle={ThemeToggle}
-          />
-        </Suspense>
-      );
-
-    return (
+    return user ? (
+      <Suspense fallback={<div>جاري التحميل...</div>}>
+        <User
+          user={user}
+          handleLogout={handleLogout}
+          ThemeToggle={ThemeToggle}
+        />
+      </Suspense>
+    ) : (
       <div className="flex items-center gap-4">
         <ThemeToggle />
         <Button
@@ -109,265 +93,183 @@ const LandingPage = () => {
   return (
     <div
       dir="rtl"
-      className={`gradient-background min-h-screen transition-colors duration-1000 ${theme === 'dark' ? 'dark' : 'light'}`}>
-      {/* Animated background circles */}
-      <div className="circle circle-1"></div>
-      <div className="circle circle-2"></div>
-      <div className="circle circle-3"></div>
-      <div className="circle circle-4"></div>
+      className={`relative min-h-screen transition-colors duration-700 ${theme === 'dark' ? 'bg-gradient-to-br from-gray-900 to-black' : 'bg-gradient-to-br from-indigo-200 via-purple-200 to-pink-200'}`}>
+      {/* Background Circles */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="circle top-[-50px] left-[15%] bg-indigo-400"></div>
+        <div className="circle right-[20%] bottom-[10%] bg-pink-400"></div>
+        <div className="circle bottom-[30%] left-[5%] bg-cyan-400"></div>
+        <div className="circle top-[20%] right-[10%] bg-purple-400"></div>
+      </div>
 
-      {/* SEO Meta Tags */}
+      {/* SEO */}
       <HelmetProvider>
         <Helmet>
           <title>منصة العملة - نظام متكامل للمحافظ الرقمية والتداول</title>
           <meta
             name="description"
-            content="انضم إلى منصة العملة لإدارة محفظتك الرقمية، تداول العملات، وكسب المكافآت من خلال إنجاز المهام. حوّل عملاتك إلى أموال حقيقية عند تجاوز الحد الأدنى."
+            content="منصة العملة لإدارة محفظتك الرقمية وتداول العملات بسهولة."
           />
-          <meta
-            name="keywords"
-            content="منصة العملة, محفظة رقمية, تداول عملات, مهام, هدايا, تحويل عملات, أموال حقيقية"
-          />
-          <meta
-            property="og:title"
-            content="منصة العملة - نظام متكامل للمحافظ الرقمية والتداول"
-          />
-          <meta
-            property="og:description"
-            content="انضم إلى منصة العملة لإدارة محفظتك الرقمية، تداول العملات، وكسب المكافآت من خلال إنجاز المهام. حوّل عملاتك إلى أموال حقيقية عند تجاوز الحد الأدنى."
-          />
-          <meta property="og:type" content="website" />
+          <meta property="og:title" content="منصة العملة" />
           <meta property="og:url" content={origin} />
-          <meta property="og:image" content={`${origin}/og-image.png`} />
-          <meta property="og:locale" content="ar_AR" />
-
-          {/* Twitter Card Meta Tags */}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta
-            name="twitter:title"
-            content="منصة العملة - نظام متكامل للمحافظ الرقمية والتداول"
-          />
-          <meta
-            name="twitter:description"
-            content="انضم إلى منصة العملة لإدارة محفظتك الرقمية، تداول العملات، وكسب المكافآت من خلال إنجاز المهام. حوّل عملاتك إلى أموال حقيقية عند تجاوز الحد الأدنى."
-          />
-          <meta name="twitter:image" content={`${origin}/twitter-image.png`} />
-          <meta name="twitter:site" content="@yourtwitterhandle" />
-          <meta name="twitter:creator" content="@yourtwitterhandle" />
-
-          {/* Structured Data */}
-          <script type="application/ld+json">
-            {`
-            {
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "منصة العملة",
-              "url": "${origin}",
-              "description": "منصة العملة هو نظام متكامل يقدم محافظ رقمية، تداول عملات، مهام، هدايا، وتحويل عملات إلى أموال حقيقية.",
-              "potentialAction": {
-                "@type": "SearchAction",
-                "target": "${origin}/search?q={search_term_string}",
-                "query-input": "required name=search_term_string"
-              }
-            }
-          `}
-          </script>
         </Helmet>
       </HelmetProvider>
 
       {/* Header */}
-      <header className="relative z-30 bg-transparent p-4 backdrop-blur-md">
-        <div className="container mx-auto flex items-center justify-between">
-          <h1 className="text-foreground text-2xl font-bold">منصة العملة</h1>
-          <AuthSection />
-        </div>
+      <header className="relative z-30 flex items-center justify-between bg-black/20 p-5 backdrop-blur-lg">
+        <h1 className="text-3xl font-bold text-white">منصة العملة</h1>
+        <AuthSection />
       </header>
 
       {/* Hero Section */}
-      <main className="relative z-10 container mx-auto px-4 py-16">
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        className="relative z-20 flex min-h-screen flex-col items-center justify-center px-4 text-center">
+        <motion.h1
+          className="text-5xl font-extrabold text-white drop-shadow-lg md:text-6xl"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, delay: 0.3 }}>
+          بوابتك للدخل أونلاين
+        </motion.h1>
+
+        <motion.p
+          className="mt-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-xl text-transparent md:text-2xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.6 }}>
+          كل طرق الربح من الإنترنت في مكان واحد
+        </motion.p>
+
         <motion.div
-          initial="hidden"
-          animate={controls}
-          variants={{
-            visible: { opacity: 1, y: 0 },
-            hidden: { opacity: 0, y: 50 },
-          }}
-          className="mb-16 text-center">
-          <h2 className="text-foreground mb-6 text-5xl font-bold">
-            محفظتك الرقمية الموثوقة
-          </h2>
-          <p className="text-foreground/80 mb-8 text-xl">
-            امتلك عملات المنصة، تداول بأمان، واكسب المزيد من خلال المهام
-            والهدايا
-          </p>
-          <div className="flex flex-col justify-center gap-4 md:flex-row">
-            {!user && (
-              <Button
-                size="lg"
-                className="bg-primary/90 hover:bg-primary backdrop-blur-sm"
-                onClick={() => navigate('/login')}>
-                احصل على محفظتك المجانية
-                <Gift className="mr-2 h-5 w-5" />
-              </Button>
-            )}
-            {user && (
-              <Button
-                size="lg"
-                className="bg-primary/90 hover:bg-primary backdrop-blur-sm"
-                onClick={() => navigate('/dashboard')}>
-                الذهاب إلى محفظتي
-                <Wallet className="mr-2 h-5 w-5" />
-              </Button>
-            )}
+          className="mt-10 flex flex-col justify-center gap-4 md:flex-row"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.9 }}>
+          {!user ? (
             <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate('/explore')}
-              className="bg-background/20 hover:bg-background/30 border-border/20 backdrop-blur-sm">
-              اكتشف المزيد
-              <Globe className="mr-2 h-5 w-5" />
+              size="xl"
+              className="rounded-full bg-purple-600 px-8 py-4 text-white shadow-lg transition-all hover:bg-purple-700 hover:shadow-xl"
+              onClick={() => navigate('/login')}>
+              ابدأ الآن مجانًا <Gift className="ml-2" />
             </Button>
-          </div>
-        </motion.div>
-
-        {/* Features */}
-        <motion.div
-          ref={ref}
-          initial="hidden"
-          animate={controls}
-          variants={{
-            visible: { opacity: 1, y: 0 },
-            hidden: { opacity: 0, y: 50 },
-          }}
-          className="mb-16 grid gap-8 md:grid-cols-4">
-          <Card className="bg-card/30 border-border/20 hover:bg-card/50 p-6 text-center backdrop-blur-md transition-all hover:shadow-lg">
-            <Wallet className="text-primary mx-auto mb-4 h-12 w-12" />
-            <h3 className="mb-2 text-xl font-bold">محفظة رقمية</h3>
-            <p className="text-foreground/80">
-              احصل على محفظة مجانية فور التسجيل مع رصيد ترحيبي
-            </p>
-          </Card>
-
-          <Card className="bg-card/30 border-border/20 hover:bg-card/50 p-6 text-center backdrop-blur-md transition-all hover:shadow-lg">
-            <ShoppingBag className="text-primary mx-auto mb-4 h-12 w-12" />
-            <h3 className="mb-2 text-xl font-bold">بيع واشتري</h3>
-            <p className="text-foreground/80">
-              تداول المنتجات والخدمات باستخدام عملات المنصة
-            </p>
-          </Card>
-
-          <Card className="bg-card/30 border-border/20 hover:bg-card/50 p-6 text-center backdrop-blur-md transition-all hover:shadow-lg">
-            <Trophy className="text-primary mx-auto mb-4 h-12 w-12" />
-            <h3 className="mb-2 text-xl font-bold">مهام وهدايا</h3>
-            <p className="text-foreground/80">
-              اكسب المزيد من العملات من خلال إكمال المهام
-            </p>
-          </Card>
-
-          <Card className="bg-card/30 border-border/20 hover:bg-card/50 p-6 text-center backdrop-blur-md transition-all hover:shadow-lg">
-            <CreditCard className="text-primary mx-auto mb-4 h-12 w-12" />
-            <h3 className="mb-2 text-xl font-bold">تحويل للنقود</h3>
-            <p className="text-foreground/80">
-              حول عملاتك إلى أموال حقيقية عند تجاوز الحد الأدنى
-            </p>
-          </Card>
-        </motion.div>
-
-        {/* How It Works Section */}
-        <motion.div
-          initial="hidden"
-          animate={controls}
-          variants={{
-            visible: { opacity: 1, y: 0 },
-            hidden: { opacity: 0, y: 50 },
-          }}
-          className="mb-16">
-          <h2 className="mb-8 text-center text-3xl font-bold">كيف تبدأ؟</h2>
-          <div className="grid gap-8 md:grid-cols-3">
-            <Card className="bg-card/30 border-border/20 hover:bg-card/50 p-6 text-center backdrop-blur-md transition-all hover:shadow-lg">
-              <div className="text-primary mb-4 text-3xl font-bold">1</div>
-              <h3 className="mb-2 text-xl font-bold">سجل حساب جديد</h3>
-              <p className="text-foreground/80">
-                احصل على محفظتك المجانية ورصيد ترحيبي فور التسجيل
-              </p>
-            </Card>
-
-            <Card className="bg-card/30 border-border/20 hover:bg-card/50 p-6 text-center backdrop-blur-md transition-all hover:shadow-lg">
-              <div className="text-primary mb-4 text-3xl font-bold">2</div>
-              <h3 className="mb-2 text-xl font-bold">اكسب العملات</h3>
-              <p className="text-foreground/80">
-                أكمل المهام اليومية واحصل على الهدايا لزيادة رصيدك
-              </p>
-            </Card>
-
-            <Card className="bg-card/30 border-border/20 hover:bg-card/50 p-6 text-center backdrop-blur-md transition-all hover:shadow-lg">
-              <div className="text-primary mb-4 text-3xl font-bold">3</div>
-              <h3 className="mb-2 text-xl font-bold">تداول أو اسحب</h3>
-              <p className="text-foreground/80">
-                استخدم عملاتك للتداول أو حولها إلى أموال حقيقية
-              </p>
-            </Card>
-          </div>
-        </motion.div>
-
-        {/* Explore Section */}
-        <motion.div
-          initial="hidden"
-          animate={controls}
-          variants={{
-            visible: { opacity: 1, y: 0 },
-            hidden: { opacity: 0, y: 50 },
-          }}
-          className="bg-primary/40 border-primary/30 hover:bg-primary/50 mb-16 rounded-lg border p-8 text-center backdrop-blur-md transition-all">
-          <Globe className="mx-auto mb-4 h-16 w-16 text-white" />
-          <h3 className="mb-4 text-2xl font-bold text-white">اكتشف المزيد</h3>
-          <p className="mb-6 text-white/90">
-            استكشف المستخدمين، المنتجات، والأكثر نشاطاً على المنصة
-          </p>
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => navigate('/explore')}
-            className="border-white/30 bg-white/10 text-white hover:bg-white/20">
-            اكتشف الآن
-            <ArrowLeftCircle className="mr-2 h-5 w-5" />
-          </Button>
-        </motion.div>
-
-        {/* CTA Section */}
-        {!user && (
-          <motion.div
-            initial="hidden"
-            animate={controls}
-            variants={{
-              visible: { opacity: 1, y: 0 },
-              hidden: { opacity: 0, y: 50 },
-            }}
-            className="bg-accent/40 border-accent/30 hover:bg-accent/50 rounded-lg border p-8 text-center backdrop-blur-md transition-all">
-            <DollarSign className="mx-auto mb-4 h-16 w-16 text-white" />
-            <h3 className="mb-4 text-2xl font-bold text-white">
-              ابدأ الآن مجاناً
-            </h3>
-            <p className="mb-6 text-white/90">
-              احصل على محفظتك الرقمية وابدأ في كسب العملات
-            </p>
+          ) : (
             <Button
-              size="lg"
-              variant="outline"
-              onClick={() => navigate('/login')}
-              className="border-white/30 bg-white/10 text-white hover:bg-white/20">
-              إنشاء حساب
-              <ArrowLeftCircle className="mr-2 h-5 w-5" />
+              size="xl"
+              className="rounded-full bg-purple-600 px-8 py-4 text-white shadow-lg transition-all hover:bg-purple-700 hover:shadow-xl"
+              onClick={() => navigate('/dashboard')}>
+              الذهاب إلى المحفظة <Wallet className="ml-2" />
             </Button>
-          </motion.div>
-        )}
-      </main>
+          )}
+
+          <button
+            className="relative rounded-full border border-transparent bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 p-[2px] transition-all hover:scale-105"
+            onClick={() => navigate('/explore')}>
+            <span className="flex items-center justify-center rounded-full bg-transparent text-white backdrop-blur-sm">
+              اكتشف المميزات <Globe className="ml-2" />
+            </span>
+          </button>
+        </motion.div>
+      </motion.div>
+
+      {/* Profit Methods */}
+      <motion.div className="mx-4 my-8 rounded-xl bg-gradient-to-br from-purple-500/30 to-indigo-500/20 py-16">
+        <h2 className="text-center text-3xl font-bold text-white">
+          ٦ طرق رئيسية لربح المال
+        </h2>
+        <div className="mt-8 grid grid-cols-1 gap-6 px-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            { title: 'مهام يومية وأسبوعية', desc: 'مكافآت تصل إلى $500' },
+            { title: 'برنامج الإحالة', desc: '50% عمولة مدى الحياة' },
+            { title: 'هدايا AirDrop', desc: 'هدايا عشوائية من المستخدمين' },
+            { title: 'نصائح للمؤثرين', desc: 'دليل للستريمرز وصناع المحتوى' },
+            { title: 'التجارة الحرة', desc: 'بيع المنتجات أو العمل كمستقل' },
+            {
+              title: 'برنامج المكافآت',
+              desc: 'احصل على مكافآت مقابل المشاركة',
+            },
+          ].map((item, idx) => (
+            <motion.div
+              key={idx}
+              whileHover={{ scale: 1.05 }}
+              className="rounded-xl bg-white/10 p-6 text-white shadow-lg backdrop-blur-sm">
+              <h3 className="mb-2 text-xl font-bold">{item.title}</h3>
+              <p>{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Cashout Section */}
+      <motion.div className="py-16 text-center">
+        <h2 className="text-3xl font-bold text-white">سحب الأرباح بكل سهولة</h2>
+        <div className="mt-8 flex flex-wrap justify-center gap-8">
+          {[
+            { icon: Paypal, label: 'PayPal', color: 'text-blue-400' },
+            { icon: Wallet, label: 'عملتنا الرقمية', color: 'text-purple-400' },
+            { icon: Bitcoin, label: 'BTC/Tether', color: 'text-orange-400' },
+          ].map(({ icon: Icon, label, color }, idx) => (
+            <motion.div
+              key={idx}
+              whileHover={{ scale: 1.1 }}
+              className={`rounded-xl bg-white/10 p-6 backdrop-blur-md ${color}`}>
+              <Icon className="mx-auto h-12 w-12" />
+              <h3 className="mt-4 text-lg font-bold">{label}</h3>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* Apps Section */}
+      <motion.div className="bg-primary/40 mb-16 rounded-xl p-8 text-center shadow-lg">
+        <h2 className="mb-4 text-2xl font-bold text-white">
+          محفظتك معك أينما كنت
+        </h2>
+        <p className="mb-6 text-white/80">
+          تصفح محفظتك واكسب النقاط بسهولة عبر جميع الأجهزة
+        </p>
+
+        <div className="grid grid-cols-2 justify-center gap-6 sm:grid-cols-4">
+          {[
+            { icon: Discord, label: 'بوت Discord', color: 'text-indigo-400' },
+            { icon: Telegram, label: 'بوت Telegram', color: 'text-blue-400' },
+            { icon: Chrome, label: 'إضافة المتصفح', color: 'text-yellow-400' },
+            {
+              icon: Smartphone,
+              label: 'تطبيق الجوال',
+              color: 'text-green-400',
+            },
+          ].map(({ icon: Icon, label, color }, idx) => (
+            <motion.div
+              key={idx}
+              whileHover={{ scale: 1.1, rotate: 2 }}
+              whileTap={{ scale: 0.95 }}
+              className={`rounded-lg bg-white/10 p-6 backdrop-blur-md transition-transform hover:bg-white/20 ${color}`}>
+              <Icon className="mx-auto mb-3 h-10 w-10" />
+              <p className="text-white">{label}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
 
       {/* Footer */}
-      <footer className="relative z-10 mt-16 bg-transparent py-8 backdrop-blur-sm">
-        <div className="text-foreground/70 container mx-auto px-4 text-center">
-          <p>جميع الحقوق محفوظة © {new Date().getFullYear()} منصة العملة</p>
+      <footer className="relative bg-black/40 py-8 text-center text-white">
+        <div className="mb-4 flex justify-center gap-6">
+          <a href="/terms" className="hover:underline">
+            الشروط والأحكام
+          </a>
+          <a href="/privacy-policy" className="hover:underline">
+            سياسة الخصوصية
+          </a>
+          <a href="/docs" className="hover:underline">
+            الدليل الإرشادي
+          </a>
         </div>
+        <p className="text-sm">
+          © {new Date().getFullYear()} جميع الحقوق محفوظة
+        </p>
       </footer>
     </div>
   );
