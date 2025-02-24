@@ -1,0 +1,254 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-xs: 400px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6; /* Matches --primary */
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+
+  --color-accent-50: #f5f3ff;
+  --color-accent-100: #ede9fe;
+  --color-accent-200: #ddd6fe;
+  --color-accent-300: #c4b5fd;
+  --color-accent-400: #a78bfa;
+  --color-accent-500: #818cf8; /* Matches --accent */
+  --color-accent-600: #6366f1;
+  --color-accent-700: #4f46e5;
+  --color-accent-800: #4338ca;
+  --color-accent-900: #3730a3;
+  --color-accent-950: #312e81;
+
+  --font-sans: Inter var, sans-serif;
+
+  --animate-bounce-slow: bounce-slow 3s infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-slide-up: slide-up 0.5s ease-out;
+  --animate-slide-down: slide-down 0.5s ease-out;
+  --animate-wave: wave 2.5s ease-in-out infinite;
+  --animate-gradient: gradient 8s ease infinite;
+  --animate-scale: scale 1s ease-in-out infinite;
+
+  @keyframes bounce-slow {
+    0%,
+    100% {
+      transform: translateY(-5%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+  @keyframes slide-up {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slide-down {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes wave {
+    0% {
+      transform: rotate(0deg);
+    }
+    10% {
+      transform: rotate(14deg);
+    }
+    20% {
+      transform: rotate(-8deg);
+    }
+    30% {
+      transform: rotate(14deg);
+    }
+    40% {
+      transform: rotate(-4deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+    60% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+  @keyframes gradient {
+    0%,
+    100% {
+      background-size: 200% 200%;
+      background-position: left center;
+    }
+    50% {
+      background-size: 200% 200%;
+      background-position: right center;
+    }
+  }
+  @keyframes scale {
+    0%,
+    100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
+@utility animated-gradient-text {
+  @apply bg-clip-text text-transparent bg-linear-to-r from-primary-600 via-accent-500 to-primary-600 animate-gradient bg-[length:200%_auto];
+}
+
+@utility animated-border-gradient {
+  @apply relative rounded-xl overflow-hidden;
+
+  &::before {
+    content: '';
+    @apply absolute inset-0 bg-linear-to-r from-primary-500 via-accent-500 to-primary-500 animate-gradient;
+    @apply [background-size:200%_200%] -z-10;
+    margin: -2px;
+  }
+}
+
+@utility cta-button {
+  @apply relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-semibold rounded-lg transition-all duration-300;
+
+  &::before {
+    content: '';
+    @apply absolute inset-0 bg-linear-to-r from-primary-500 via-accent-500 to-primary-500;
+    @apply transition-all duration-500 animate-gradient bg-[length:200%_auto];
+    opacity: 0;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  & span {
+    @apply relative z-10 transition-colors duration-300;
+  }
+
+  &:hover span {
+    @apply text-white;
+  }
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+.glass-morphism {
+  @apply bg-white/10 backdrop-blur-lg border border-white/20;
+}
+
+.feature-card {
+  @apply relative overflow-hidden rounded-xl p-6 transition-all duration-300;
+  @apply hover:shadow-lg hover:shadow-primary-500/10;
+  @apply before:absolute before:inset-0 before:-z-10 before:bg-linear-to-br;
+  @apply before:from-white/50 before:to-white/30 dark:before:from-gray-800/50 dark:before:to-gray-800/30;
+  @apply before:opacity-0 hover:before:opacity-100 before:transition-opacity;
+}
+
+.interactive-demo {
+  @apply relative overflow-hidden rounded-xl bg-linear-to-br from-primary-500/5 to-accent-500/5;
+  @apply border border-primary-200/20 dark:border-primary-700/20;
+  @apply shadow-xl shadow-primary-500/10;
+}
+
+.demo-window {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-2xl overflow-hidden;
+  @apply border border-gray-200/50 dark:border-gray-700/50;
+}
+
+.demo-header {
+  @apply flex items-center gap-2 px-4 py-3 border-b border-gray-200/50 dark:border-gray-700/50;
+}
+
+.demo-dot {
+  @apply w-3 h-3 rounded-full;
+}
+
+.demo-content {
+  @apply p-4;
+}
+
+.demo-task {
+  @apply flex items-center gap-3 p-3 rounded-lg;
+  @apply bg-gray-50 dark:bg-gray-700/50 mb-2;
+  @apply animate-slide-up;
+}
+
+.demo-task-checkbox {
+  @apply w-5 h-5 rounded-sm border-2 border-primary-500;
+  @apply flex items-center justify-center;
+}
+
+.demo-task-text {
+  @apply flex-1;
+}
+
+.demo-task-priority {
+  @apply px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.animated-gradient-border {
+  @apply relative rounded-xl overflow-hidden;
+  @apply before:absolute before:inset-0 before:-z-10;
+  @apply before:bg-linear-to-r before:from-primary-500 before:via-accent-500 before:to-primary-500;
+  @apply before:animate-gradient before:[background-size:200%_200%];
+  @apply before:p-[2px];
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  display: none;
+}
