@@ -452,11 +452,11 @@ const MarkdownDisplay = ({
           return (
             <div className={cn('my-3 flex gap-2 border-r-2 p-3', styles)}>
               <Icon className="h-4 w-4 shrink-0 self-center" />
-              <ReactMarkdown
-                components={markdownComponents}
-                className="text-sm leading-tight [&>p]:m-0">
-                {subContent.trim()}
-              </ReactMarkdown>
+              <div className="text-sm leading-tight [&>p]:m-0">
+                <ReactMarkdown components={markdownComponents}>
+                  {subContent.trim()}
+                </ReactMarkdown>
+              </div>
             </div>
           );
         }
