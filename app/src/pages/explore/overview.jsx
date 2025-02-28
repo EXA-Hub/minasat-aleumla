@@ -30,9 +30,6 @@ const OverviewPage = () => {
             حسابك: <Username username={user.username} />
           </div>
         )}
-        <div className="text-muted-foreground text-lg font-medium">
-          حساب المؤسس: <Username username="zampx" />
-        </div>
       </div>
       <MarkdownDisplay
         title="نشرة إخبارية"

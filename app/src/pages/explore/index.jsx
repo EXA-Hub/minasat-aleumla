@@ -6,9 +6,8 @@ const ExplorePage = () => {
   const location = useLocation();
 
   // Redirect to overview if accessing /explore directly
-  if (['/explore', '/explore/'].includes(location.pathname)) {
+  if (['/explore', '/explore/'].includes(location.pathname))
     return <Navigate to="/explore/overview" replace />;
-  }
 
   return <ExploreLayout />;
 };
