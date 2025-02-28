@@ -7,7 +7,7 @@ import { useTheme } from '../context/ThemeContext';
 
 const Config = {
   APP_NAME: 'منصة العملة',
-  APP_DOMAIN_NAME: 'minasat-aleumla.vercel.app',
+  APP_DOMAIN_NAME: window.location.hostname,
   CONTACT_EMAIL: import.meta.env.VITE_EMAIL,
   SUBSCRIPTION_PRICES: {
     plus: {
@@ -132,7 +132,7 @@ export function Navbar() {
               تسجيل الدخول
             </Link>
             <Link
-              to="/login"
+              to="/dashboard"
               className="bg-primary-600 hover:bg-primary-700 rounded-lg px-4 py-2 text-white transition-colors">
               البدء
             </Link>
@@ -187,7 +187,7 @@ export function Navbar() {
                 تسجيل الدخول
               </Link>
               <Link
-                to="/login"
+                to="/dashboard"
                 className="bg-primary-600 hover:bg-primary-700 mx-4 rounded-lg px-4 py-2 text-center text-white transition-colors">
                 التسجيل
               </Link>
@@ -227,7 +227,7 @@ export function HeroSection() {
         </p>
         <div className="mb-16 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
-            to="/ref/landing"
+            to="/dashboard"
             className="from-primary-500 to-accent-500 hover:bg-primary-700 rounded-lg bg-linear-to-tr px-8 py-3 font-semibold text-white shadow-lg transition-colors hover:shadow-xl">
             البدء مجانا
           </Link>
@@ -248,9 +248,11 @@ export function FeaturesSection() {
       id="features"
       className="from-primary-100 bg-linear-to-b to-gray-50 py-24 dark:from-gray-950 dark:to-gray-900">
       <div className="container mx-auto px-4">
-        <h2 className="mb-16 text-center text-3xl font-bold md:text-4xl">
-          ابدأ رحلتك نحو الدخل الرقمي اليوم
+        <h2 className="mb-16 flex flex-row-reverse items-center justify-center text-center text-3xl font-bold md:text-4xl">
+          <span className="text-primary-600 dark:text-primary-400 px-2">6</span>
+          <span>طرق للربح والمزيد قادم</span>
         </h2>
+
         <div className="grid gap-8 md:grid-cols-3">
           <div className="feature-card from-primary-100 to-accent-100 bg-linear-to-br dark:from-gray-800 dark:to-gray-800">
             <div className="mb-4 flex items-center">
@@ -577,7 +579,7 @@ export function PricingSection() {
               </ul>
 
               <Link
-                to="/ref/plans"
+                to="/dashboard"
                 className="text-primary-600 bg-primary-50 hover:bg-primary-100 dark:text-primary-400 dark:bg-primary-900/50 dark:hover:bg-primary-900/80 block w-full rounded-xl px-6 py-3 text-center text-sm font-medium transition-all duration-200 hover:shadow-md">
                 إبدا الآن مجانا
               </Link>

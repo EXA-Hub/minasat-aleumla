@@ -28,7 +28,41 @@ import {
   CardFooter,
 } from '../../../components/ui/card';
 
-const TelegramDialog = ({ dialogData, setDialogData }) => {
+export const LastClaimCountdown = ({ lastClaim }) => {
+  const [timeLeft, setTimeLeft] = useState(null);
+
+  useEffect(() => {
+    if (!lastClaim) return;
+
+    const lastClaimTime = new Date(parseInt(lastClaim)).getTime();
+    const expirationTime = parseInt(lastClaimTime) + 24 * 60 * 60 * 1000;
+
+    const updateCountdown = () => {
+      const now = new Date().getTime();
+      const remainingTime = expirationTime - now;
+
+      if (remainingTime > 0) {
+        const hours = Math.floor((remainingTime / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
+        const seconds = Math.floor((remainingTime / 1000) % 60);
+        setTimeLeft(`${hours}س ${minutes}د ${seconds}ث`);
+      } else setTimeLeft('Expired');
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [lastClaim]);
+
+  return <>{timeLeft}</>;
+};
+
+LastClaimCountdown.propTypes = {
+  lastClaim: PropTypes.string,
+};
+
+export const TelegramDialog = ({ dialogData, setDialogData }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = (text) => {
@@ -210,6 +244,7 @@ const TasksPage = () => {
           id,
         });
         setDialogData({ open: true, message, daily });
+        localStorage.setItem('lastClaim:id=' + id, Date.now());
       } catch (error) {
         toast.error(error.data?.error || 'حدث خطأ ما');
       } finally {
@@ -275,16 +310,18 @@ const TasksPage = () => {
       loadingText: 'جاري التحميل...',
       deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
       onClick: () => handleGetDaily(1),
+      lastClaim: localStorage.getItem('lastClaim:id=1'),
     },
     {
       id: 2,
       title: 'الهدية اليومية 2',
       description:
-        'قم بزيارة موقعنا كل 12 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
+        'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
       buttonLabel: 'الحصول على الهدية اليومية',
       loadingText: 'جاري التحميل...',
       deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
       onClick: () => handleGetDaily(2),
+      lastClaim: localStorage.getItem('lastClaim:id=2'),
     },
   ];
 
@@ -362,9 +399,17 @@ const TasksPage = () => {
                   </Button>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="mt-2 text-sm text-red-500 sm:text-xs">
-                  <p>{task.deadline}</p>
+              <CardContent className="space-y-2 sm:flex sm:items-center sm:justify-between">
+                {task.lastClaim && (
+                  <p className="text-foreground m-0 flex items-center gap-1 text-sm sm:gap-2 sm:text-xs">
+                    <span className="text-secondary-foreground font-semibold">
+                      اخر محاولة:
+                    </span>
+                    <LastClaimCountdown lastClaim={task.lastClaim} />
+                  </p>
+                )}
+                <div className="text-sm text-red-500 sm:order-2 sm:text-xs">
+                  <p className="m-0">{task.deadline}</p>
                 </div>
               </CardContent>
             </Card>
