@@ -205,6 +205,12 @@ export class CommandHandlers {
   }
 
   async handleVerify({ discordUserData, interaction }) {
+    if (process.env.DISCORD_CHANNEL_ID !== interaction.channel_id) {
+      await this.#discordApi.sendFollowUpMessage(interaction, {
+        content: `⚠️ **لا يمكنك استخدام هذا الامر في هذه القناة.**`,
+      });
+      return;
+    }
     await this.#discordApi.sendFollowUpMessage(interaction, {
       content: `✅ **تم التحقق من حسابك.**\n يمكنك الدخول للسيرفر.`,
     });

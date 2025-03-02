@@ -1,6 +1,8 @@
 # آخر اﻷخبار
 
-## رابط التيليجرام:🚀 [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](/dashboard/finance/tasks) 🚀
+## لدينا الآن مهمات ديسكورد وتيليجرام
+
+***الروابط: 🚀 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](/dashboard/finance/tasks) ߷ [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](/dashboard/finance/tasks) 🚀***
 
 > [!info] سيتم فتح مهمة الربح من قناة تيليجرام بمجرد وصول عدد الأعضاء إلى \*\*💡 🎯 6000 عضو 🎯\*\*
 

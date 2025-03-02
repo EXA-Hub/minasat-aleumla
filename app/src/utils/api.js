@@ -250,6 +250,9 @@ const api = {
     telegram: async () => {
       return axiosInstance.get('/api/auth/@me/task/telegram');
     },
+    discord: async () => {
+      return axiosInstance.get('/api/auth/@me/task/discord');
+    },
   },
   affiliate: {
     getReferrals: async () => {

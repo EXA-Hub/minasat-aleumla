@@ -268,4 +268,24 @@ router.get('/@me/task/telegram', async (req, res) => {
   }
 });
 
+import { DiscordAPI } from '../bots/discord/services/discordApi.js';
+const discordApi = DiscordAPI.getInstance();
+
+router.get('/@me/task/discord', async (req, res) => {
+  const channelId = validateEnv('DISCORD_CHANNEL_ID');
+  discordApi
+    .createInvite(channelId)
+    .then((inviteLinkData) => {
+      res.json({
+        inviteLink: `https://discord.com/invite/${inviteLinkData.code}`,
+      });
+    })
+    .catch((error) => {
+      console.error('Discord API Error:', error);
+      res.status(500).json({
+        error: 'خطاء في الخادم',
+      });
+    });
+});
+
 export default router;

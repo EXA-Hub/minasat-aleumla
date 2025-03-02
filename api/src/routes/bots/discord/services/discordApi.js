@@ -16,6 +16,30 @@ export class DiscordAPI {
     return this.#instance;
   }
 
+  async createInvite(channelId) {
+    const response = await fetch(
+      `${this.#baseUrl}/${
+        CONFIG.DISCORD_API_VERSION
+      }/channels/${channelId}/invites`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bot ${this.#botToken}`,
+        },
+        body: JSON.stringify({
+          max_age: 24 * 60 * 60, // 24 hours
+          max_uses: 1, // One-time use
+          temporary: false, // Not a temporary invite
+          unique: true, // Generate a unique invite link
+        }),
+      }
+    );
+
+    if (!response.ok) throw new Error(await response.text());
+    return response.json();
+  }
+
   async getRoles(guildId) {
     const response = await fetch(
       `${this.#baseUrl}/${CONFIG.DISCORD_API_VERSION}/guilds/${guildId}/roles`,

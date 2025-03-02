@@ -62,14 +62,14 @@ LastClaimCountdown.propTypes = {
   lastClaim: PropTypes.string,
 };
 
+const copyToClipboard = (text, setCopied) => {
+  navigator.clipboard.writeText(text);
+  setCopied(true);
+  setTimeout(() => setCopied(false), 2000);
+};
+
 export const TelegramDialog = ({ dialogData, setDialogData }) => {
   const [copied, setCopied] = useState(false);
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   return (
     <DialogContent className="animate-fade-in scale-95">
@@ -187,7 +187,68 @@ export const TelegramDialog = ({ dialogData, setDialogData }) => {
                 </a>
                 <Button
                   onClick={() =>
-                    copyToClipboard(dialogData.telegramData.inviteLink)
+                    copyToClipboard(
+                      dialogData.telegramData.inviteLink,
+                      setCopied
+                    )
+                  }
+                  className="bg-primary hover:bg-accent flex w-full items-center gap-2 rounded-md px-4 py-2 text-white md:w-auto">
+                  {copied ? 'تم النسخ ✓' : 'نسخ'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      <CardFooter className="p-0">
+        <div className="mt-6 flex w-full justify-center">
+          <DialogTrigger
+            className="rounded-md bg-gray-200 px-6 py-2 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
+            onClick={() => setDialogData({ open: false })}>
+            إغلاق
+          </DialogTrigger>
+        </div>
+      </CardFooter>
+    </DialogContent>
+  );
+};
+
+export const DiscordDialog = ({ dialogData, setDialogData }) => {
+  const [copied, setCopied] = useState(false);
+
+  return (
+    <DialogContent className="animate-fade-in scale-95">
+      <DialogHeader>
+        <DialogTitle className="text-center text-2xl font-bold text-gray-800 dark:text-gray-200">
+          سيرفر الديسكورد
+        </DialogTitle>
+      </DialogHeader>
+
+      {dialogData.discordData && (
+        <div className="mt-6 space-y-6">
+          {/* Invite Link Section */}
+          {dialogData.discordData.inviteLink && (
+            <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-600">
+              <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">
+                رابط الدعوة (صالح لمدة 24 ساعة)
+              </p>
+              <div className="items-center gap-2 md:flex">
+                <a
+                  href={dialogData.discordData.inviteLink || '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group hover:border-primary dark:hover:border-primary mb-1 flex w-full items-center justify-between rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm shadow-sm transition duration-150 ease-in-out hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-800">
+                  <span className="flex-grow truncate">
+                    {dialogData.discordData.inviteLink || 'لا يوجد رابط'}
+                  </span>
+                  <ExternalLink className="group-hover:text-primary h-5 w-5 text-gray-500 transition duration-150 ease-in-out" />
+                </a>
+                <Button
+                  onClick={() =>
+                    copyToClipboard(
+                      dialogData.discordData.inviteLink,
+                      setCopied
+                    )
                   }
                   className="bg-primary hover:bg-accent flex w-full items-center gap-2 rounded-md px-4 py-2 text-white md:w-auto">
                   {copied ? 'تم النسخ ✓' : 'نسخ'}
@@ -211,6 +272,11 @@ export const TelegramDialog = ({ dialogData, setDialogData }) => {
 };
 
 TelegramDialog.propTypes = {
+  dialogData: PropTypes.object.isRequired,
+  setDialogData: PropTypes.func.isRequired,
+};
+
+DiscordDialog.propTypes = {
   dialogData: PropTypes.object.isRequired,
   setDialogData: PropTypes.func.isRequired,
 };
@@ -300,6 +366,23 @@ const TasksPage = () => {
     }
   };
 
+  const handleDiscord = async () => {
+    setLoading(true);
+    try {
+      const discordData = await api.tasks.discord();
+      setDialogData({
+        open: true,
+        message: 'تحتاج أن تربط حسابك في ديسكورد من صفحة التطبيقات المتصلة',
+        discordData,
+      });
+    } catch (error) {
+      console.error(error);
+      toast.error(error.data?.error || 'حدث خطأ ما');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const dailyTasks = [
     {
       id: 1,
@@ -327,7 +410,7 @@ const TasksPage = () => {
 
   const currentTasks = [
     {
-      id: 2,
+      id: 3,
       title: 'مهمة قناة التيليجرام',
       description:
         'يتم توزيع هدايا عشوائية شبه يومية على المتفاعلين مع منشوراتنا عبر قناة تيليجرام.',
@@ -335,6 +418,16 @@ const TasksPage = () => {
       loadingText: 'جاري التحميل...',
       deadline: 'يجب الإنضمام لقناة تيليجرام عبر رابط البوت!',
       onClick: () => handleTelegram(),
+    },
+    {
+      id: 4,
+      title: 'مهمة سيرفر الديسكورد',
+      description:
+        'يتم توزيع هدايا عشوائية شبه يومية على المتفاعلين داخل سيرفر الديسكورد.',
+      buttonLabel: 'الحصول على رابط البوت',
+      loadingText: 'جاري التحميل...',
+      deadline: 'يجب توثيق حسابك عبر البوت!',
+      onClick: () => handleDiscord(),
     },
   ];
 
@@ -344,6 +437,11 @@ const TasksPage = () => {
         <Dialog>
           {dialogData.telegramData ? (
             <TelegramDialog
+              dialogData={dialogData}
+              setDialogData={setDialogData}
+            />
+          ) : dialogData.discordData ? (
+            <DiscordDialog
               dialogData={dialogData}
               setDialogData={setDialogData}
             />
