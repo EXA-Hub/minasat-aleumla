@@ -58,6 +58,12 @@ async function handleInteraction(interaction) {
           subscriptions,
         });
         break;
+      case CONFIG.COMMANDS.VERIFY:
+        await commandHandlers.handleVerify({
+          discordUserData,
+          interaction,
+        });
+        break;
       default:
         await DiscordAPI.getInstance().sendFollowUpMessage(interaction, {
           content: 'أمر غير معروف :skull:',

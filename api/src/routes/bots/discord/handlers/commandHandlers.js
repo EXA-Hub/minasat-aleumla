@@ -203,4 +203,20 @@ export class CommandHandlers {
       recipientUser.username
     );
   }
+
+  async handleVerify({ discordUserData, interaction }) {
+    await this.#discordApi.sendFollowUpMessage(interaction, {
+      content: `✅ **تم التحقق من حسابك.**\n يمكنك الدخول للسيرفر.`,
+    });
+    await this.#discordApi
+      .getRoles(interaction.guild_id)
+      .then(async (roles) => {
+        const role = roles.find((role) => role.name === 'موثق');
+        return await this.#discordApi.addUserToRole(
+          interaction.guild_id,
+          role.id,
+          discordUserData.id
+        );
+      });
+  }
 }

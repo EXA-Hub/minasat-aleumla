@@ -16,6 +16,37 @@ export class DiscordAPI {
     return this.#instance;
   }
 
+  async getRoles(guildId) {
+    const response = await fetch(
+      `${this.#baseUrl}/${CONFIG.DISCORD_API_VERSION}/guilds/${guildId}/roles`,
+      {
+        headers: {
+          Authorization: `Bot ${this.#botToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) throw new Error(await response.text());
+    return response.json();
+  }
+
+  async addUserToRole(guildId, roleId, userId) {
+    const response = await fetch(
+      `${this.#baseUrl}/${
+        CONFIG.DISCORD_API_VERSION
+      }/guilds/${guildId}/members/${userId}/roles/${roleId}`,
+      {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bot ${this.#botToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) throw new Error(await response.text());
+    return true;
+  }
+
   async #createDmChannel(userId) {
     const response = await fetch(
       `${this.#baseUrl}/${CONFIG.DISCORD_API_VERSION}/users/@me/channels`,
