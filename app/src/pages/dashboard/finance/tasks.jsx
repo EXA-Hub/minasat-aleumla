@@ -46,7 +46,7 @@ export const LastClaimCountdown = ({ lastClaim }) => {
         const minutes = Math.floor((remainingTime / (1000 * 60)) % 60);
         const seconds = Math.floor((remainingTime / 1000) % 60);
         setTimeLeft(`${hours}س ${minutes}د ${seconds}ث`);
-      } else setTimeLeft('Expired');
+      } else setTimeLeft('يمكنك الحصول على هديتك');
     };
 
     updateCountdown();
@@ -501,7 +501,7 @@ const TasksPage = () => {
                 {task.lastClaim && (
                   <p className="text-foreground m-0 flex items-center gap-1 text-sm sm:gap-2 sm:text-xs">
                     <span className="text-secondary-foreground font-semibold">
-                      اخر محاولة:
+                      وقت هديتك:
                     </span>
                     <LastClaimCountdown lastClaim={task.lastClaim} />
                   </p>
