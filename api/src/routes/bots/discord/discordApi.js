@@ -1,5 +1,5 @@
 // api/src/routes/websockets/bots/discord/services/discordApi.js
-import { CONFIG } from '../config/config.js';
+import { CONFIG } from './config.js';
 
 export class DiscordAPI {
   static #instance;

@@ -268,7 +268,7 @@ router.get('/@me/task/telegram', async (req, res) => {
   }
 });
 
-import { DiscordAPI } from '../bots/discord/services/discordApi.js';
+import { DiscordAPI } from '../bots/discord/discordApi.js';
 const discordApi = DiscordAPI.getInstance();
 
 router.get('/@me/task/discord', async (req, res) => {

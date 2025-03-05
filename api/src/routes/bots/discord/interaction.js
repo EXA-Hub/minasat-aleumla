@@ -3,13 +3,14 @@ import { Router } from 'express';
 import {
   InteractionResponseType,
   verifyKeyMiddleware,
+  InteractionType,
 } from 'discord-interactions';
 import { waitUntil } from '@vercel/functions';
-import User from '../../../../utils/schemas/mongoUserSchema.js';
-import { CommandHandlers } from '../handlers/commandHandlers.js';
-import { DiscordAPI } from '../services/discordApi.js';
-import config from '../../../../config.js';
-import { CONFIG } from '../config/config.js';
+import User from '../../../utils/schemas/mongoUserSchema.js';
+import { CommandHandlers } from './commandHandlers.js';
+import { DiscordAPI } from './discordApi.js';
+import config from '../../../config.js';
+import { CONFIG } from './config.js';
 
 const { subscriptions } = config;
 
@@ -36,7 +37,7 @@ async function handleInteraction(interaction) {
   }
 
   try {
-    switch (interaction.data.name) {
+    switch (interaction.data.name || interaction.data.custom_id) {
       case CONFIG.COMMANDS.PING:
         await commandHandlers.handlePing({ discordUserData, interaction });
         break;
@@ -86,6 +87,11 @@ router.post(
     try {
       res.send({
         type: InteractionResponseType.DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE,
+        ...(req.body.type === InteractionType.MESSAGE_COMPONENT && {
+          data: {
+            flags: 64,
+          },
+        }),
       });
     } catch (error) {
       console.error(error);

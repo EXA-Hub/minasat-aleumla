@@ -1,8 +1,8 @@
-import { logTransaction } from '../../../../utils/schemas/transactionLogger.js';
-import User from '../../../../utils/schemas/mongoUserSchema.js';
-import { DiscordAPI } from '../services/discordApi.js';
-import discordApp from '../../../../apps/discord.js';
-import { ws } from '../../../../utils/webhook.js';
+import { logTransaction } from '../../../utils/schemas/transactionLogger.js';
+import User from '../../../utils/schemas/mongoUserSchema.js';
+import discordApp from '../../../apps/discord.js';
+import { ws } from '../../../utils/webhook.js';
+import { DiscordAPI } from './discordApi.js';
 
 export class CommandHandlers {
   #discordApi;
@@ -33,7 +33,7 @@ export class CommandHandlers {
   }) {
     const targetId = interaction.data.options?.[0]?.value;
     const target =
-      targetId & (discordUserData.id !== targetId)
+      targetId && discordUserData.id !== targetId
         ? await User.findOne({
             'apps.Discord': { $elemMatch: { id: targetId } },
           })
