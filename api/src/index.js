@@ -39,8 +39,8 @@ app.use(
 app.use((req, res, next) => {
   if (
     [
-      '/webhooks/bots/discord/routes/interactions',
       '/src/routes/jobs/ExpiredSubscriptions.js',
+      '/webhooks/bots/discord/interactions',
     ].includes(req.path)
   )
     next();
@@ -49,7 +49,7 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   cachingMiddleware(req, res, next, listRoutes(app, true), [
-    '/webhooks/bots/discord/routes/interactions',
+    '/webhooks/bots/discord/interactions',
     '/webhooks/bots/telegram/endpoint',
     '/api/auth/chat/:tradeid',
   ]);

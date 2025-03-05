@@ -41,7 +41,7 @@ function shouldCacheRoute(path, includedRoutes, excludedRoutes = []) {
 /*
 const path = '/api/public/@zampx/profile';
 const includedRoutes = ['/api/public/@:user/profile'];
-const excludedRoutes = ['/webhooks/bots/discord/routes/interactions'];
+const excludedRoutes = ['/webhooks/bots/discord/interactions'];
 
 const shouldCache = shouldCacheRoute(path, includedRoutes, excludedRoutes);
 console.log(shouldCache); // true
