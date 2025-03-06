@@ -4,7 +4,7 @@ import Confetti from 'react-confetti';
 import { toast } from 'react-hot-toast';
 import { useEffect, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import CoinIcon from '../../../components/ui/CoinIcon';
 import { Button } from '../../../components/ui/button';
 import api from '../../../utils/api';
@@ -478,6 +478,11 @@ const TasksPage = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold sm:text-xl">المهام اليومية</h2>
+            <Link
+              to="/docs?q=tasks"
+              className="text-primary border-primary hover:bg-35primary rounded-md border px-3 py-1 text-sm font-medium transition">
+              الشرح
+            </Link>
           </div>
           {dailyTasks.map((task) => (
             <Card key={task.id}>
