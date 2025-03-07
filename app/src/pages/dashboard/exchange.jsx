@@ -57,34 +57,50 @@ const Exchange = () => {
               to: '/pay/paypal',
               src: '/icons/payment/paypal.png',
               alt: 'PayPal Payment',
+              closed: true,
             },
             {
               to: '/pay/vodafone-cash',
               src: '/icons/payment/vodafone.png',
               alt: 'Vodafone Cash',
+              closed: true,
             },
             {
               to: '/pay/crypto',
               src: '/icons/payment/crypto.png',
               alt: 'Cryptocurrency',
+              closed: true,
             },
             {
               to: '/pay/probot',
               src: '/icons/payment/Probot.png',
               alt: 'Probot Payment',
+              closed: false,
             },
-          ].map((payment, index) => (
-            <Link
-              key={index}
-              to={payment.to}
-              className="group bg-30mutedforeground flex items-center justify-center rounded-lg">
-              <img
-                src={payment.src}
-                className="object-contain p-2"
-                alt={payment.alt}
-              />
-            </Link>
-          ))}
+          ].map((payment, index) =>
+            payment.closed ? (
+              <div
+                key={index}
+                className="group bg-30mutedforeground flex cursor-not-allowed items-center justify-center rounded-lg opacity-50">
+                <img
+                  src={payment.src}
+                  className="object-contain p-2"
+                  alt={payment.alt}
+                />
+              </div>
+            ) : (
+              <Link
+                key={index}
+                to={payment.to}
+                className="group bg-30mutedforeground flex items-center justify-center rounded-lg">
+                <img
+                  src={payment.src}
+                  className="object-contain p-2"
+                  alt={payment.alt}
+                />
+              </Link>
+            )
+          )}
         </div>
       </div>
     </div>
