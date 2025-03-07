@@ -1,5 +1,9 @@
 # آخر اﻷخبار
 
+## تم فتح الدفع بواسطة بروبوت
+
+[![ProBot](/docs/assets/images/payProBot.png)](/dashboard/exchange)
+
 ## لدينا الآن مهمات ديسكورد وتيليجرام
 
 ***الروابط: 🚀 [![Discord](https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](/dashboard/finance/tasks) ߷ [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](/dashboard/finance/tasks) 🚀***
