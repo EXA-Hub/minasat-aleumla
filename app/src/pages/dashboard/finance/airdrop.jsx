@@ -186,7 +186,9 @@ const AirdropPage = () => {
       if (gift.url) window.open(gift.url, '_blank');
       const data = await api.airdrop.claimGift(gift.id);
       toast.success(data.message);
-      fetchGifts();
+      setGifts((gifts) =>
+        gifts.map((g) => (g.id === gift.id ? { ...g, claimed: true } : g))
+      );
     } catch (error) {
       toast.error(error.data?.error || 'حدث خطأ أثناء تقديم الهدية');
     } finally {
@@ -213,7 +215,12 @@ const AirdropPage = () => {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {gifts.map((gift) => (
-          <Card key={gift.id} className="transition-shadow hover:shadow-lg">
+          <Card
+            key={gift.id}
+            className={
+              'transition-shadow hover:shadow-lg' +
+              (gift.claimed ? ' bg-muted' : '')
+            }>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 {gift.title}
