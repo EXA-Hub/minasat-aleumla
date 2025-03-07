@@ -1,5 +1,6 @@
-import { ArrowLeft, Bot } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ArrowLeft, Bot } from 'lucide-react';
+import { Button } from '../../../components/ui/button';
 
 // probot.jsx
 export default function ProbotPage() {
@@ -29,8 +30,8 @@ export default function ProbotPage() {
             </h2>
             <ol className="text-muted-foreground list-inside list-decimal space-y-2">
               <li>انضم إلى سيرفر Discord الخاص بنا</li>
-              <li>ابحث عن بوت Probot</li>
-              <li>استخدم الأمر !pay متبوعاً بالمبلغ</li>
+              <li>وثق حسابك في السيرفر</li>
+              <li>إفتح تذكرة بيع أو شراء</li>
               <li>اتبع تعليمات البوت لإتمام عملية الدفع</li>
             </ol>
           </div>
@@ -47,9 +48,11 @@ export default function ProbotPage() {
           </div>
 
           <div className="border-border border-t pt-6">
-            <button className="text-primary-foreground w-full rounded-lg bg-[#5865F2] px-6 py-3 font-medium shadow-sm transition-colors hover:bg-[#4752C4]">
+            <Button
+              onClick={() => window.open('https://discord.gg/P78WYKwXv6')}
+              className="text-primary-foreground w-full rounded-lg bg-[#5865F2] px-6 py-3 font-medium shadow-sm transition-colors hover:bg-[#4752C4]">
               الانضمام للسيرفر
-            </button>
+            </Button>
           </div>
         </div>
       </div>
