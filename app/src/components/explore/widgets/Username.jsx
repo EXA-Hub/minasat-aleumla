@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useModal } from '../../../context/ModalManager';
+import { useModal } from '../../../context/modal-context.js';
 import verifiedUserNames from '../../../utils/verifiedUserNames.json';
 
 const Username = ({ username }) => {

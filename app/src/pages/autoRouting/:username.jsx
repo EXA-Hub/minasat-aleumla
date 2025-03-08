@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useModal } from '../../context/ModalManager.jsx';
+import { useModal } from '../../context/modal-context.js';
 import { Button } from '../../components/ui/button.jsx';
 import CoinIcon from '../../components/ui/CoinIcon.jsx';
 import Badges from '@/components/ui/badges.jsx';

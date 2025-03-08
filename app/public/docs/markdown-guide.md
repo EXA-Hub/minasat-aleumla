@@ -1,8 +1,16 @@
 # آخر اﻷخبار
 
+## تمت زيادة **✨ الهدايا اليومية**
+
+> لمعرفة كم ستحصل من الهديا: [إضغط هنا](/explore/support/subscriptions)
+>>
+---
+
 ## تم فتح الدفع بواسطة بروبوت
 
 [![ProBot](/docs/assets/images/payProBot.png)](/dashboard/exchange)
+
+---
 
 ## لدينا الآن مهمات ديسكورد وتيليجرام
 

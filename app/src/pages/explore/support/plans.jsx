@@ -26,6 +26,7 @@ const featureTranslations = {
   maxSend: 'الحد الأقصى للإرسال',
   fee: 'الرسوم',
   daily: 'يومي',
+  daily2: 'يومي 2',
   limit: 'الحد',
   bonus: 'المكافأة',
 };

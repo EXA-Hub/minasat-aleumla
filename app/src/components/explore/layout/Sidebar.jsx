@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Settings, Home } from 'lucide-react';
 import menuItems from '../../../components/explore/ExploreRoutes';
 
 const SidebarContent = () => {
@@ -18,6 +18,18 @@ const SidebarContent = () => {
 
   return (
     <nav className="h-full overflow-y-auto">
+      <Link
+        to="/"
+        className="text-70foreground hover:bg-5primary hover:text-foreground m-2 flex items-center gap-3 rounded-lg px-4 py-3">
+        <Home className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+        <span className="font-medium">الصفحة الرئيسية</span>
+      </Link>
+      <Link
+        to="/dashboard"
+        className="text-70foreground hover:bg-5primary hover:text-foreground m-2 flex items-center gap-3 rounded-lg px-4 py-3">
+        <Settings className="h-5 w-5 text-gray-500 dark:text-gray-400" />
+        <span className="font-medium">لوحة التحكم</span>
+      </Link>
       <div className="flex flex-col gap-y-2 p-4">
         {menuItems.map((section) => (
           <div key={section.id} className="rounded-xl backdrop-blur-xs">

@@ -57,10 +57,10 @@ import {
 import dashboardMenuItems from './components/dashboard/DashboardRoutes';
 import exploreMenuItems from './components/explore/ExploreRoutes';
 import { ReferralRedirect } from './context/ReferralRedirect';
+import { ModalProvider } from './context/ModalManager';
 import { ColorProvider } from './context/ColorContext';
 import { ThemeProvider } from './context/ThemeContext';
 import ErrorBoundary from './pages/core/ErrorBoundary';
-import { ModalProvider } from './context/ModalManager';
 import LoadingPage from './pages/core/loading.jsx';
 import { errorRoutes } from './errorConfig.jsx';
 import RecoveryPage from './pages/RecoveryPage';

@@ -6,7 +6,7 @@ import User from '../../ui/user';
 import ThemeToggle from '../../ThemeToggle';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useModal } from '../../../context/ModalManager'; // Import useModal
+import { useModal } from '../../../context/modal-context.js'; // Import useModal
 
 const Header = ({ user, onToggleSidebar }) => {
   const navigate = useNavigate();
@@ -39,7 +39,7 @@ const Header = ({ user, onToggleSidebar }) => {
   return (
     <>
       <header
-        className={`fixed left-0 top-0 z-30 w-full border-b border-white/10 bg-30background backdrop-blur-xl transition-transform duration-300 ease-in-out ${shouldHideHeader ? '-translate-y-full' : 'translate-y-0'}`}>
+        className={`bg-30background fixed top-0 left-0 z-30 w-full border-b border-white/10 backdrop-blur-xl transition-transform duration-300 ease-in-out ${shouldHideHeader ? '-translate-y-full' : 'translate-y-0'}`}>
         <div className="flex h-16 items-center justify-between px-6">
           {user ? (
             <div className="flex items-center gap-4">
@@ -51,18 +51,18 @@ const Header = ({ user, onToggleSidebar }) => {
             </div>
           ) : (
             <div className="flex items-center gap-4">
-              <div className="rounded-xl border border-white/10 bg-50background p-2 shadow-xs backdrop-blur-xs">
+              <div className="bg-50background rounded-xl border border-white/10 p-2 shadow-xs backdrop-blur-xs">
                 <ThemeToggle />
               </div>
               <Button
                 onClick={() => navigate('/login')}
-                className="relative overflow-hidden rounded-xl bg-linear-to-r from-primary to-primary px-6 py-2 text-white transition-all duration-300 hover:shadow-lg hover:shadow-30primary">
+                className="from-primary to-primary hover:shadow-30primary relative overflow-hidden rounded-xl bg-linear-to-r px-6 py-2 text-white transition-all duration-300 hover:shadow-lg">
                 تسجيل الدخول
               </Button>
             </div>
           )}
 
-          <h1 className="mr-4 bg-linear-to-r from-primary to-primary bg-clip-text text-xl font-bold text-transparent">
+          <h1 className="from-primary to-primary mr-4 bg-linear-to-r bg-clip-text text-xl font-bold text-transparent">
             منصة العملة
           </h1>
 
@@ -72,7 +72,7 @@ const Header = ({ user, onToggleSidebar }) => {
                 variant="ghost"
                 size="icon"
                 onClick={onToggleSidebar}
-                className="rounded-full text-foreground hover:bg-10primary">
+                className="text-foreground hover:bg-10primary rounded-full">
                 <Menu className="h-5 w-5" />
               </Button>
             </div>

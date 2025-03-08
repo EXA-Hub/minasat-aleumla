@@ -152,7 +152,7 @@ router.get(
       const dailyConfig =
         id === 1
           ? subscriptions[req.user.tier].features.tasks.daily
-          : subscriptions[req.user.tier].features.tasks['12H'];
+          : subscriptions[req.user.tier].features.tasks.daily2;
       const daily =
         Math.floor(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
       req.user.balance += daily;

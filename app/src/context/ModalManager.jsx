@@ -1,16 +1,30 @@
 // react-app/src/context/ModalManager.jsx
-import { createContext, useContext, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import { ModalContext } from './modal-context';
 import ProfileModal from '../components/explore/widgets/ProfileModal';
 import ProductModal from '../components/explore/widgets/ProductModal';
-import PropTypes from 'prop-types';
-
-const ModalContext = createContext();
 
 export const ModalProvider = ({ children }) => {
   const [modal, setModal] = useState(null);
 
   const openModal = (modalName, props) => setModal({ name: modalName, props });
-  const closeModal = () => setModal(null);
+  const closeModal = useCallback((shouldBack = true) => {
+    if (shouldBack) window.history.back();
+    setModal(null);
+  }, []);
+
+  // Handle browser back button
+  useEffect(() => {
+    if (modal) window.history.pushState(null, '', window.location.href);
+
+    const handlePopState = () => {
+      if (modal) closeModal(false);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [modal, closeModal]);
 
   return (
     <ModalContext.Provider value={{ modal, openModal, closeModal }}>
@@ -37,5 +51,3 @@ export const ModalProvider = ({ children }) => {
 ModalProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
-
-export const useModal = () => useContext(ModalContext);

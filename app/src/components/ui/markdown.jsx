@@ -339,6 +339,7 @@ const MarkdownDisplay = ({
 
   const markdownComponents = React.useMemo(
     () => ({
+      img: ({ src, alt }) => <img src={src} alt={alt} className="max-w-full" />,
       a: ({ href, children }) => {
         const handleLinkClick = (e) => {
           e.preventDefault();
@@ -365,7 +366,7 @@ const MarkdownDisplay = ({
               display: 'inline-block',
               width: 'max-content',
             }}
-            className="text-foreground hover:text-purple-400 hover:underline">
+            className="text-foreground max-w-full hover:text-purple-400 hover:underline">
             {children}
           </a>
         );

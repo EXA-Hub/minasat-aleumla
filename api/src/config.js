@@ -8,10 +8,10 @@ const plans = {
     features: {
       wallet: { maxSend: 2000, fee: 2, maxCoins: 200000 },
       tasks: {
-        '12H': { limit: dailyQuarter / 2, bonus: dailyBonus / 2 },
+        daily2: { limit: dailyQuarter * 2, bonus: dailyBonus * 2 },
         daily: { limit: dailyQuarter, bonus: dailyBonus },
       },
-      products: { slots: 10, maxCoins: 20000 },
+      products: { slots: 0, maxCoins: 0 },
       gifts: { slots: 10, maxCoins: 20000, maxUsers: 10 },
       airdrop: { slots: 10, maxCoins: 20000, maxUsers: 10 },
       apps: { slots: 2 },
@@ -23,10 +23,10 @@ const plans = {
     features: {
       wallet: { maxSend: 5000, fee: 1, maxCoins: 500000 },
       tasks: {
-        '12H': { limit: dailyQuarter, bonus: dailyBonus },
+        daily2: { limit: dailyQuarter * 4, bonus: dailyBonus * 4 },
         daily: { limit: dailyQuarter * 2, bonus: dailyBonus * 2 },
       },
-      products: { slots: 15, maxCoins: 30000 },
+      products: { slots: 5, maxCoins: 30000 },
       gifts: { slots: 15, maxCoins: 30000, maxUsers: 15 },
       airdrop: { slots: 15, maxCoins: 30000, maxUsers: 15 },
       apps: { slots: 3 },
@@ -38,10 +38,10 @@ const plans = {
     features: {
       wallet: { maxSend: 100000, fee: 0.5, maxCoins: 1000000 },
       tasks: {
-        '12H': { limit: dailyQuarter * (3 / 2), bonus: dailyBonus * (3 / 2) },
+        daily2: { limit: dailyQuarter * 6, bonus: dailyBonus * 6 },
         daily: { limit: dailyQuarter * 3, bonus: dailyBonus * 3 },
       },
-      products: { slots: 25, maxCoins: 50000 },
+      products: { slots: 10, maxCoins: 50000 },
       gifts: { slots: 25, maxCoins: 50000, maxUsers: 25 },
       airdrop: { slots: 25, maxCoins: 50000, maxUsers: 25 },
       apps: { slots: 5 },
@@ -53,10 +53,10 @@ const plans = {
     features: {
       wallet: { maxSend: 500000, fee: 0, maxCoins: 5000000 },
       tasks: {
-        '12H': { limit: dailyQuarter * 2, bonus: dailyBonus * 2 },
+        daily2: { limit: dailyQuarter * 8, bonus: dailyBonus * 8 },
         daily: { limit: dailyQuarter * 4, bonus: dailyBonus * 4 },
       },
-      products: { slots: 50, maxCoins: 100000 },
+      products: { slots: 20, maxCoins: 100000 },
       gifts: { slots: 50, maxCoins: 100000, maxUsers: 50 },
       airdrop: { slots: 50, maxCoins: 100000, maxUsers: 50 },
       apps: { slots: 10 },

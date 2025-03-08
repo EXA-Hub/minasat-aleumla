@@ -1,5 +1,5 @@
 // my-react-app/src/components/explore/widgets/ProductModal.jsx
-import { useModal } from '../../../context/ModalManager';
+import { useModal } from '../../../context/modal-context.js';
 import ProductPage from '../../../pages/core/:username/product/:productId';
 
 const ProductModal = ({ username, productId }) => {
