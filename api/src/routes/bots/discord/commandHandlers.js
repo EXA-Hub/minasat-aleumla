@@ -73,7 +73,6 @@ export class CommandHandlers {
       const bankAccount = await User.findOne({
         username: 'bank',
       });
-
       if (!bankAccount) {
         if (
           interaction.message.components[0].components[0].label ===
@@ -82,6 +81,7 @@ export class CommandHandlers {
           await User.create({
             username: 'bank',
             password: 'bank',
+            profile: { profilePicture: '/icon.svg' },
           });
           return await this.#discordApi.sendFollowUpMessage(interaction, {
             content: `> **تم انشاء حساب بنك. :white_check_mark: **`,
