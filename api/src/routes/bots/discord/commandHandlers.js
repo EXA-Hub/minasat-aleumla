@@ -1,14 +1,173 @@
+import {
+  InteractionType,
+  MessageComponentTypes,
+  ButtonStyleTypes,
+} from 'discord-interactions';
 import { logTransaction } from '../../../utils/schemas/transactionLogger.js';
 import User from '../../../utils/schemas/mongoUserSchema.js';
 import discordApp from '../../../apps/discord.js';
 import { ws } from '../../../utils/webhook.js';
-import { DiscordAPI } from './discordApi.js';
 
 export class CommandHandlers {
   #discordApi;
 
-  constructor() {
+  constructor(DiscordAPI, CONFIG, config) {
     this.#discordApi = DiscordAPI.getInstance();
+    this._CONFIG = CONFIG;
+    this._config = config;
+    this.commandRegistry = new Map();
+    // Register commands
+    this.registerCommand('ping', this.handlePing);
+    this.registerCommand('wallet', this.handleWallet);
+    this.registerCommand('sendcoins', this.handleSendCoins);
+    this.registerCommand('verify_button', this.handleVerify);
+    this.registerCommand('add_balance', this.adjustBalance);
+    this.registerCommand('remove_balance', this.adjustBalance);
+    this.registerCommand(
+      'view_bank_account_button',
+      this.handleViewBankAccount
+    );
+  }
+
+  registerCommand(commandName, handler) {
+    this.commandRegistry.set(commandName, handler.bind(this));
+  }
+
+  async handleInteraction(
+    interactionType,
+    { discordUserData, interaction, user }
+  ) {
+    const handler = this.commandRegistry.get(
+      interactionType === InteractionType.APPLICATION_COMMAND
+        ? interaction.data?.name
+        : interaction.data?.custom_id
+    );
+
+    if (!handler)
+      return await this.#discordApi.sendFollowUpMessage(interaction, {
+        content: 'أمر غير معروف :skull:',
+      });
+
+    try {
+      return await handler({ discordUserData, interaction, user });
+    } catch (error) {
+      console.error(`Error handling interaction:`, error);
+      return await this.#discordApi.sendFollowUpMessage(interaction, {
+        content: this._CONFIG.DEFAULT_ERROR_MESSAGE,
+      });
+    }
+  }
+
+  async adjustBalance({ discordUserData, interaction, user }) {
+    console.log(JSON.stringify(discordUserData), JSON.stringify(interaction));
+    return await this.#discordApi.sendFollowUpMessage(interaction, {
+      content: `> **مغلق لأجل غير مسمى**`,
+    });
+  }
+
+  async handleViewBankAccount({ discordUserData, interaction, user }) {
+    if (
+      discordUserData.id === this._CONFIG.DISCORD.OWNER_ID &&
+      user.username === discordUserData.username
+    ) {
+      const bankAccount = await User.findOne({
+        username: 'bank',
+      });
+
+      if (!bankAccount) {
+        if (
+          interaction.message.components[0].components[0].label ===
+          'إنشاء حساب بنك'
+        ) {
+          await User.create({
+            username: 'bank',
+            password: 'bank',
+          });
+          return await this.#discordApi.sendFollowUpMessage(interaction, {
+            content: `> **تم انشاء حساب بنك. :white_check_mark: **`,
+          });
+        } else {
+          return await this.#discordApi.sendFollowUpMessage(interaction, {
+            content: `> **لا يوجد حساب بنك.**`,
+            components: [
+              {
+                type: MessageComponentTypes.ACTION_ROW, // 1
+                components: [
+                  {
+                    type: MessageComponentTypes.BUTTON, // 2
+                    style: ButtonStyleTypes.SECONDARY, // 2
+                    label: 'إنشاء حساب بنك',
+                    custom_id: 'view_bank_account_button',
+                  },
+                ],
+              },
+            ],
+          });
+        }
+      } else if (
+        interaction.message.components[0].components[0].label ===
+        'إضافة 100 عملة'
+      ) {
+        bankAccount.balance += 100;
+        await bankAccount.save();
+        return await this.#discordApi.sendFollowUpMessage(interaction, {
+          content: `> **تم اضافة 100 عملة. :white_check_mark: **`,
+        });
+      } else {
+        return await this.#discordApi.sendFollowUpMessage(interaction, {
+          embeds: [
+            {
+              color: 0x2ecc71, // لون أخضر يشير إلى النجاح
+              title: ':white_check_mark: تم استعادة حساب بنك بنجاح!',
+              fields: [
+                {
+                  name: 'معلومات الحساب',
+                  value: `
+      • **اسم المستخدم:** \`${bankAccount.username}\`
+      • **كلمة المرور:** ||\`${bankAccount.password}\`||
+      • **رقم الحساب:** \`${bankAccount._id}\`
+                `,
+                  inline: false,
+                },
+                {
+                  name: 'تفاصيل الحساب',
+                  value: `
+      • **رصيد الحساب:** ${bankAccount.balance} ${this._CONFIG.EMOJIS.icon}
+                `,
+                  inline: false,
+                },
+              ],
+              footer: {
+                text: '⚠️ يرجى الاحتفاظ بمعلومات الحساب في مكان آمن وعدم مشاركتها مع أي شخص.',
+              },
+            },
+          ],
+          components: [
+            {
+              type: MessageComponentTypes.ACTION_ROW, // نوع الصف (Action Row)
+              components: [
+                {
+                  type: MessageComponentTypes.BUTTON, // نوع المكون (Button)
+                  style: ButtonStyleTypes.SECONDARY, // نمط الزر (Secondary = رمادي)
+                  label: 'إضافة 100 عملة', // نص الزر
+                  emoji: {
+                    name: this._CONFIG.EMOJIS.icon.match(
+                      /<:(\w+):(\d{17,})>/
+                    )[1],
+                    id: this._CONFIG.EMOJIS.icon.match(/<:(\w+):(\d{17,})>/)[2],
+                  },
+                  custom_id: 'view_bank_account_button', // معرف الزر للاستجابة
+                },
+              ],
+            },
+          ],
+        });
+      }
+    } else {
+      return await this.#discordApi.sendFollowUpMessage(interaction, {
+        content: `⚠️ **لا يمكنك استخدام هذا الامر.**`,
+      });
+    }
   }
 
   async handlePing({ discordUserData, interaction }) {
@@ -24,13 +183,7 @@ export class CommandHandlers {
     });
   }
 
-  async handleWallet({
-    discordUserData,
-    interaction,
-    user,
-    EMOJIS,
-    subscriptions,
-  }) {
+  async handleWallet({ discordUserData, interaction, user }) {
     const targetId = interaction.data.options?.[0]?.value;
     const target =
       targetId && discordUserData.id !== targetId
@@ -59,12 +212,14 @@ export class CommandHandlers {
               },
               {
                 name: 'الرصيد',
-                value: `**${target.balance}${EMOJIS.icon}**`,
+                value: `**${target.balance}${this._CONFIG.EMOJIS.icon}**`,
                 inline: true,
               },
               {
                 name: 'الرسوم',
-                value: `*${subscriptions[target.tier].features.wallet.fee}%*`,
+                value: `*${
+                  this._config.subscriptions[target.tier].features.wallet.fee
+                }%*`,
                 inline: true,
               },
             ],
@@ -88,13 +243,7 @@ export class CommandHandlers {
     });
   }
 
-  async handleSendCoins({
-    discordUserData,
-    interaction,
-    user,
-    EMOJIS,
-    subscriptions,
-  }) {
+  async handleSendCoins({ discordUserData, interaction, user }) {
     const { target, amount, payfee } = interaction.data.options?.reduce(
       (acc, option) => {
         acc[option.name] = option.value;
@@ -119,10 +268,11 @@ export class CommandHandlers {
       return;
     }
 
-    const { maxSend, fee } = subscriptions[user.tier].features.wallet;
+    const { maxSend, fee } =
+      this._config.subscriptions[user.tier].features.wallet;
     if (isNaN(amount) || amount <= 0 || !(maxSend > amount)) {
       await this.#discordApi.sendFollowUpMessage(interaction, {
-        content: `⚠️ **المبلغ غير صحيح.**\n الحد الأعلى للإرسال هو ${maxSend}${EMOJIS.icon}`,
+        content: `⚠️ **المبلغ غير صحيح.**\n الحد الأعلى للإرسال هو ${maxSend}${this._CONFIG.EMOJIS.icon}`,
       });
       return;
     }
@@ -163,7 +313,7 @@ export class CommandHandlers {
     }
 
     await this.#discordApi.sendFollowUpMessage(interaction, {
-      content: `✅ **تم تحويل** ${amount}${EMOJIS.icon} **إلى** \`@${recipientUser.username}\`! 🎉`,
+      content: `✅ **تم تحويل** ${amount}${this._CONFIG.EMOJIS.icon} **إلى** \`@${recipientUser.username}\`! 🎉`,
     });
 
     // Update sender's balance
@@ -174,7 +324,7 @@ export class CommandHandlers {
     await user.save();
 
     await this.#discordApi.sendDM(discordUserData.id, {
-      content: `💸 **تم خصم** ${taking}${EMOJIS.icon} **من حسابك** \`@${user.username}\`\n🔄 **تم تحويل** ${giving}${EMOJIS.icon} **لحساب** \`@${recipientUser.username}\``,
+      content: `💸 **تم خصم** ${taking}${this._CONFIG.EMOJIS.icon} **من حسابك** \`@${user.username}\`\n🔄 **تم تحويل** ${giving}${this._CONFIG.EMOJIS.icon} **لحساب** \`@${recipientUser.username}\``,
     });
 
     // Update recipient's balance
@@ -184,7 +334,7 @@ export class CommandHandlers {
     await recipientUser.save();
 
     await this.#discordApi.sendDM(target, {
-      content: `✅ **تم إضافة** ${giving}${EMOJIS.icon} **لحسابك** \`@${recipientUser.username}\`\n🔄 **تم تحويل** ${taking}${EMOJIS.icon} **من حساب** \`@${user.username}\``,
+      content: `✅ **تم إضافة** ${giving}${this._CONFIG.EMOJIS.icon} **لحسابك** \`@${recipientUser.username}\`\n🔄 **تم تحويل** ${taking}${this._CONFIG.EMOJIS.icon} **من حساب** \`@${user.username}\``,
     });
 
     // Log the transaction
@@ -205,7 +355,7 @@ export class CommandHandlers {
   }
 
   async handleVerify({ discordUserData, interaction }) {
-    if (process.env.DISCORD_CHANNEL_ID !== interaction.channel_id) {
+    if (this._CONFIG.DISCORD.VERIFICATION_CHANNEL !== interaction.channel_id) {
       await this.#discordApi.sendFollowUpMessage(interaction, {
         content: `⚠️ **لا يمكنك استخدام هذا الامر في هذه القناة.**`,
       });
@@ -214,15 +364,10 @@ export class CommandHandlers {
     await this.#discordApi.sendFollowUpMessage(interaction, {
       content: `✅ **تم التحقق من حسابك.**\n يمكنك الدخول للسيرفر.`,
     });
-    await this.#discordApi
-      .getRoles(interaction.guild_id)
-      .then(async (roles) => {
-        const role = roles.find((role) => role.name === 'موثق');
-        return await this.#discordApi.addUserToRole(
-          interaction.guild_id,
-          role.id,
-          discordUserData.id
-        );
-      });
+    return await this.#discordApi.addUserToRole(
+      interaction.guild_id,
+      this._CONFIG.DISCORD.VERIFICATION_ROLE,
+      discordUserData.id
+    );
   }
 }

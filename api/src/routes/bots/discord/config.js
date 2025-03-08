@@ -2,11 +2,10 @@ export const CONFIG = {
   DISCORD_API_VERSION: 'v10',
   DISCORD_API_BASE_URL: 'https://discord.com/api',
   DEFAULT_ERROR_MESSAGE: 'حدث خطأ غير متوقع',
-  COMMANDS: {
-    PING: 'ping',
-    WALLET: 'wallet',
-    SEND: 'sendcoins',
-    VERIFY: 'verify_button',
+  DISCORD: {
+    VERIFICATION_CHANNEL: '1345844680851460196',
+    VERIFICATION_ROLE: '1345843422711386254',
+    OWNER_ID: '635933198035058700',
   },
   EMOJIS: {
     icon: '<:coinIcon:1324922875203031050>',
