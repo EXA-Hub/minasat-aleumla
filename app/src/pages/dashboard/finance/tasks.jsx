@@ -406,11 +406,22 @@ const TasksPage = () => {
       onClick: () => handleGetDaily(2),
       lastClaim: localStorage.getItem('lastClaim:id=2'),
     },
+    {
+      id: 3,
+      title: 'الهدية اليومية 3',
+      description:
+        'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
+      buttonLabel: 'الحصول على الهدية اليومية',
+      loadingText: 'جاري التحميل...',
+      deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
+      onClick: () => handleGetDaily(3),
+      lastClaim: localStorage.getItem('lastClaim:id=3'),
+    },
   ];
 
   const currentTasks = [
     {
-      id: 3,
+      id: 4,
       title: 'مهمة قناة التيليجرام',
       description:
         'يتم توزيع هدايا عشوائية شبه يومية على المتفاعلين مع منشوراتنا عبر قناة تيليجرام.',
@@ -420,7 +431,7 @@ const TasksPage = () => {
       onClick: () => handleTelegram(),
     },
     {
-      id: 4,
+      id: 5,
       title: 'مهمة سيرفر الديسكورد',
       description:
         'يتم توزيع هدايا عشوائية شبه يومية على المتفاعلين داخل سيرفر الديسكورد.',

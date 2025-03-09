@@ -29,7 +29,37 @@ const dailyIpSchema = new mongoose.Schema(
 
 const DailyIp = mongoose.model('DailyIp', dailyIpSchema);
 
-const generateShortURL = async (url, id, expirationMinutes = 15) => {
+const dailyProviders = new Map([
+  [
+    1,
+    {
+      name: 'linkjust.com',
+      period: 24 * 60 * 60 * 1000,
+      API_KEY: process.env.LINKJUST_API_KEY,
+      gift: (tier) => subscriptions[tier].features.tasks.daily,
+    },
+  ],
+  [
+    2,
+    {
+      name: 'nitro-link.com',
+      period: 24 * 60 * 60 * 1000,
+      API_KEY: process.env.NITRO_LINK_API_KEY,
+      gift: (tier) => subscriptions[tier].features.tasks.daily2,
+    },
+  ],
+  [
+    3,
+    {
+      name: 'yallashort.com',
+      period: 24 * 60 * 60 * 1000,
+      API_KEY: process.env.YALLASHORT_API_KEY,
+      gift: (tier) => subscriptions[tier].features.tasks.daily,
+    },
+  ],
+]);
+
+const generateShortURL = async (url, provider, expirationMinutes = 15) => {
   const currentTime = new Date();
   currentTime.setMinutes(currentTime.getMinutes() + expirationMinutes); // Add expiration time
 
@@ -41,10 +71,8 @@ const generateShortURL = async (url, id, expirationMinutes = 15) => {
     minute: currentTime.getUTCMinutes(),
   };
 
-  const apiUrl = `https://${
-    id === 1 ? 'linkjust.com' : 'nitro-link.com'
-  }/api?api=${
-    id === 1 ? process.env.LINKJUST_API_KEY : process.env.NITRO_LINK_API_KEY
+  const apiUrl = `https://${provider.name}/api?api=${
+    provider.API_KEY
   }&url=${encodeURIComponent(url)}&format=json&expiration[year]=${
     expiration.year
   }&expiration[month]=${expiration.month}&expiration[day]=${
@@ -87,8 +115,8 @@ router.get(
     query('id')
       .isInt()
       .withMessage('ID must be an integer')
-      .isIn([1, 2])
-      .withMessage('ID must be 1 or 2'),
+      .isIn([...dailyProviders.keys()])
+      .withMessage('ID is not valid'),
     validateRequest,
   ],
   async (req, res) => {
@@ -98,18 +126,17 @@ router.get(
       const ipRecord = await DailyIp.findOne({
         identifier: `${id}-${clientIp}`,
       });
+      const provider = dailyProviders.get(id);
+      if (!provider) throw new Error(`Provider ${id} not found`);
       if (
         ipRecord &&
-        ((id === 1 &&
-          ipRecord.updatedAt > new Date(Date.now() - 24 * 60 * 60 * 1000)) ||
-          (id === 2 &&
-            ipRecord.updatedAt > new Date(Date.now() - 24 * 60 * 60 * 1000)))
+        ipRecord.updatedAt > new Date(Date.now() - provider.period)
       )
         return res.status(200).json({ dailyUrl: ipRecord.url });
       const code = generateCode();
       const shortUrl = await generateShortURL(
         `${host}?dailyCode=${code}&id=${id}`,
-        id
+        provider
       );
       const redisClient = await getRedisClient();
       await redisClient.set(
@@ -133,7 +160,13 @@ router.get(
 
 router.get(
   '/verify-daily',
-  [query('dailyCode').isInt(), query('id').isInt(), validateRequest],
+  [
+    query('dailyCode').isInt(),
+    query('id')
+      .isInt()
+      .isIn([...dailyProviders.keys()]),
+    validateRequest,
+  ],
   async (req, res) => {
     try {
       const redisClient = await getRedisClient();
@@ -143,16 +176,13 @@ router.get(
         await redisClient.get(`tempCode:${id}-${clientIp}`)
       );
       if (!entry)
-        return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
+        return res.status(400).json({ error: 'ليس لديك هدايا حاليا' });
       await redisClient.del(`tempCode:${id}-${clientIp}`);
       if (entry.code !== dailyCode)
         return res.status(400).json({ error: 'رمز غير صحيح' });
       if (Date.now() >= entry.expireTime)
         return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
-      const dailyConfig =
-        id === 1
-          ? subscriptions[req.user.tier].features.tasks.daily
-          : subscriptions[req.user.tier].features.tasks.daily2;
+      const dailyConfig = dailyProviders.get(id).gift(req.user.tier);
       const daily =
         Math.floor(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
       req.user.balance += daily;
