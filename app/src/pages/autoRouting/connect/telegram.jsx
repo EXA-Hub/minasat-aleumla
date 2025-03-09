@@ -68,7 +68,7 @@ export default function TelegramAuth() {
       }
       delete window.onTelegramAuth;
     };
-  }, [mfa]);
+  }, []);
 
   const handleBackToApps = () => window.close();
 
