@@ -9,14 +9,16 @@ export default function TelegramAuth() {
   const [mfa, setMfa] = useState(false);
   const [responseStatus, setResponseStatus] = useState(null);
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://telegram.org/js/telegram-widget.js?22';
-    script.async = true;
-    script.setAttribute('data-telegram-login', 'Minasat_Aleumla_bot');
-    script.setAttribute('data-size', 'large');
-    script.setAttribute('data-request-access', 'write');
-    script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-    document.getElementById('telegram-login').appendChild(script);
+    if (!mfa) {
+      const script = document.createElement('script');
+      script.src = 'https://telegram.org/js/telegram-widget.js?22';
+      script.async = true;
+      script.setAttribute('data-telegram-login', 'Minasat_Aleumla_bot');
+      script.setAttribute('data-size', 'large');
+      script.setAttribute('data-request-access', 'write');
+      script.setAttribute('data-onauth', 'onTelegramAuth(user)');
+      document.getElementById('telegram-login').appendChild(script);
+    }
     window.onTelegramAuth = (user) => {
       setDataSent(true);
       setLoading(true);
@@ -68,7 +70,7 @@ export default function TelegramAuth() {
       }
       delete window.onTelegramAuth;
     };
-  }, []);
+  }, [mfa]);
 
   const handleBackToApps = () => window.close();
 
