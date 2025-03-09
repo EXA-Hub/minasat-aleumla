@@ -34,8 +34,6 @@ router.get('/apps', (req, res) => {
 // =================== 🔵 LOGIN ROUTE ===================
 router.post('/apps/login', async (req, res) => {
   try {
-    console.log(req.body);
-
     const redisClient = await getRedisClient();
     const app = config.apps.find(
       (app) => app.id.toLowerCase() === req.body.app.toLowerCase()
