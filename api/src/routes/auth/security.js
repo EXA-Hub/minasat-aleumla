@@ -120,7 +120,7 @@ router.post(
   async (req, res) => {
     const { action, type, value, token } = req.body;
     const userId = req.user._id.toString();
-
+    const redisClient = await getRedisClient();
     try {
       switch (action) {
         case '2fa':
@@ -136,7 +136,6 @@ router.post(
               'منصة العملة',
               secret
             );
-            const redisClient = await getRedisClient();
             await redisClient.set(
               `tempVerification:${userId}`,
               JSON.stringify({ secret }),
@@ -144,14 +143,14 @@ router.post(
             ); // 5 minutes TTL
             return res.json({ otpauth, secret });
           } else if (type === 'verify') {
-            const tempData = await redisClient.get(
-              `tempVerification:${userId}`
+            const tempData = JSON.parse(
+              await redisClient.get(`tempVerification:${userId}`)
             );
-            if (!tempData || !tempData.secret) {
+            if (!tempData || !tempData.secret)
               return res
                 .status(400)
                 .json({ error: 'يرجى إعداد المصادقة الثنائية أولاً' });
-            }
+
             const isValid = authenticator.verify({
               token,
               secret: tempData.secret,
@@ -162,7 +161,6 @@ router.post(
             req.user.twoFactorSecret = tempData.secret;
             req.user.twoFactorEnabled = true;
             await req.user.save();
-            const redisClient = await getRedisClient();
             await redisClient.del(`tempVerification:${userId}`);
             return res.json({ enabled: true });
           } else if (type === 'disable') {
@@ -194,7 +192,6 @@ router.post(
             const verificationCode = Math.floor(
               100000 + Math.random() * 900000
             ).toString();
-            const redisClient = await getRedisClient();
             await redisClient.set(
               `tempVerification:${userId}`,
               JSON.stringify({
@@ -234,7 +231,6 @@ router.post(
               message: 'تم إرسال رمز التحقق إلى بريدك الإلكتروني',
             });
           } else if (type === 'verify') {
-            const redisClient = await getRedisClient();
             const tempData = await redisClient.get(
               `tempVerification:${userId}`
             );
@@ -262,7 +258,6 @@ router.post(
             console.log(`SMS Code: ${verificationCode} to ${value}`);
             return res.json({ message: 'تم إرسال رمز التحقق إلى هاتفك' });
           } else if (type === 'verify') {
-            const redisClient = await getRedisClient();
             const tempData = await redisClient.get(
               `tempVerification:${userId}`
             );
@@ -276,6 +271,7 @@ router.post(
           break;
       }
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: 'حدث خطأ في عملية التحقق' });
     }
   }

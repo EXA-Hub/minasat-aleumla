@@ -77,6 +77,44 @@ const discordApp = {
       throw error;
     }
   },
+  login: async (data, User) => {
+    const code = data.query.code;
+    const url = 'https://discord.com/api/oauth2/token';
+    const body = new URLSearchParams({
+      client_id: process.env.DISCORD_CLIENT_ID,
+      client_secret: process.env.DISCORD_CLIENT_SECRET,
+      code: code,
+      grant_type: 'authorization_code',
+      redirect_uri: data.redirectUrl,
+    });
+    try {
+      // Get token
+      const tokenResponse = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body.toString(),
+      });
+      const tokenData = await tokenResponse.json();
+      if (!tokenData.access_token)
+        throw new Error('Failed to get access token');
+      // Get user data
+      const userResponse = await fetch(
+        'https://discord.com/api/v10/users/@me',
+        {
+          headers: {
+            Authorization: `Bearer ${tokenData.access_token}`,
+          },
+        }
+      );
+      const userData = await userResponse.json();
+      return await User.findOne({ [`apps.${AppID}.id`]: userData.id });
+    } catch (error) {
+      console.error('Discord connection error:', error);
+      throw error;
+    }
+  },
   schema: new mongoose.Schema({
     _id: false,
     id: { type: String, required: true }, // default required

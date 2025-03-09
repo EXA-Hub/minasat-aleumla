@@ -121,7 +121,6 @@ const badges = [
 import { isProduction } from './utils/env.js';
 import discordApp from './apps/discord.js';
 import telegramApp from './apps/telegram.js';
-import youtubeApp from './apps/youtube.js';
 
 export default {
   port: isProduction
@@ -148,9 +147,5 @@ export default {
     ]),
   },
   badges,
-  apps: [
-    discordApp,
-    telegramApp,
-    // youtubeApp
-  ],
+  apps: [discordApp, telegramApp],
 };

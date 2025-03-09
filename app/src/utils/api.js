@@ -185,8 +185,14 @@ const api = {
     verifyConnection: async (data) => {
       return axiosInstance.post('/api/auth/@me/apps/verifyConnection', data);
     },
+    loginWithApp: async (data) => {
+      return axiosInstance.post('/api/public/apps/login', data);
+    },
     getApps: async () => {
       return axiosInstance.get('/api/auth/@me/apps');
+    },
+    allApps: async () => {
+      return axiosInstance.get('/api/public/apps');
     },
     disconnect: async (data) => {
       return axiosInstance.put('/api/auth/@me/apps/disconnect', data);

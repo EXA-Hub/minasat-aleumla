@@ -1,14 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
 import api from '../../../utils/api';
 
 const ConnectPage = () => {
   const [loading, setLoading] = useState(true);
+  const [mfa, setMfa] = useState(false);
   const [responseStatus, setResponseStatus] = useState(null);
   const { app } = useParams();
   const location = useLocation();
   const apiCallMade = useRef(false);
+
+  const { origin, pathname } = window.location;
+
+  const queryParams = new URLSearchParams(location.search);
+  const query = {};
+  queryParams.forEach((value, key) => {
+    query[key] = value;
+  });
 
   useEffect(() => {
     const apiCall = async () => {
@@ -18,20 +28,19 @@ const ConnectPage = () => {
       setLoading(true);
       setResponseStatus(null);
 
-      const { origin, pathname } = window.location;
-      const queryParams = new URLSearchParams(location.search);
-      const query = {};
-      queryParams.forEach((value, key) => {
-        query[key] = value;
-      });
-
       try {
-        await api.apps.verifyConnection({
+        const response = await api.apps[
+          localStorage.getItem('token') ? 'verifyConnection' : 'loginWithApp'
+        ]({
           app,
           query,
           redirectUrl: origin + pathname,
         });
         setResponseStatus('success');
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+          window.close();
+        } else if (response.requiresMFA) setMfa(true);
       } catch (e) {
         console.log(e);
         setResponseStatus(e.data?.error || 'error');
@@ -46,6 +55,47 @@ const ConnectPage = () => {
   }, []);
 
   const handleBackToApps = () => window.close();
+
+  if (mfa) {
+    // add mfa otp code
+    return (
+      <div className="mx-auto max-w-4xl px-6 py-4">
+        <div className="text-primary text-lg font-bold">ادخل كود التحقق</div>
+        <Input
+          className="mt-4"
+          placeholder="كود التحقق"
+          onChange={(e) => setMfa(e.target.value)}
+        />
+        <Button
+          onClick={() => {
+            setMfa(false);
+            api.apps
+              .loginWithApp({
+                app,
+                query,
+                redirectUrl: origin + pathname,
+                tfaCode: mfa,
+              })
+              .catch((e) => {
+                console.log(e);
+                setResponseStatus(e.data?.error || 'error');
+              })
+              .then((data) => {
+                if (data.token) {
+                  localStorage.setItem('token', data.token);
+                  window.close();
+                } else if (data.requiresMFA) setMfa(true);
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+          }}
+          className="mt-4 rounded-md px-6 py-3 text-lg">
+          تأكيد
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-4">
@@ -68,7 +118,7 @@ const ConnectPage = () => {
       {!loading && (
         <Button
           onClick={handleBackToApps}
-          className="mt-4 rounded-md bg-primary px-6 py-3 text-lg text-primary-foreground transition duration-200 hover:bg-90primary disabled:cursor-not-allowed disabled:bg-gray-400">
+          className="bg-primary text-primary-foreground hover:bg-90primary mt-4 rounded-md px-6 py-3 text-lg transition duration-200 disabled:cursor-not-allowed disabled:bg-gray-400">
           العودة للتطبيقات
         </Button>
       )}

@@ -31,7 +31,6 @@ const App = {
   redirectUrl: process.env.TELEGRAM_REDIRECT_URI,
   bgColor: '#0088cc',
   connect: async (data, user, User) => {
-    console.log(data);
     const { id, first_name, last_name, username, photo_url, auth_date } =
       data.user;
     // verfiy if telegram send hash
@@ -52,6 +51,12 @@ const App = {
       },
     ];
     await user.save();
+  },
+  login: async (data, User) => {
+    const { id } = data.user;
+    if (!verifyTelegramHash(data.user, process.env.TELEGRAM_BOT_TOKEN))
+      throw new Error('invalid hash');
+    return await User.findOne({ [`apps.${AppID}.id`]: id });
   },
   schema: new mongoose.Schema({
     _id: false,

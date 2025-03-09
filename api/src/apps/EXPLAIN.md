@@ -14,6 +14,9 @@ const App = {
   // <>it's one-many (one user to many accounts)<>
   // my-react-app/src/pages/autoRouting/connect/:app.jsx
   connect: async (data, user, User) => {}, // if oauth method used then make this to oauth the account and to get tokens
+  login: async (data, User) => {
+    return await User.findOne({ [`apps.${AppID}.id`]: data.id });
+  },
   schema: new mongoose.Schema({
     // the schema for the accounts of this app
     /*
