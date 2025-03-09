@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+import { Input } from '../../../components/ui/input';
 import { Button } from '../../../components/ui/button';
 import api from '../../../utils/api';
 
 export default function TelegramAuth() {
   const [dataSent, setDataSent] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [mfa, setMfa] = useState(false);
   const [responseStatus, setResponseStatus] = useState(null);
   useEffect(() => {
     const script = document.createElement('script');
@@ -15,25 +17,46 @@ export default function TelegramAuth() {
     script.setAttribute('data-request-access', 'write');
     script.setAttribute('data-onauth', 'onTelegramAuth(user)');
     document.getElementById('telegram-login').appendChild(script);
-
     window.onTelegramAuth = (user) => {
       setDataSent(true);
       setLoading(true);
-      api.apps
-        .verifyConnection({
-          app: 'telegram',
-          user,
-        })
-        .then(() => {
-          setResponseStatus('success');
-        })
-        .catch((e) => {
-          console.log(e);
-          setResponseStatus(e.data?.error || 'error');
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+      if (localStorage.getItem('token'))
+        api.apps
+          .verifyConnection({
+            app: 'telegram',
+            user,
+          })
+          .then(() => {
+            setResponseStatus('success');
+          })
+          .catch((e) => {
+            console.log(e);
+            setResponseStatus(e.data?.error || 'error');
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      else
+        api.apps
+          .loginWithApp({
+            app: 'telegram',
+            query: user,
+          })
+          .then((data) => {
+            if (data.requiresMFA) setMfa(user);
+            if (data.token) {
+              localStorage.setItem('token', data.token);
+              window.close();
+            }
+            setResponseStatus('success');
+          })
+          .catch((e) => {
+            console.log(e);
+            setResponseStatus(e.data?.error || 'error');
+          })
+          .finally(() => {
+            setLoading(false);
+          });
     };
 
     return () => {
@@ -48,6 +71,50 @@ export default function TelegramAuth() {
   }, []);
 
   const handleBackToApps = () => window.close();
+
+  if (mfa) {
+    return (
+      <div className="mx-auto max-w-4xl px-6 py-4">
+        <div className="text-primary text-lg font-bold">ادخل كود التحقق</div>
+        <Input
+          className="mt-4"
+          placeholder="كود التحقق"
+          onChange={(e) =>
+            setMfa((user) => ({
+              user,
+              tfaCode: e.target.value,
+            }))
+          }
+        />
+        <Button
+          onClick={() => {
+            setMfa(false);
+            api.apps
+              .loginWithApp({
+                app: 'telegram',
+                query: mfa.user,
+                tfaCode: mfa.tfaCode,
+              })
+              .catch((e) => {
+                console.log(e);
+                setResponseStatus(e.data?.error || 'error');
+              })
+              .then((data) => {
+                if (data.token) {
+                  localStorage.setItem('token', data.token);
+                  window.close();
+                } else if (data.requiresMFA) setMfa(true);
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+          }}
+          className="mt-4 rounded-md px-6 py-3 text-lg">
+          تأكيد
+        </Button>
+      </div>
+    );
+  }
 
   return dataSent ? (
     <div className="mx-auto max-w-4xl px-6 py-4">
@@ -70,7 +137,7 @@ export default function TelegramAuth() {
       {!loading && (
         <Button
           onClick={handleBackToApps}
-          className="mt-4 rounded-md bg-primary px-6 py-3 text-lg text-primary-foreground transition duration-200 hover:bg-90primary disabled:cursor-not-allowed disabled:bg-gray-400">
+          className="bg-primary text-primary-foreground hover:bg-90primary mt-4 rounded-md px-6 py-3 text-lg transition duration-200 disabled:cursor-not-allowed disabled:bg-gray-400">
           العودة للتطبيقات
         </Button>
       )}
