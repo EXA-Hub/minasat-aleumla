@@ -1,3 +1,5 @@
+# Explain of the App Code Block
+
 ```js
 // my-api/src/apps/App.js
 import mongoose from 'mongoose'; // import mongoose to create the schema

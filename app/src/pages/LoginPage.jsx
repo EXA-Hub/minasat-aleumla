@@ -372,51 +372,53 @@ const LoginPage = () => {
           </Button>
         </form>
 
-        <div className="flex flex-col items-center space-y-4 rounded-lg p-6 pb-0">
-          <h2 className="text-lg font-semibold">تسجيل الدخول باستخدام</h2>
-          <div className="flex space-x-4">
-            {apps.map((app) => (
-              <Button
-                key={app.id}
-                onClick={() => {
-                  setIsLoading(true);
-                  const width = 500;
-                  const height = 600;
-                  const left = (window.innerWidth - width) / 2;
-                  const top = (window.innerHeight - height) / 2;
-                  const popup = window.open(
-                    `${api.API_BASE_URL}/api/public/app/connect/${app.id}`,
-                    '_blank',
-                    `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
-                  );
-                  if (popup) {
-                    const popupCheckInterval = setInterval(() => {
-                      if (popup.closed) {
-                        clearInterval(popupCheckInterval);
-                        navigate('/dashboard');
-                        setIsLoading(false);
-                      }
-                    }, 500); // Check every 500ms
-                  } else {
-                    console.error('Failed to open popup');
-                  }
-                }}
-                className="flex items-center space-x-2 rounded-lg px-4 py-2 text-white"
-                style={{ backgroundColor: app.bgColor }}>
-                <div
-                  alt={app.name}
-                  className="h-5 w-5 p-1"
-                  style={{
-                    WebkitMask: `url(${app.svg}) center/contain no-repeat`,
-                    mask: `url(${app.svg}) center/contain no-repeat`,
-                    backgroundColor: 'white',
+        {isLogin && (
+          <div className="flex flex-col items-center space-y-4 rounded-lg p-6 pb-0">
+            <h2 className="text-lg font-semibold">تسجيل الدخول باستخدام</h2>
+            <div className="flex space-x-4">
+              {apps.map((app) => (
+                <Button
+                  key={app.id}
+                  onClick={() => {
+                    setIsLoading(true);
+                    const width = 500;
+                    const height = 600;
+                    const left = (window.innerWidth - width) / 2;
+                    const top = (window.innerHeight - height) / 2;
+                    const popup = window.open(
+                      `${api.API_BASE_URL}/api/public/app/connect/${app.id}`,
+                      '_blank',
+                      `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
+                    );
+                    if (popup) {
+                      const popupCheckInterval = setInterval(() => {
+                        if (popup.closed) {
+                          clearInterval(popupCheckInterval);
+                          navigate('/dashboard');
+                          setIsLoading(false);
+                        }
+                      }, 500); // Check every 500ms
+                    } else {
+                      console.error('Failed to open popup');
+                    }
                   }}
-                />
-                <span>{app.name}</span>
-              </Button>
-            ))}
+                  className="flex items-center space-x-2 rounded-lg px-4 py-2 text-white"
+                  style={{ backgroundColor: app.bgColor }}>
+                  <div
+                    alt={app.name}
+                    className="h-5 w-5 p-1"
+                    style={{
+                      WebkitMask: `url(${app.svg}) center/contain no-repeat`,
+                      mask: `url(${app.svg}) center/contain no-repeat`,
+                      backgroundColor: 'white',
+                    }}
+                  />
+                  <span>{app.name}</span>
+                </Button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="mt-6 text-center">
           <button
