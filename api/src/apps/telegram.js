@@ -54,7 +54,7 @@ const App = {
   },
   login: async (data, User) => {
     const { id } = data.query;
-    if (!verifyTelegramHash(data.user, process.env.TELEGRAM_BOT_TOKEN))
+    if (!verifyTelegramHash(data.query, process.env.TELEGRAM_BOT_TOKEN))
       throw new Error('invalid hash');
     return await User.findOne({ [`apps.${AppID}.id`]: id });
   },
