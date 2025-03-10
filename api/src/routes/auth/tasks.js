@@ -100,10 +100,14 @@ const generateShortURL = async (url, provider, expirationMinutes = 15) => {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-      Accept: 'application/json',
+      Accept:
+        'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Sec-CH-UA': '"Not_A Brand";v="8", "Chromium";v="122"',
+      'Sec-CH-UA-Mobile': '?0',
+      'Sec-CH-UA-Platform': '"Windows"',
       Referer: 'https://minasat-aleumla.vercel.app/',
       Origin: 'https://minasat-aleumla.vercel.app/',
-      Connection: 'keep-alive',
     },
   });
 
