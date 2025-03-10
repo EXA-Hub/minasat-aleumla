@@ -48,6 +48,7 @@ console.log(
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Toaster } from 'react-hot-toast';
+import { Analytics } from '@vercel/analytics/react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -103,6 +104,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           },
         }}
       />
+      <Analytics />
       <ColorProvider>
         <ThemeProvider>
           <ModalProvider>
