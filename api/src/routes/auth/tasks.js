@@ -97,7 +97,14 @@ const generateShortURL = async (url, provider, expirationMinutes = 15) => {
 
   const response = await fetch(apiUrl, {
     method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+      Accept: 'application/json',
+      Referer: 'https://minasat-aleumla.vercel.app/',
+      Origin: 'https://minasat-aleumla.vercel.app/',
+      Connection: 'keep-alive',
+    },
   });
 
   if (!response.ok) {
