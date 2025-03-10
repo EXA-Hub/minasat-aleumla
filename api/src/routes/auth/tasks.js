@@ -104,23 +104,17 @@ const generateShortURL = async (url, provider, expirationMinutes = 15) => {
   const currentTime = new Date();
   currentTime.setMinutes(currentTime.getMinutes() + expirationMinutes); // Add expiration time
 
-  const expiration = {
+  /*const expiration = {
     year: currentTime.getUTCFullYear(),
     month: currentTime.getUTCMonth() + 1, // Months are 0-indexed
     day: currentTime.getUTCDate(),
     hour: currentTime.getUTCHours(),
     minute: currentTime.getUTCMinutes(),
-  };
+  };*/
 
   const apiUrl = `https://${provider.name}/api?api=${
     provider.API_KEY
-  }&url=${encodeURIComponent(url)}&format=json&expiration[year]=${
-    expiration.year
-  }&expiration[month]=${expiration.month}&expiration[day]=${
-    expiration.day
-  }&expiration[hour]=${expiration.hour}&expiration[minute]=${
-    expiration.minute
-  }`;
+  }&url=${encodeURIComponent(url)}&format=json`;
 
   // Select a random proxy
   let agent;
