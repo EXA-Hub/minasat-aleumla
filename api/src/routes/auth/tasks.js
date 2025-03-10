@@ -101,7 +101,7 @@ const generateShortURL = async (url, provider, expirationMinutes = 15) => {
   });
 
   if (!response.ok) {
-    console.error(await response.json());
+    console.error(response);
     throw new Error(
       `Failed to generate short URL: ${response.message}\n${response.status}`
     );
