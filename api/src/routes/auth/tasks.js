@@ -101,6 +101,7 @@ const generateShortURL = async (url, provider, expirationMinutes = 15) => {
   });
 
   if (!response.ok) {
+    console.error(await response.json());
     throw new Error(
       `Failed to generate short URL: ${response.message}\n${response.status}`
     );
@@ -307,6 +308,48 @@ router.get('/streaks/daily', async (req, res) => {
           _id: 0, // Exclude the default _id field
         },
       },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userData',
+          pipeline: [
+            {
+              $match: {
+                'privacy.showProfile': true,
+              },
+            },
+            {
+              $project: {
+                username: 1,
+                'profile.profilePicture': 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$userData',
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              {
+                _id: '$userData._id',
+                username: '$userData.username',
+                profile: '$userData.profile',
+                streak: '$streak',
+              },
+              '$userData',
+            ],
+          },
+        },
+      },
       { $sort: { streak: -1 } }, // Sort by streak in descending order
       { $limit: 50 }, // Limit to top 50 users
     ]);
@@ -411,6 +454,48 @@ router.get('/streaks/on-fire', async (req, res) => {
           user: '$_id', // Include user ID
           streak: '$streak.max', // Include the maximum streak
           _id: 0, // Exclude the default _id field
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userData',
+          pipeline: [
+            {
+              $match: {
+                'privacy.showProfile': true,
+              },
+            },
+            {
+              $project: {
+                username: 1,
+                'profile.profilePicture': 1,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: '$userData',
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: [
+              {
+                _id: '$userData._id',
+                username: '$userData.username',
+                profile: '$userData.profile',
+                streak: '$streak',
+              },
+              '$userData',
+            ],
+          },
         },
       },
       { $sort: { streak: -1 } }, // Sort by streak in descending order

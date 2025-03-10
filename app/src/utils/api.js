@@ -159,8 +159,11 @@ const api = {
     me: async () => axiosInstance.get(`/api/auth/@me/engagement`),
   },
   top: {
-    rich: async (page, limit) =>
-      axiosInstance.get(`/api/public/richest?page=${page}&limit=${limit}`),
+    rich: async () => axiosInstance.get(`/api/public/richest`),
+    streaks: {
+      daily: async () => axiosInstance.get(`/api/auth/streaks/daily`),
+      onFire: async () => axiosInstance.get(`/api/auth/streaks/on-fire`),
+    },
   },
   userData: {
     profile: async (username) =>

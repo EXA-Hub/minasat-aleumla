@@ -2,7 +2,7 @@
 
 ## تمت زيادة **✨ الهدايا اليومية**
 
-[![ProBot](/docs/assets/images/betterTasks.png)](/explore/support/subscriptions)
+[![ProBot](/docs/assets/images/betterTasks.png)](/dashboard/finance/tasks)
 
 ---
 

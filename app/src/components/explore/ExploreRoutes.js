@@ -12,6 +12,7 @@ import {
   Code,
   Crown,
   Store,
+  Flame,
 } from 'lucide-react';
 
 const menuItems = [
@@ -97,6 +98,14 @@ const menuItems = [
         path: '/explore/richest',
         component: React.lazy(
           () => import('../../pages/explore/kings/richest.jsx')
+        ),
+      },
+      {
+        name: 'مجتمع الإستمرارية',
+        icon: Flame,
+        path: '/explore/streakers',
+        component: React.lazy(
+          () => import('../../pages/explore/kings/TopStreaks.jsx')
         ),
       },
     ],
