@@ -405,6 +405,7 @@ const TasksPage = () => {
       deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
       onClick: () => handleGetDaily(2),
       lastClaim: localStorage.getItem('lastClaim:id=2'),
+      special: true,
     },
     {
       id: 3,
@@ -417,11 +418,22 @@ const TasksPage = () => {
       onClick: () => handleGetDaily(3),
       lastClaim: localStorage.getItem('lastClaim:id=3'),
     },
+    {
+      id: 4,
+      title: 'الهدية اليومية 4',
+      description:
+        'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
+      buttonLabel: 'الحصول على الهدية اليومية',
+      loadingText: 'جاري التحميل...',
+      deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
+      onClick: () => handleGetDaily(4),
+      lastClaim: localStorage.getItem('lastClaim:id=4'),
+    },
   ];
 
   const currentTasks = [
     {
-      id: 4,
+      id: 1,
       title: 'مهمة قناة التيليجرام',
       description:
         'يتم توزيع هدايا عشوائية شبه يومية على المتفاعلين مع منشوراتنا عبر قناة تيليجرام.',
@@ -431,7 +443,7 @@ const TasksPage = () => {
       onClick: () => handleTelegram(),
     },
     {
-      id: 5,
+      id: 2,
       title: 'مهمة سيرفر الديسكورد',
       description:
         'يتم توزيع هدايا عشوائية شبه يومية على المتفاعلين داخل سيرفر الديسكورد.',
@@ -496,7 +508,13 @@ const TasksPage = () => {
             </Link>
           </div>
           {dailyTasks.map((task) => (
-            <Card key={task.id}>
+            <Card
+              key={task.id}
+              className={`animate-slide-up ${
+                task.special
+                  ? 'border-primary bg-20primary border-2 shadow-lg'
+                  : ''
+              }`}>
               <CardHeader>
                 <CardTitle className="flex flex-col items-start justify-between space-y-2 sm:flex-row sm:items-center sm:space-y-0">
                   <div className="flex flex-col">
@@ -505,6 +523,7 @@ const TasksPage = () => {
                     </h3>
                     <p className="text-gray-500">{task.description}</p>
                   </div>
+
                   <Button
                     onClick={() => task.onClick()}
                     disabled={loading}
@@ -513,16 +532,26 @@ const TasksPage = () => {
                   </Button>
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 sm:flex sm:items-center sm:justify-between">
+              <CardContent className="flex flex-wrap items-center justify-between gap-3 sm:gap-4">
+                {/* Special Task Badge */}
+                {task.special && (
+                  <span className="rounded-md bg-red-500 px-3 py-1 text-sm font-bold text-white shadow sm:text-xs">
+                    🎉 2x الهدية! 🎉
+                  </span>
+                )}
+
+                {/* Last Claim Countdown */}
                 {task.lastClaim && (
-                  <p className="text-foreground m-0 flex items-center gap-1 text-sm sm:gap-2 sm:text-xs">
+                  <p className="text-foreground flex items-center gap-2 text-sm sm:order-2 sm:text-xs">
                     <span className="text-secondary-foreground font-semibold">
                       وقت هديتك:
                     </span>
                     <LastClaimCountdown lastClaim={task.lastClaim} />
                   </p>
                 )}
-                <div className="text-sm text-red-500 sm:order-2 sm:text-xs">
+
+                {/* Deadline */}
+                <div className="text-sm text-red-500 sm:order-3 sm:text-xs">
                   <p className="m-0">{task.deadline}</p>
                 </div>
               </CardContent>
@@ -562,27 +591,6 @@ const TasksPage = () => {
           ))}
         </div>
       </div>
-
-      <a href="https://pawns.app/?r=zampx" target="_blank">
-        {/* 
-      https://cdn.pawns.app/images/b/728.jpg
-      https://cdn.pawns.app/images/b/630.jpg
-      https://cdn.pawns.app/images/b/468.jpg
-      https://cdn.pawns.app/images/b/160.jpg
-       */}
-        <img
-          src={`https://cdn.pawns.app/images/b/${
-            width / 2 <= 160
-              ? 160
-              : width / 2 <= 468
-                ? 468
-                : width / 2 <= 630
-                  ? 630
-                  : 728
-          }.jpg`}
-          alt="Pawns.app"
-        />
-      </a>
     </div>
   );
 };

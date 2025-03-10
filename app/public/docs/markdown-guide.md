@@ -2,8 +2,8 @@
 
 ## تمت زيادة **✨ الهدايا اليومية**
 
-> لمعرفة كم ستحصل من الهديا: [إضغط هنا](/explore/support/subscriptions)
->>
+[![ProBot](/docs/assets/images/betterTasks.png)](/explore/support/subscriptions)
+
 ---
 
 ## تم فتح الدفع بواسطة بروبوت

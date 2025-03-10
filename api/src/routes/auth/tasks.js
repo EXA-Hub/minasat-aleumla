@@ -19,6 +19,11 @@ const dailyIpSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   {
     versionKey: false, // Disable the __v field
@@ -54,6 +59,15 @@ const dailyProviders = new Map([
       name: 'yallashort.com',
       period: 24 * 60 * 60 * 1000,
       API_KEY: process.env.YALLASHORT_API_KEY,
+      gift: (tier) => subscriptions[tier].features.tasks.daily,
+    },
+  ],
+  [
+    4,
+    {
+      name: 'x-short.pro',
+      period: 24 * 60 * 60 * 1000,
+      API_KEY: process.env.X_SHORT_API_KEY,
       gift: (tier) => subscriptions[tier].features.tasks.daily,
     },
   ],
@@ -93,6 +107,7 @@ const generateShortURL = async (url, provider, expirationMinutes = 15) => {
   }
 
   const data = await response.json();
+  // console.log(data); // for debugging
   return data.shortenedUrl; // Assuming the API returns a field called 'shortenedUrl'
 };
 
@@ -144,12 +159,19 @@ router.get(
         JSON.stringify({ code, expireTime: Date.now() + 15 * 60 * 1000 }),
         { EX: 900 } // 15 minutes
       );
-      if (!ipRecord)
+      // console.log(`${host}?dailyCode=${code}&id=${id}`, shortUrl); // Only for debugging
+      if (
+        !ipRecord ||
+        ipRecord.updatedAt <
+          new Date(Date.now() - (provider.period + 24 * 60 * 60 * 1000))
+      ) {
+        if (ipRecord) await ipRecord.deleteOne();
         await DailyIp.create({
           identifier: `${id}-${clientIp}`,
+          user: req.user._id,
           url: shortUrl,
         });
-      else await ipRecord.updateOne({ url: shortUrl });
+      } else await ipRecord.updateOne({ url: shortUrl });
       res.status(200).json({ dailyUrl: shortUrl });
     } catch (error) {
       console.error(error);
@@ -182,7 +204,7 @@ router.get(
         return res.status(400).json({ error: 'رمز غير صحيح' });
       if (Date.now() >= entry.expireTime)
         return res.status(400).json({ error: 'إنتهت المهلة جرب مرة آخرى غدا' });
-      const dailyConfig = dailyProviders.get(id).gift(req.user.tier);
+      const dailyConfig = dailyProviders.get(parseInt(id)).gift(req.user.tier);
       const daily =
         Math.floor(Math.random() * dailyConfig.limit) + dailyConfig.bonus;
       req.user.balance += daily;
@@ -192,11 +214,215 @@ router.get(
         daily,
       });
     } catch (error) {
-      console.error(`Error in /verify-daily: ${error.message}`);
+      console.error(error);
       res.status(500).json({ error: 'خطأ في الخادم' });
     }
   }
 );
+
+// Add these new routes at the end of tasks.js
+router.get('/streaks/daily', async (req, res) => {
+  try {
+    const streaks = await DailyIp.aggregate([
+      {
+        $group: {
+          _id: '$user', // Group by user
+          dates: {
+            $addToSet: {
+              $dateToString: { format: '%Y-%m-%d', date: '$createdAt' }, // Convert dates to YYYY-MM-DD format
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          sortedDates: {
+            $sortArray: {
+              input: {
+                $map: {
+                  input: '$dates',
+                  as: 'dateStr',
+                  in: { $dateFromString: { dateString: '$$dateStr' } }, // Convert back to date objects for sorting
+                },
+              },
+              sortBy: 1, // Sort dates in ascending order
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          streak: {
+            $reduce: {
+              input: '$sortedDates', // Iterate through sorted dates
+              initialValue: { current: 1, max: 1, prev: null }, // Initialize streak tracking
+              in: {
+                $let: {
+                  vars: {
+                    diffDays: {
+                      $divide: [
+                        { $subtract: ['$$this', '$$value.prev'] }, // Calculate difference between current and previous date
+                        86400000, // Convert milliseconds to days
+                      ],
+                    },
+                  },
+                  in: {
+                    current: {
+                      $cond: {
+                        if: { $eq: ['$$value.prev', null] }, // If it's the first date, start with streak = 1
+                        then: 1,
+                        else: {
+                          $cond: {
+                            if: { $eq: ['$$diffDays', 1] }, // If the difference is 1 day, increment streak
+                            then: { $add: ['$$value.current', 1] },
+                            else: 1, // Otherwise, reset streak to 1
+                          },
+                        },
+                      },
+                    },
+                    max: {
+                      $max: [
+                        '$$value.max', // Track the maximum streak
+                        {
+                          $cond: {
+                            if: { $eq: ['$$diffDays', 1] }, // If the difference is 1 day, update max streak
+                            then: { $add: ['$$value.current', 1] },
+                            else: 1, // Otherwise, reset max streak to 1
+                          },
+                        },
+                      ],
+                    },
+                    prev: '$$this', // Set the current date as the previous date for the next iteration
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          user: '$_id', // Include user ID
+          streak: '$streak.max', // Include the maximum streak
+          _id: 0, // Exclude the default _id field
+        },
+      },
+      { $sort: { streak: -1 } }, // Sort by streak in descending order
+      { $limit: 50 }, // Limit to top 50 users
+    ]);
+
+    res.status(200).json(streaks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.get('/streaks/on-fire', async (req, res) => {
+  try {
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0)); // Start of today
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999)); // End of today
+
+    const streaks = await DailyIp.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startOfDay, $lte: endOfDay }, // Filter entries created today
+        },
+      },
+      {
+        $group: {
+          _id: '$user', // Group by user
+          dates: {
+            $addToSet: {
+              $dateToString: { format: '%Y-%m-%d', date: '$createdAt' }, // Convert dates to YYYY-MM-DD format
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          sortedDates: {
+            $sortArray: {
+              input: {
+                $map: {
+                  input: '$dates',
+                  as: 'dateStr',
+                  in: { $dateFromString: { dateString: '$$dateStr' } }, // Convert back to date objects for sorting
+                },
+              },
+              sortBy: 1, // Sort dates in ascending order
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          streak: {
+            $reduce: {
+              input: '$sortedDates', // Iterate through sorted dates
+              initialValue: { current: 1, max: 1, prev: null }, // Initialize streak tracking
+              in: {
+                $let: {
+                  vars: {
+                    diffDays: {
+                      $divide: [
+                        { $subtract: ['$$this', '$$value.prev'] }, // Calculate difference between current and previous date
+                        86400000, // Convert milliseconds to days
+                      ],
+                    },
+                  },
+                  in: {
+                    current: {
+                      $cond: {
+                        if: { $eq: ['$$value.prev', null] }, // If it's the first date, start with streak = 1
+                        then: 1,
+                        else: {
+                          $cond: {
+                            if: { $eq: ['$$diffDays', 1] }, // If the difference is 1 day, increment streak
+                            then: { $add: ['$$value.current', 1] },
+                            else: 1, // Otherwise, reset streak to 1
+                          },
+                        },
+                      },
+                    },
+                    max: {
+                      $max: [
+                        '$$value.max', // Track the maximum streak
+                        {
+                          $cond: {
+                            if: { $eq: ['$$diffDays', 1] }, // If the difference is 1 day, update max streak
+                            then: { $add: ['$$value.current', 1] },
+                            else: 1, // Otherwise, reset max streak to 1
+                          },
+                        },
+                      ],
+                    },
+                    prev: '$$this', // Set the current date as the previous date for the next iteration
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          user: '$_id', // Include user ID
+          streak: '$streak.max', // Include the maximum streak
+          _id: 0, // Exclude the default _id field
+        },
+      },
+      { $sort: { streak: -1 } }, // Sort by streak in descending order
+      { $limit: 50 }, // Limit to top 50 users
+    ]);
+
+    res.status(200).json(streaks);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 // Helper function to validate environment variables
 function validateEnv(variableName) {
