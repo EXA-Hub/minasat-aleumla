@@ -395,29 +395,29 @@ const TasksPage = () => {
       onClick: () => handleGetDaily(1),
       lastClaim: localStorage.getItem('lastClaim:id=1'),
     },
-    {
-      id: 2,
-      title: 'الهدية اليومية 2',
-      description:
-        'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
-      buttonLabel: 'الحصول على الهدية اليومية',
-      loadingText: 'جاري التحميل...',
-      deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
-      onClick: () => handleGetDaily(2),
-      lastClaim: localStorage.getItem('lastClaim:id=2'),
-      special: true,
-    },
-    {
-      id: 3,
-      title: 'الهدية اليومية 3',
-      description:
-        'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
-      buttonLabel: 'الحصول على الهدية اليومية',
-      loadingText: 'جاري التحميل...',
-      deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
-      onClick: () => handleGetDaily(3),
-      lastClaim: localStorage.getItem('lastClaim:id=3'),
-    },
+    // {
+    //   id: 2,
+    //   title: 'الهدية اليومية 2',
+    //   description:
+    //     'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
+    //   buttonLabel: 'الحصول على الهدية اليومية',
+    //   loadingText: 'جاري التحميل...',
+    //   deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
+    //   onClick: () => handleGetDaily(2),
+    //   lastClaim: localStorage.getItem('lastClaim:id=2'),
+    //   special: true,
+    // },
+    // {
+    //   id: 3,
+    //   title: 'الهدية اليومية 3',
+    //   description:
+    //     'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
+    //   buttonLabel: 'الحصول على الهدية اليومية',
+    //   loadingText: 'جاري التحميل...',
+    //   deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
+    //   onClick: () => handleGetDaily(3),
+    //   lastClaim: localStorage.getItem('lastClaim:id=3'),
+    // },
     {
       id: 4,
       title: 'الهدية اليومية 4',

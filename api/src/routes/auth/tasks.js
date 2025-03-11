@@ -73,33 +73,6 @@ const dailyProviders = new Map([
   ],
 ]);
 
-import { HttpsProxyAgent } from 'https-proxy-agent';
-import fs from 'fs/promises';
-import path from 'path';
-
-// Load proxies from the file (add this before the generateShortURL function)
-let proxies = [];
-(async () => {
-  try {
-    const __dirname = path.dirname(new URL(import.meta.url).pathname);
-    const proxiesPath = path.join(
-      __dirname,
-      '../../../../scripts/config/proxies.txt'
-    );
-    const data = await fs.readFile(proxiesPath, 'utf8');
-    proxies = data
-      .split('\n')
-      .filter((line) => line.trim() && !line.startsWith('#')) // Remove empty lines and comments
-      .map((line) => {
-        const [host, port] = line.split(':');
-        return { host: host.trim(), port: port?.trim() }; // Handle lines without port
-      })
-      .filter((proxy) => proxy.host && proxy.port); // Filter invalid entries
-  } catch (error) {
-    console.error('Failed to load proxies:', error);
-  }
-})();
-
 const generateShortURL = async (url, provider, expirationMinutes = 15) => {
   const currentTime = new Date();
   currentTime.setMinutes(currentTime.getMinutes() + expirationMinutes); // Add expiration time
@@ -116,19 +89,8 @@ const generateShortURL = async (url, provider, expirationMinutes = 15) => {
     provider.API_KEY
   }&url=${encodeURIComponent(url)}&format=json`;
 
-  // Select a random proxy
-  let agent;
-  if (proxies.length > 0) {
-    const randomProxy = proxies[Math.floor(Math.random() * proxies.length)];
-    agent = new HttpsProxyAgent(
-      `http://${randomProxy.host}:${randomProxy.port}`
-    );
-    console.log(`Using proxy: ${randomProxy.host}:${randomProxy.port}`);
-  }
-
   const response = await fetch(apiUrl, {
     method: 'GET',
-    agent,
     headers: {
       'Content-Type': 'application/json',
     },
