@@ -429,6 +429,17 @@ const TasksPage = () => {
       onClick: () => handleGetDaily(4),
       lastClaim: localStorage.getItem('lastClaim:id=4'),
     },
+    {
+      id: 5,
+      title: 'الهدية اليومية 5',
+      description:
+        'قم بزيارة موقعنا كل 24 ساعة لتخطى روابط الإعلانات والحصول على مكافأة عشوائية!',
+      buttonLabel: 'الحصول على الهدية اليومية',
+      loadingText: 'جاري التحميل...',
+      deadline: 'يجب إتمام المهمة في خلال 15 دقيقة!',
+      onClick: () => handleGetDaily(5),
+      lastClaim: localStorage.getItem('lastClaim:id=5'),
+    },
   ];
 
   const currentTasks = [

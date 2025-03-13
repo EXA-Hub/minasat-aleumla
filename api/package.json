@@ -25,7 +25,6 @@
     "express-rate-limit": "^7.5.0",
     "express-validator": "^7.2.0",
     "helmet": "^8.0.0",
-    "https-proxy-agent": "^7.0.6",
     "ip": "^2.0.1",
     "moment-timezone": "^0.5.47",
     "mongoose": "^8.10.1",

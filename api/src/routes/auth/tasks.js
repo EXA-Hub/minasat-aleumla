@@ -71,6 +71,15 @@ const dailyProviders = new Map([
       gift: (tier) => subscriptions[tier].features.tasks.daily,
     },
   ],
+  [
+    5,
+    {
+      name: 'short-jambo.com',
+      period: 24 * 60 * 60 * 1000,
+      API_KEY: process.env.SHORT_JAMBO_API_KEY,
+      gift: (tier) => subscriptions[tier].features.tasks.daily,
+    },
+  ],
 ]);
 
 const generateShortURL = async (url, provider, expirationMinutes = 15) => {
