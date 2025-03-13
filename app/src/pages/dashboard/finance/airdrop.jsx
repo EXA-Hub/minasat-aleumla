@@ -197,62 +197,63 @@ const AirdropPage = () => {
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold">الهدايا المتاحة</h2>
-        <button
-          onClick={() => setDialogOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary rounded-md px-4 py-2">
-          إنشاء هدية جديدة
-        </button>
-      </div>
-
+    <>
       <CreateGiftDialog
         onSuccess={fetchGifts}
         open={dialogOpen}
         onOpenChange={setDialogOpen}
       />
+      <div className="space-y-6 p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-3xl font-bold">الهدايا المتاحة</h2>
+          <button
+            onClick={() => setDialogOpen(true)}
+            className="bg-primary text-primary-foreground hover:bg-primary rounded-md px-4 py-2">
+            إنشاء هدية جديدة
+          </button>
+        </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {gifts.map((gift) => (
-          <Card
-            key={gift.id}
-            className={
-              'transition-shadow hover:shadow-lg' +
-              (gift.claimed ? ' bg-muted' : '')
-            }>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                {gift.title}
-                <CoinIcon amount={gift.coins} />
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {gift.url && (
-                <a className="text-primary mb-4 block hover:underline">
-                  ثمة تفاصيل إضافية
-                </a>
-              )}
-            </CardContent>
-            <CardFooter className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm">
-                المتبقي: {gift.max - gift.claimedCount} / {gift.max}
-              </span>
-              <button
-                onClick={() => handleGiftClaim(gift)}
-                disabled={claimingId === gift.id || gift.claimed}
-                className="bg-primary text-primary-foreground hover:bg-primary rounded-md px-4 py-2 disabled:opacity-50">
-                {claimingId === gift.id
-                  ? 'جاري تقديم الهدية...'
-                  : gift.claimed
-                    ? 'تم الحصول على الهدية'
-                    : 'احصل على الهدية'}
-              </button>
-            </CardFooter>
-          </Card>
-        ))}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {gifts.map((gift) => (
+            <Card
+              key={gift.id}
+              className={
+                'transition-shadow hover:shadow-lg' +
+                (gift.claimed ? ' bg-muted' : '')
+              }>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  {gift.title}
+                  <CoinIcon amount={gift.coins} />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {gift.url && (
+                  <a className="text-primary mb-4 block hover:underline">
+                    ثمة تفاصيل إضافية
+                  </a>
+                )}
+              </CardContent>
+              <CardFooter className="flex items-center justify-between">
+                <span className="text-muted-foreground text-sm">
+                  المتبقي: {gift.max - gift.claimedCount} / {gift.max}
+                </span>
+                <button
+                  onClick={() => handleGiftClaim(gift)}
+                  disabled={claimingId === gift.id || gift.claimed}
+                  className="bg-primary text-primary-foreground hover:bg-primary rounded-md px-4 py-2 disabled:opacity-50">
+                  {claimingId === gift.id
+                    ? 'جاري تقديم الهدية...'
+                    : gift.claimed
+                      ? 'تم الحصول على الهدية'
+                      : 'احصل على الهدية'}
+                </button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

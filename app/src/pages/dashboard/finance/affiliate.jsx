@@ -1,10 +1,10 @@
 // my-react-app/src/pages/dashboard/finance/affiliate.jsx
+import { toast } from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { DollarSign, Users } from 'lucide-react';
-import api from '../../../utils/api';
-import { toast } from 'react-hot-toast';
 import CoinIcon from '../../../components/ui/CoinIcon';
+import api from '../../../utils/api';
 
 const AffiliatePage = () => {
   const [referrals, setReferrals] = useState([]);
@@ -46,7 +46,7 @@ const AffiliatePage = () => {
   if (loading) {
     return (
       <div className="flex justify-center p-8">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
       </div>
     );
   }
@@ -70,7 +70,7 @@ const AffiliatePage = () => {
         <button
           onClick={handleCollectTaxes}
           disabled={!referrals.reduce((sum, ref) => sum + ref.tax, 0)}
-          className="rounded-md bg-primary px-4 py-2 text-white hover:bg-primary">
+          className="bg-primary hover:bg-primary rounded-md px-4 py-2 text-white">
           حصد الأرباح
         </button>
       </div>
@@ -100,7 +100,7 @@ const AffiliatePage = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="p-4">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-primary" />
+            <Users className="text-primary h-5 w-5" />
             <span className="text-gray-600">عدد الإحالات</span>
           </div>
           <p className="mt-2 text-2xl font-bold">{referrals.length}</p>
@@ -108,7 +108,7 @@ const AffiliatePage = () => {
 
         <Card className="p-4">
           <div className="flex items-center gap-2">
-            <DollarSign className="h-5 w-5 text-primary" />
+            <DollarSign className="text-primary h-5 w-5" />
             <span className="text-gray-600">مجموع الأرباح</span>
           </div>
           <div className="mt-2 text-2xl font-bold">
