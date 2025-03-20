@@ -59,10 +59,100 @@ export class CommandHandlers {
   }
 
   async adjustBalance({ discordUserData, interaction, user }) {
-    console.log(JSON.stringify(discordUserData), JSON.stringify(interaction));
-    return await this.#discordApi.sendFollowUpMessage(interaction, {
-      content: `> **مغلق لأجل غير مسمى**`,
-    });
+    try {
+      if (!interaction.member?.roles?.includes(this._CONFIG.DISCORD.ADMIN_ROLE))
+        return await this.#discordApi.sendFollowUpMessage(interaction, {
+          content: `> **⚠️ تحتاج إلى رتبة <@&${this._CONFIG.DISCORD.ADMIN_ROLE}>**`,
+          allowed_mentions: { parse: [] },
+        });
+      const amount = parseInt(
+        interaction.data.components
+          .flatMap((c) => c.components)
+          .find((comp) => comp.custom_id === 'amount')?.value,
+        10
+      );
+      if (isNaN(amount) || amount < 1)
+        return await this.#discordApi.sendFollowUpMessage(interaction, {
+          content: `> **رقم غير صحيح *\`${amount}\`${this._CONFIG.EMOJIS.icon}***`,
+          allowed_mentions: { parse: [] },
+        });
+      const targetId = interaction.data.components
+        .flatMap((c) => c.components)
+        .find((comp) => comp.custom_id === 'discord_id')?.value;
+      const target =
+        targetId && discordUserData.id !== targetId
+          ? await User.findOne({
+              'apps.Discord': { $elemMatch: { id: targetId } },
+            })
+          : user;
+      if (!target)
+        return await this.#discordApi.sendFollowUpMessage(interaction, {
+          content: `> **⚠️ مستخدم غير موجود ${this._CONFIG.EMOJIS.icon}!**`,
+          allowed_mentions: { parse: [] },
+        });
+      const password = interaction.data.components
+        .flatMap((c) => c.components)
+        .find((comp) => comp.custom_id === 'password')?.value;
+      const bank = await User.findOne({
+        username: 'bank',
+        password: password,
+      });
+      if (!bank)
+        return await this.#discordApi.sendFollowUpMessage(interaction, {
+          content: `> **⚠️ كلمة السر غير صحيحة ${this._CONFIG.EMOJIS.icon}!**`,
+          allowed_mentions: { parse: [] },
+        });
+      switch (interaction.data.custom_id) {
+        case 'add_balance':
+          if (bank.balance < amount)
+            return await this.#discordApi.sendFollowUpMessage(interaction, {
+              content: `> **⚠️ رصيد البنك غير كافي *\`${bank.balance}\`${this._CONFIG.EMOJIS.icon}*!**`,
+              allowed_mentions: { parse: [] },
+            });
+          target.balance += amount;
+          bank.balance -= amount;
+          await bank.save();
+          await target.save();
+          await this.#discordApi.sendFollowUpMessage(interaction, {
+            content: `> **تم إرسال *\`${amount}\`${this._CONFIG.EMOJIS.icon}* إلى <@!${targetId}>**`,
+            allowed_mentions: { parse: [] },
+          });
+          await this.#discordApi.sendDM(targetId, {
+            content: `> **تم إرسال *\`${amount}\`${this._CONFIG.EMOJIS.icon}* إليك**\n> رصيدك الحالي: **\`${target.balance}\`**${this._CONFIG.EMOJIS.icon}`,
+          });
+          break;
+        case 'remove_balance':
+          if (target.balance < amount)
+            return await this.#discordApi.sendFollowUpMessage(interaction, {
+              content: `> **⚠️ رصيد المستخدم غير كافي *\`${target.balance}\`${this._CONFIG.EMOJIS.icon}*!**`,
+              allowed_mentions: { parse: [] },
+            });
+          target.balance -= amount;
+          bank.balance += amount;
+          await bank.save();
+          await target.save();
+          await this.#discordApi.sendFollowUpMessage(interaction, {
+            content: `> **تم إرسال *\`${amount}\`${this._CONFIG.EMOJIS.icon}* إلى البنك**`,
+            allowed_mentions: { parse: [] },
+          });
+          await this.#discordApi.sendDM(targetId, {
+            content: `> **تم إرسال *\`${amount}\`${this._CONFIG.EMOJIS.icon}* إلى البنك**\n> رصيدك الحالي: **\`${target.balance}\`**${this._CONFIG.EMOJIS.icon}`,
+          });
+          break;
+        default:
+          await this.#discordApi.sendFollowUpMessage(interaction, {
+            content: `> **⚠️ عملية غير موجودة \`${interaction.data.custom_id}\`!**`,
+            allowed_mentions: { parse: [] },
+          });
+          break;
+      }
+    } catch (error) {
+      console.error('❌ Error in adjustBalance:', error);
+      return await this.#discordApi.sendFollowUpMessage(interaction, {
+        content: this._CONFIG.DEFAULT_ERROR_MESSAGE,
+        allowed_mentions: { parse: [] },
+      });
+    }
   }
 
   async handleViewBankAccount({ discordUserData, interaction, user }) {
@@ -81,7 +171,9 @@ export class CommandHandlers {
           await User.create({
             username: 'bank',
             password: 'bank',
-            profile: { profilePicture: '/icon.svg' },
+            profile: {
+              profilePicture: 'https://discord.com/assets/60e4658040396168.svg',
+            },
           });
           return await this.#discordApi.sendFollowUpMessage(interaction, {
             content: `> **تم انشاء حساب بنك. :white_check_mark: **`,

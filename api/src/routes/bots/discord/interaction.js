@@ -91,6 +91,21 @@ router.post(
                 },
               ],
             },
+            {
+              type: MessageComponentTypes.ACTION_ROW,
+              components: [
+                {
+                  type: MessageComponentTypes.INPUT_TEXT, // TEXT_INPUT
+                  custom_id: 'password',
+                  label: 'كلمة السر',
+                  style: 1, // SHORT
+                  min_length: 1,
+                  max_length: 10,
+                  required: true,
+                  placeholder: '****',
+                },
+              ],
+            },
           ],
         },
       });
