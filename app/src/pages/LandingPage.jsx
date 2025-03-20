@@ -132,7 +132,7 @@ export function Navbar() {
               تسجيل الدخول
             </Link>
             <Link
-              to="/dashboard"
+              to="/explore"
               className="bg-primary-600 hover:bg-primary-700 rounded-lg px-4 py-2 text-white transition-colors">
               البدء
             </Link>
@@ -182,14 +182,14 @@ export function Navbar() {
                 المحفظة
               </Link>
               <Link
-                to="/login"
+                to="/dashboard"
                 className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 px-4 transition-colors">
                 تسجيل الدخول
               </Link>
               <Link
-                to="/dashboard"
+                to="/explore"
                 className="bg-primary-600 hover:bg-primary-700 mx-4 rounded-lg px-4 py-2 text-center text-white transition-colors">
-                التسجيل
+                المنصة
               </Link>
             </div>
           </div>
@@ -227,12 +227,12 @@ export function HeroSection() {
         </p>
         <div className="mb-16 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
-            to="/dashboard"
+            to="/explore"
             className="from-primary-500 to-accent-500 hover:bg-primary-700 rounded-lg bg-linear-to-tr px-8 py-3 font-semibold text-white shadow-lg transition-colors hover:shadow-xl">
             البدء مجانا
           </Link>
           <Link
-            to="/login"
+            to="/dashboard"
             className="border-primary-600 dark:border-primary-400 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg border-2 px-8 py-3 font-semibold transition-colors">
             تسجيل الدخول
           </Link>
@@ -579,7 +579,7 @@ export function PricingSection() {
               </ul>
 
               <Link
-                to="/dashboard"
+                to="/explore"
                 className="text-primary-600 bg-primary-50 hover:bg-primary-100 dark:text-primary-400 dark:bg-primary-900/50 dark:hover:bg-primary-900/80 block w-full rounded-xl px-6 py-3 text-center text-sm font-medium transition-all duration-200 hover:shadow-md">
                 إبدا الآن مجانا
               </Link>

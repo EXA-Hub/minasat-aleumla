@@ -252,11 +252,10 @@ export class CommandHandlers {
           ],
         });
       }
-    } else {
+    } else
       return await this.#discordApi.sendFollowUpMessage(interaction, {
         content: `⚠️ **لا يمكنك استخدام هذا الامر.**`,
       });
-    }
   }
 
   async handlePing({ discordUserData, interaction }) {
