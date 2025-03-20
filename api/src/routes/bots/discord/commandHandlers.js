@@ -171,9 +171,6 @@ export class CommandHandlers {
           await User.create({
             username: 'bank',
             password: 'bank',
-            profile: {
-              profilePicture: 'https://discord.com/assets/60e4658040396168.svg',
-            },
           });
           return await this.#discordApi.sendFollowUpMessage(interaction, {
             content: `> **تم انشاء حساب بنك. :white_check_mark: **`,

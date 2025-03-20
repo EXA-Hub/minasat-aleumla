@@ -1,8 +1,11 @@
 // app/src/pages/explore/overview.jsx
-import { useOutletContext } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import Username from '../../components/explore/widgets/Username';
 import MarkdownDisplay from '../../components/ui/markdown';
+
+import AdBanner from '../../services/ads/aads/AdBanner';
+import Referral from '../../services/ads/aads/Referral';
 
 const OverviewPage = () => {
   const { user } = useOutletContext();
@@ -42,6 +45,10 @@ const OverviewPage = () => {
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen></iframe>
         </div>
+      </div>
+      <div className="flex flex-col items-center">
+        <Referral />
+        <AdBanner />
       </div>
       <MarkdownDisplay
         title="نشرة إخبارية"
